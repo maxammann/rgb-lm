@@ -6,6 +6,7 @@
 
 typedef unsigned int bits_t;
 
+//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer-internal.h#L66
 union io_bits_ {
     struct {
         // These reflect the GPIO mapping. The Revision1 and Revision2 boards

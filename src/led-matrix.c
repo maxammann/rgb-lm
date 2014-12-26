@@ -11,7 +11,7 @@
 #  define COLOR_OUT_BITS(x) (x)
 #endif
 
-lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows) {
+lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
     uint8_t double_rows = (uint8_t) (rows / 2);
 
     lmLedMatrix *matrix = malloc(sizeof(lmLedMatrix));
@@ -20,7 +20,7 @@ lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows) {
     matrix->rows = rows;
     matrix->double_rows = double_rows;
     matrix->row_mask = double_rows - (uint8_t) 1;
-    matrix->pwm_bits = 11; //todo
+    matrix->pwm_bits = pwm_bits;
     matrix->bitplane_buffer = calloc(1, sizeof(io_bits) * double_rows * columns * MAX_BITPLANES);
     pthread_mutex_init(&matrix->buffer_mutex, NULL);
 
@@ -51,6 +51,7 @@ static uint16_t map_color(uint16_t color) {
     return COLOR_OUT_BITS((shift > 0) ? (color << shift) : (color >> -shift));
 }
 
+//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L150
 void lm_matrix_fill(lmLedMatrix *matrix, uint8_t r, uint8_t g, uint8_t b) {
     int i, row, col;
 
@@ -76,6 +77,7 @@ void lm_matrix_fill(lmLedMatrix *matrix, uint8_t r, uint8_t g, uint8_t b) {
     }
 }
 
+//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L171
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
         uint8_t r, uint8_t g, uint8_t b) {

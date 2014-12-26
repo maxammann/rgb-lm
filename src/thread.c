@@ -14,7 +14,7 @@ struct lmThread_ {
     pthread_t pthread;
 };
 
-const long row_sleep_nanos[11] = {
+const long row_sleep_timings[11] = {
         (1 * BASE_TIME_NANOS),
         (2 * BASE_TIME_NANOS),
         (4 * BASE_TIME_NANOS),
@@ -28,14 +28,9 @@ const long row_sleep_nanos[11] = {
         (1024 * BASE_TIME_NANOS),
 };
 
+//Thanks to hzeller for these timings! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L48 :D
 static void sleep_nanos(long nanos) {
-    // For sleep times above 20usec, nanosleep seems to be fine, but it has
-    // an offset of about 20usec (on the RPi distribution I was testing it on).
-    // That means, we need to give it 80us to get 100us.
-    // For values lower than roughly 30us, this is not accurate anymore and we
-    // need to switch to busy wait.
-    // TODO: compile Linux kernel realtime extensions and watch if the offset-time
-    // changes and hope for less jitter.
+
     if (nanos > 28000) {
         struct timespec sleep_time = {0, nanos - 20000};
         nanosleep(&sleep_time, NULL);
@@ -49,6 +44,7 @@ static void sleep_nanos(long nanos) {
     }
 }
 
+//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L200
 static void *main(void *ch) {
     lmThread *thread = ch;
     lmLedMatrix *matrix = thread->matrix;
@@ -107,7 +103,7 @@ static void *main(void *ch) {
 
                 // Now switch on for the sleep time necessary for that bit-plane.
                 lm_gpio_clear_bits(output_enable.raw);
-                sleep_nanos(row_sleep_nanos[b]);
+                sleep_nanos(row_sleep_timings[b]);
                 lm_gpio_set_bits(output_enable.raw);
             }
         }
@@ -124,9 +120,6 @@ void lm_thread_start(lmThread *thread) {
     struct sched_param p;
     p.sched_priority = sched_get_priority_max(SCHED_FIFO);
     pthread_setschedparam(pthread, SCHED_FIFO, &p);
-
-    printf("Priority: %d\n", p.sched_priority);
-
     thread->pthread = pthread;
 }
 

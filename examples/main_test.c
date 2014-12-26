@@ -10,7 +10,7 @@ int main() {
     uint32_t outputs = lm_gpio_init_output(raw);
     assert(outputs == raw);
 
-    lmLedMatrix *matrix = lm_matrix_new(32, 32);
+    lmLedMatrix *matrix = lm_matrix_new(32, 32, 1);
     lm_matrix_clear(matrix);
     lm_matrix_fill(matrix, 255, 0, 0);
 
