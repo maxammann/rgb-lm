@@ -18,5 +18,8 @@ int main() {
     lm_thread_start(thread);
 
     lm_thread_wait(thread);
+
+    lm_matrix_free(matrix);
+    lm_thread_free(thread);
     return 0;
 }

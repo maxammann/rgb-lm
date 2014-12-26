@@ -28,6 +28,8 @@ lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
 }
 
 void lm_matrix_free(lmLedMatrix *matrix) {
+    pthread_mutex_destroy(&matrix->buffer_mutex);
+    free(matrix->bitplane_buffer);
     free(matrix);
 }
 
