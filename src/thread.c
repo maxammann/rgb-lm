@@ -48,10 +48,9 @@ static void sleep_nanos(long nanos) {
 static void *main(void *ch) {
     lmThread *thread = ch;
     lmLedMatrix *matrix = thread->matrix;
-    uint16_t pwm_bits = matrix->pwm_bits;
-    int double_rows = matrix->double_rows;
-    io_bits *bitplane = matrix->bitplane_buffer;
-    uint16_t columns = matrix->columns;
+    int double_rows = lm_matrix_double_rows(matrix);
+    io_bits *bitplane = lm_matrix_bit_plane(matrix);
+    uint16_t columns = lm_matrix_columns(matrix);
 
     uint8_t d_row;
     int b;
@@ -75,6 +74,8 @@ static void *main(void *ch) {
     strobe.bits.strobe = 1;
 
     while (thread->running) {
+        uint16_t pwm_bits = lm_matrix_pwm_bits(matrix);
+
         for (d_row = 0; d_row < double_rows; ++d_row) {
             row_address.bits.row = d_row;
             lm_gpio_set_masked_bits(row_address.raw, row_mask.raw);  // Set row address
@@ -83,8 +84,7 @@ static void *main(void *ch) {
             // full PWM of one row before switching rows.
             for (b = MAX_BITPLANES - pwm_bits; b < MAX_BITPLANES; ++b) {
 
-                pthread_mutex_lock(&matrix->buffer_mutex);
-
+                lm_matrix_lock(matrix);
                 io_bits *row_data = lm_io_bits_value_at(bitplane, columns, d_row, 0, b);
                 // We clock these in while we are dark. This actually increases the
                 // dark time, but we ignore that a bit.
@@ -93,8 +93,7 @@ static void *main(void *ch) {
                     lm_gpio_set_masked_bits(out.raw, color_clk_mask.raw);  // col + reset clock
                     lm_gpio_set_bits(clock.raw);               // Rising edge: clock color in.
                 }
-
-                pthread_mutex_unlock(&matrix->buffer_mutex);
+                lm_matrix_unlock(matrix);
 
                 lm_gpio_clear_bits(color_clk_mask.raw);    // clock back to normal.
 

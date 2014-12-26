@@ -1,15 +1,11 @@
 #include <stdio.h>
-#include <assert.h>
 #include <unistd.h>
 #include <lm.h>
 
 int main() {
     printf("Starting\n");
     lm_gpio_init();
-
-    uint32_t raw = lm_io_bits_new();
-    uint32_t outputs = lm_gpio_init_output(raw);
-    assert(outputs == raw);
+    lm_gpio_init_output(lm_io_bits_new());
 
     lmLedMatrix *matrix = lm_matrix_new(32, 32, 6);
     lm_matrix_clear(matrix);

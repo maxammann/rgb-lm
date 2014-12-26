@@ -30,16 +30,15 @@ static const uint32_t gpios = (
                 (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25) | (1 << 27));
 
 
-void lm_gpio_init() {
+int lm_gpio_init() {
     if (gpio != NULL) {
-        return;
+        return 0;
     }
 
     int mem_fd;
 
     if ((mem_fd = open("/dev/mem", O_RDWR | O_SYNC)) < 0) {
-        printf("can't open /dev/mem \n");
-        exit(-1);
+        return -1;
     }
 
     void *gpio_map = mmap(
@@ -55,11 +54,12 @@ void lm_gpio_init() {
 
     if (gpio_map == MAP_FAILED) {
         printf("mmap error %ld\n", (long) gpio_map);
-        exit(-1);
+        return -2;
     }
 
     // Always use volatile pointer!
     gpio = (volatile unsigned *) gpio_map;
+    return 1;
 }
 
 uint32_t lm_gpio_init_output(uint32_t outputs) {

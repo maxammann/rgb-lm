@@ -24,7 +24,7 @@
 #endif
 
 
-void lm_gpio_init();
+int lm_gpio_init();
 
 uint32_t lm_gpio_init_output(uint32_t outputs);
 

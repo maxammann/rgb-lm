@@ -11,14 +11,24 @@
 #  define COLOR_OUT_BITS(x) (x)
 #endif
 
-lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
-    uint8_t double_rows = (uint8_t) (rows / 2);
+#define COLOR_SHIRT MAX_BITPLANES - 8
 
+struct lmLedMatrix_ {
+    uint16_t columns, rows;
+    uint8_t row_mask;
+
+    uint8_t pwm_bits;
+    io_bits *bitplane_buffer;
+
+    pthread_mutex_t buffer_mutex;
+};
+
+lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
     lmLedMatrix *matrix = malloc(sizeof(lmLedMatrix));
 
     matrix->columns = columns;
     matrix->rows = rows;
-    matrix->double_rows = double_rows;
+    uint8_t double_rows = lm_matrix_double_rows(matrix);
     matrix->row_mask = double_rows - (uint8_t) 1;
     matrix->pwm_bits = pwm_bits;
     matrix->bitplane_buffer = calloc(1, sizeof(io_bits) * double_rows * columns * MAX_BITPLANES);
@@ -41,16 +51,28 @@ uint16_t lm_matrix_rows(lmLedMatrix *matrix) {
     return matrix->rows;
 }
 
+void lm_matrix_lock(lmLedMatrix *matrix) {
+    pthread_mutex_lock(&matrix->buffer_mutex);
+}
+
+void lm_matrix_unlock(lmLedMatrix *matrix) {
+    pthread_mutex_unlock(&matrix->buffer_mutex);
+}
+
 uint16_t lm_matrix_pwm_bits(lmLedMatrix *matrix) {
     return matrix->pwm_bits;
 }
 
-static uint16_t map_color(uint16_t color) {
-    enum {
-        shift = MAX_BITPLANES - 8
-    };
+inline uint8_t lm_matrix_double_rows(lmLedMatrix *matrix) {
+    return (uint8_t) (matrix->rows / 2);
+}
 
-    return COLOR_OUT_BITS((shift > 0) ? (color << shift) : (color >> -shift));
+io_bits *lm_matrix_bit_plane(lmLedMatrix *matrix) {
+    return matrix->bitplane_buffer;
+}
+
+static uint16_t map_color(uint16_t color) {
+    return COLOR_OUT_BITS((COLOR_SHIRT > 0) ? (color << COLOR_SHIRT) : (color >> -COLOR_SHIRT));
 }
 
 //bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L150
@@ -61,6 +83,8 @@ void lm_matrix_fill(lmLedMatrix *matrix, uint8_t r, uint8_t g, uint8_t b) {
     const uint16_t green = map_color(g);
     const uint16_t blue = map_color(b);
 
+    uint8_t double_rows = lm_matrix_double_rows(matrix);
+
     for (i = MAX_BITPLANES - matrix->pwm_bits; i < MAX_BITPLANES; ++i) {
         int mask = 1 << i;
         io_bits plane_bits;
@@ -68,13 +92,13 @@ void lm_matrix_fill(lmLedMatrix *matrix, uint8_t r, uint8_t g, uint8_t b) {
         plane_bits.bits.r1 = plane_bits.bits.r2 = (bits_t) ((red & mask) == mask);
         plane_bits.bits.g1 = plane_bits.bits.g2 = (bits_t) ((green & mask) == mask);
         plane_bits.bits.b1 = plane_bits.bits.b2 = (bits_t) ((blue & mask) == mask);
-        for (row = 0; row < matrix->double_rows; ++row) {
-            pthread_mutex_lock(&matrix->buffer_mutex);
+        for (row = 0; row < double_rows; ++row) {
+            lm_matrix_lock(matrix);
             io_bits *row_data = lm_io_bits_value_at(matrix->bitplane_buffer, matrix->columns, row, 0, i);
             for (col = 0; col < matrix->columns; ++col) {
                 (row_data++)->raw = plane_bits.raw;
             }
-            pthread_mutex_unlock(&matrix->buffer_mutex);
+            lm_matrix_unlock(matrix);
         }
     }
 }
@@ -91,12 +115,13 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
 
     uint8_t pwm = matrix->pwm_bits;
     uint16_t columns = matrix->columns;
+    uint8_t double_rows = lm_matrix_double_rows(matrix);
 
     const int min_bit_plane = MAX_BITPLANES - pwm;
 
-    pthread_mutex_lock(&matrix->buffer_mutex);
+    lm_matrix_lock(matrix);
     io_bits *bits = lm_io_bits_value_at(matrix->bitplane_buffer, matrix->columns, y & matrix->row_mask, x, min_bit_plane);
-    if (y < matrix->double_rows) {   // Upper sub-panel.
+    if (y < double_rows) {   // Upper sub-panel.
         for (i = min_bit_plane; i < MAX_BITPLANES; ++i) {
             const uint16_t mask = (uint16_t) 1 << i;
 
@@ -114,13 +139,15 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
             bits += columns;
         }
     }
-    pthread_mutex_unlock(&matrix->buffer_mutex);
+    lm_matrix_unlock(matrix);
 }
 
 void lm_matrix_clear(lmLedMatrix *matrix) {
     io_bits *bits = matrix->bitplane_buffer;
-    pthread_mutex_lock(&matrix->buffer_mutex);
-    memset(bits, 0, sizeof(*bits) * matrix->double_rows * matrix->columns * MAX_BITPLANES);
-    pthread_mutex_unlock(&matrix->buffer_mutex);
+    uint8_t double_rows = lm_matrix_double_rows(matrix);
+
+    lm_matrix_lock(matrix);
+    memset(bits, 0, sizeof(*bits) * double_rows * matrix->columns * MAX_BITPLANES);
+    lm_matrix_unlock(matrix);
 }
 
