@@ -1,12 +1,20 @@
 find_package (Threads)
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 
-add_executable(simple main_test.c)
-target_link_libraries (simple rgb_led_matrix ${CMAKE_THREAD_LIBS_INIT})
-set_target_properties(simple
+add_executable(simple_fill simple_fill.c)
+target_link_libraries (simple_fill rgb_led_matrix ${CMAKE_THREAD_LIBS_INIT})
+set_target_properties(simple_fill
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
+
+add_executable(simple_pixels simple_pixels.c)
+target_link_libraries (simple_pixels rgb_led_matrix ${CMAKE_THREAD_LIBS_INIT})
+set_target_properties(simple_pixels
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
 
 add_executable(pulsing pulsing.c)
 target_link_libraries (pulsing rgb_led_matrix ${CMAKE_THREAD_LIBS_INIT})
@@ -14,3 +22,13 @@ set_target_properties(pulsing
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
+
+
+include_directories(${FREETYPE_INCLUDE_DIR_ft2build} /usr/include/freetype2/)
+add_executable(simple_font simple_font.c)
+target_link_libraries (simple_font rgb_led_matrix ${CMAKE_THREAD_LIBS_INIT})
+set_target_properties(simple_font
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
