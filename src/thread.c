@@ -134,6 +134,8 @@ lmThread *lm_thread_new(lmLedMatrix *matrix) {
 }
 
 void lm_thread_free(lmThread *thread) {
+    pthread_cancel(thread->pthread);
+    pthread_detach(thread->pthread);
     free(thread);
 }
 
