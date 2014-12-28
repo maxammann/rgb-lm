@@ -84,8 +84,8 @@ int main() {
 
 //    lm_matrix_print_wchar(matrix, 'A', "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 0, 0, 0, 255, 255);
 
-    lm_matrix_print_string(matrix, "Fu", "../arial_uni.ttf", 16, 16, 255, 0, 0);
-//    lm_matrix_print_string(matrix, "❤", "../arial_uni.ttf", 11, 31, 255, 0, 0);
+    lm_matrix_print_string(matrix, "Fuck", "/usr/share/fonts/X11/Type1/a010013l.pfb", 0, 2, 255, 0, 0);
+    lm_matrix_print_wstring(matrix, L"❤", "../arial_uni.ttf", 7, 16, 255, 0, 0);
 
 //    lm_matrix_print_wstring(matrix, L"ist scheiße!", "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 0, 16, 0, 255, 255);
 //    printf("%d\n", draw_font(matrix));

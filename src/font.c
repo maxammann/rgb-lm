@@ -1,35 +1,38 @@
 #include "led-matrix.h"
-//#include <ft2build.h>
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedImportStatement"
+
+#include <ft2build.h>
+
+#pragma clang diagnostic pop
+
 #include <freetype.h>
 #include <ftglyph.h>
+#include <fttrigon.h>
 
+#include <math.h>
 
-//            "bin/6x12.bdf",
-//            "/usr/share/fonts/truetype/msttcorefonts/arial.ttf",
-//            "../arial_uni.ttf",
+#define TO_FT_STRING(text, len) int i; FT_ULong ft_text[length]; for (i = 0; i < len; i++) {ft_text[i] = (FT_ULong) text[i];}
 
 typedef struct TGlyph_ {
-    FT_UInt index;
-    /* glyph index                  */
     FT_Vector pos;
-    /* glyph origin on the baseline */
-    FT_Glyph image;  /* glyph image                  */
+    FT_Glyph image;
 
 } TGlyph, *PGlyph;
 
 
 static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
-        uint16_t x, uint16_t y,
+        FT_Int x, FT_Int y,
         uint8_t red, uint8_t green, uint8_t blue) {
-    int i, j;
+    FT_Int i, j;
 
     for (j = 0; j < bitmap.rows; j++) {
         for (i = 0; i < bitmap.width; i++) {
             if (i < 0 || j < 0 || i >= 32 || j >= 32)
                 continue;
 
-            // For non-monochrome:
-//            unsigned char value = bitmap.buffer[bitmap.width * y + x ];
+            // For non-monochrome: unsigned char value = bitmap.buffer[bitmap.width * y + x ];
 
             unsigned char *row = &bitmap.buffer[bitmap.pitch * j];
             char value = row[(i >> 3)];
@@ -38,12 +41,12 @@ static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
                 continue;
             }
 
-            lm_matrix_set_pixel(matrix, i + x, j + y, red, green, blue);
+            lm_matrix_set_pixel(matrix, (uint16_t) (i + x), (uint16_t) (j + y), red, green, blue);
         }
     }
 }
 
-void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
+static inline void print_string(lmLedMatrix *matrix, FT_ULong *text, int length, char *font,
         uint16_t x, uint16_t y,
         uint8_t red, uint8_t green, uint8_t blue) {
 
@@ -69,21 +72,19 @@ void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
     }
 
     FT_Set_Char_Size(face,
-            12 * 64, 0,
+            8 * 64, 0,
             100, 0
     );
 
     FT_GlyphSlot slot = face->glyph;   /* a small shortcut */
     FT_UInt glyph_index;
-    FT_Bool use_kerning;
+    FT_Long use_kerning;
     FT_UInt previous;
     int pen_x, pen_y, n;
 
-    FT_Glyph glyphs[50];   /* glyph image    */
-    FT_Vector pos[50];   /* glyph position */
-    FT_UInt num_glyphs;
+    TGlyph glyphs[50];  /* glyphs table */
 
-    size_t num_chars = strlen(text);
+    FT_UInt num_glyphs;
 
 
     pen_x = 0;   /* start at (0,0) */
@@ -93,8 +94,9 @@ void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
     use_kerning = FT_HAS_KERNING(face);
     previous = 0;
 
-    for (n = 0; n < num_chars; n++) {
-        /* convert character code to glyph index */
+    for (n = 0; n < length; n++) {
+        PGlyph glyph = &glyphs[n];
+
         glyph_index = FT_Get_Char_Index(face, text[n]);
 
         /* retrieve kerning distance and move pen position */
@@ -109,8 +111,8 @@ void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
         }
 
         /* store current pen position */
-        pos[num_glyphs].x = pen_x;    //1: 0 2: 10
-        pos[num_glyphs].y = pen_y;
+        glyph->pos.x = pen_x;
+        glyph->pos.y = pen_y;
 
         /* load glyph image into the slot without rendering */
         error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
@@ -121,11 +123,13 @@ void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
 
 
         /* extract glyph image and store it in our table */
-        error = FT_Get_Glyph(face->glyph, &glyphs[num_glyphs]);
+        error = FT_Get_Glyph(face->glyph, &glyph->image);
         if (error) {
             printf("get glyph error");
             continue;  /* ignore errors, jump to next glyph */
         }
+
+        FT_Glyph_Transform(glyph->image, 0, &glyph->pos);
 
         /* increment pen position */
         pen_x += slot->advance.x >> 6;
@@ -149,13 +153,8 @@ void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
         /* for each glyph image, compute its bounding box, */
         /* translate it, and grow the string bbox          */
         for (n = 0; n < num_glyphs; n++) {
-            FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels,
+            FT_Glyph_Get_CBox(glyphs[n].image, ft_glyph_bbox_pixels,
                     &glyph_bbox);
-
-            glyph_bbox.xMin += pos[n].x;
-            glyph_bbox.xMax += pos[n].x;
-            glyph_bbox.yMin += pos[n].y;
-            glyph_bbox.yMax += pos[n].y;
 
             if (glyph_bbox.xMin < bbox.xMin)
                 bbox.xMin = glyph_bbox.xMin;
@@ -183,41 +182,82 @@ void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
     }
 
     FT_BBox string_bbox;
-
     compute_string_bbox(&string_bbox);
 
-    /* compute string dimensions in integer pixels */
-    FT_Pos string_width = string_bbox.xMax - string_bbox.xMin;
-    FT_Pos string_height = string_bbox.yMax - string_bbox.yMin;
+    FT_Glyph image;
+    FT_Vector pen;
+    pen.x = 0;
+    pen.y = 0;
 
-/* compute start pen position in 26.6 Cartesian pixels */
-//    int start_x = ((my_target_width - string_width) / 2) * 64;
-//    int start_y = ((my_target_height - string_height) / 2) * 64;
+    FT_Pos string_width = (string_bbox.xMax - string_bbox.xMin);
+    FT_Pos string_height = (string_bbox.yMax - string_bbox.yMin);
 
-    int start_x = 0 * 64;
-    int start_y = 0 * 64;
+    FT_Matrix trans_matrix;
+    double angle = 30 * M_PI / 180.0;
+    trans_matrix.xx = (FT_Fixed) (cos(angle) * 0x10000L);
+    trans_matrix.xy = (FT_Fixed) (-sin(angle) * 0x10000L);
+    trans_matrix.yx = (FT_Fixed) (sin(angle) * 0x10000L);
+    trans_matrix.yy = (FT_Fixed) (cos(angle) * 0x10000L);
+
+//    double scale = 1.5;
+//    trans_matrix.xx = 0x10000L * scale;
+//    trans_matrix.xy = 0;
+//    trans_matrix.yx = 0;
+//    trans_matrix.yy = 0x10000L * scale;
 
     for (n = 0; n < num_glyphs; n++) {
-        FT_Glyph image;
-        FT_Vector pen;
+        error = FT_Glyph_Copy(glyphs[n].image, &image);
+        if (error) continue;
+
+        FT_Vector delta;
+        delta.x = x * 64;
+        delta.y = -y * 64;
+        FT_Glyph_Transform(image, 0, &delta);
+        FT_Glyph_Transform(image, 0, &pen);
 
 
-        image = glyphs[n];
+        error = FT_Glyph_To_Bitmap(
+                &image,
+                FT_RENDER_MODE_MONO,
+                0,
+                1);
 
-        pen.x = start_x + pos[n].x * 64;
-        pen.y = start_y + pos[n].y * 64;
-
-        error = FT_Glyph_To_Bitmap(&image, FT_RENDER_MODE_MONO,
-                &pen, 0);
         if (!error) {
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
 
 
             render_bitmap(matrix, bit->bitmap,
-                    bit->left + x,
-                    string_height - bit->top + y, red, green, blue);
+                    bit->left,
+                    string_height - bit->top,
+                    red, green, blue);
+
+
+            /* increment pen position --                       */
+            /* we don't have access to a slot structure,       */
+            /* so we have to use advances from glyph structure */
+            /* (which are in 16.16 fixed float format)         */
+            pen.x += image->advance.x >> 10;
+            pen.y += image->advance.y >> 10;
 
             FT_Done_Glyph(image);
         }
     }
 }
+
+void lm_matrix_print_string(lmLedMatrix *matrix, const char *text, char *font,
+        uint16_t x, uint16_t y,
+        uint8_t red, uint8_t green, uint8_t blue) {
+    int length = (int) strlen(text);
+    TO_FT_STRING(text, length);
+    print_string(matrix, ft_text, length, font, x, y, red, green, blue);
+}
+
+void lm_matrix_print_wstring(lmLedMatrix *matrix, const wchar_t *text, char *font,
+        uint16_t x, uint16_t y,
+        uint8_t red, uint8_t green, uint8_t blue) {
+    int length = (int) wcslen(text);
+    TO_FT_STRING(text, length);
+    print_string(matrix, ft_text, length, font, x, y, red, green, blue);
+}
+
+
