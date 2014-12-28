@@ -1,7 +1,6 @@
 #pragma once
 
 #include <pthread.h>
-#include <stddef.h>
 #include "stdint.h"
 #include "io_bits.h"
 
@@ -32,11 +31,7 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
         uint8_t red, uint8_t green, uint8_t blue);
 
-void lm_matrix_print_wchar(lmLedMatrix *matrix, wchar_t c, char *font,
-        uint16_t x, uint16_t y,
-        uint8_t red, uint8_t green, uint8_t blue);
-
-void lm_matrix_print_wstring(lmLedMatrix *matrix, wchar_t *s, char *font,
+void lm_matrix_print_string(lmLedMatrix *matrix, char *s, char *font,
         uint16_t x, uint16_t y,
         uint8_t red, uint8_t green, uint8_t blue);
 
