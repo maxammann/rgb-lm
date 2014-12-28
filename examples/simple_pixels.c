@@ -3,7 +3,7 @@
 #include <lm.h>
 
 int main() {
-    int x,y;
+    uint16_t x, y;
     printf("Starting\n");
     lm_gpio_init();
 
