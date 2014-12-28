@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
 #include <lm.h>
-#include <ftbitmap.h>
 
 
 //int draw_font(lmLedMatrix *matrix) {
@@ -85,8 +84,8 @@ int main() {
 
 //    lm_matrix_print_wchar(matrix, 'A', "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 0, 0, 0, 255, 255);
 
-    lm_matrix_print_wstring(matrix, L"Fuck", "../arial_uni.ttf", 0, 16, 60, 0, 0);
-    lm_matrix_print_wstring(matrix, L"❤", "../arial_uni.ttf", 11, 31, 255, 0, 0);
+    lm_matrix_print_string(matrix, "Fu", "../arial_uni.ttf", 16, 16, 255, 0, 0);
+//    lm_matrix_print_string(matrix, "❤", "../arial_uni.ttf", 11, 31, 255, 0, 0);
 
 //    lm_matrix_print_wstring(matrix, L"ist scheiße!", "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 0, 16, 0, 255, 255);
 //    printf("%d\n", draw_font(matrix));

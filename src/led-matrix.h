@@ -31,7 +31,7 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
         uint8_t red, uint8_t green, uint8_t blue);
 
-void lm_matrix_print_string(lmLedMatrix *matrix, char *s, char *font,
+void lm_matrix_print_string(lmLedMatrix *matrix, char *text, char *font,
         uint16_t x, uint16_t y,
         uint8_t red, uint8_t green, uint8_t blue);
 

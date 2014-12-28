@@ -108,6 +108,11 @@ void lm_matrix_fill(lmLedMatrix *matrix, uint8_t r, uint8_t g, uint8_t b) {
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
         uint8_t r, uint8_t g, uint8_t b) {
+    if (x < 0 || y < 0
+            || x >= matrix->columns || y >= matrix->rows) {
+        return;
+    }
+
     int i;
 
     uint16_t red = map_color(r);
