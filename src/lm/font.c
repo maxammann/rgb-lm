@@ -12,9 +12,8 @@
 
 #include <ftcache.h>
 
-FT_Library library;
-FTC_Manager manager;
-FTC_ImageCache image_cache;
+//#include <fterrdef.h>
+
 
 typedef struct CacheFace_ {
     const char *file_path;
@@ -24,6 +23,12 @@ typedef struct CacheFace_ {
 
 struct lmFont_ {
     FTC_ScalerRec scaler;
+};
+
+struct lmFontLibrary_ {
+    FT_Library library;
+    FTC_Manager manager;
+    FTC_ImageCache image_cache;
 };
 
 struct lmString_ {
@@ -46,23 +51,26 @@ static FT_Error face_requester(FTC_FaceID face_id,
     return error;
 }
 
-int lm_fonts_init() {
-    if (FT_Init_FreeType(&library)) {
-        return -1;
+lmFontLibrary *lm_fonts_init() {
+    lmFontLibrary *library = malloc(sizeof(lmFontLibrary));
+
+
+    if (FT_Init_FreeType(&library->library)) {
+        return NULL;
     }
 
-    if (FTC_Manager_New(library, 0, 0, 0, face_requester, NULL, &manager)) {
-        return -2;
+    if (FTC_Manager_New(library->library, 0, 0, 0, face_requester, NULL, &library->manager)) {
+        return NULL;
     }
 
-    if (FTC_ImageCache_New(manager, &image_cache)) {
-        return -2;
+    if (FTC_ImageCache_New(library->manager, &library->image_cache)) {
+        return NULL;
     }
 
-    return 0;
+    return library;
 }
 
-lmFont *lm_fonts_font_new(char *font_file, font_size_t size) {
+lmFont *lm_fonts_font_new(lmFontLibrary *library, const char *font_file, font_size_t size) {
     lmFont *font = malloc(sizeof(lmFont));
 
     CacheFace *cache_face = malloc(sizeof(CacheFace)); // How to fuck do I clear this?
@@ -81,13 +89,19 @@ lmFont *lm_fonts_font_new(char *font_file, font_size_t size) {
     return font;
 }
 
-FT_Face get_font_face(FTC_ScalerRec scaler) {
+FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec scaler) {
+
+        printf("library: %p\n", (void *)library);
+    printf("FTC_ScalerRec: %p\n", (void *)scaler.face_id);
+    printf("manger: %p\n", (void *)library->manager);
+
     FT_Size size;
-    FTC_Manager_LookupSize(manager, &scaler, &size);
+    printf("e: %d\n", FTC_Manager_LookupSize(library->manager, &scaler, &size));
+    printf("size: %p\n", (void *)size);
     return size->face;
 }
 
-static void render_bitmap(lmLedMatrix *matrix, lmString *string, FT_Bitmap bitmap,
+static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
         FT_Int x, FT_Int y,
         rgb rgb) {
 
@@ -158,10 +172,10 @@ static void compute_string_bbox(int num_glyphs, FT_Glyph *glyphs, FT_BBox *abbox
     *abbox = bbox;
 }
 
-static inline void create_string(lmString *string, FT_ULong *text, int length, lmFont *font) {
+static inline void create_string(lmFontLibrary *library, lmString *string, FT_ULong *text, int length, lmFont *font) {
     // Get font face
     FT_Error error;
-    FT_Face face = get_font_face(font->scaler);
+    FT_Face face = get_font_face(library, font->scaler);
 
     // Load glyphs
 
@@ -204,14 +218,14 @@ static inline void create_string(lmString *string, FT_ULong *text, int length, l
         FTC_Node node;
         FT_Glyph cachedGlyph;
 
-        error = FTC_ImageCache_LookupScaler(image_cache, &font->scaler, FT_LOAD_DEFAULT, glyph_index, &cachedGlyph, &node);
+        error = FTC_ImageCache_LookupScaler(library->image_cache, &font->scaler, FT_LOAD_DEFAULT, glyph_index, &cachedGlyph, &node);
 
         if (error) {
             continue;  /* ignore errors, jump to next glyph */
         }
 
         error = FT_Glyph_Copy(cachedGlyph, &glyphs[n]);
-        FTC_Node_Unref(node, manager);
+        FTC_Node_Unref(node, library->manager);
 
         if (error) {
             continue;  /* ignore errors, jump to next glyph */
@@ -283,7 +297,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
         if (!error) {
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
 
-            render_bitmap(matrix, string, bit->bitmap,
+            render_bitmap(matrix, bit->bitmap,
                     bit->left,
                     string->height - bit->top,
                     rgb);
@@ -300,7 +314,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
 
 static inline void init_string(lmString *string) {
     string->use_matrix = 0;
-    string->glyphs = 0;
+//    string->glyphs = 0;
 }
 
 lmString *lm_fonts_string_new() {
@@ -323,51 +337,60 @@ void lm_fonts_string_free(lmString *string) {
     free(string);
 }
 
-void lm_fonts_print_string(lmLedMatrix *matrix, const char *text, lmFont *font,
+void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const char *text, lmFont *font,
         uint16_t x, uint16_t y,
         rgb rgb) {
+
+//    printf("Matrix: %p\n", (void *)matrix);
+//    printf("text: %s\n", text);
+//    printf("Font: %p\n", (void *)font);
+//    printf("X: %d\n", x);
+//    printf("Y: %d\n", y);
+//    printf("R: %d\n", rgb.r);
+//    printf("G: %d\n", rgb.g);
+
     lmString string;
     init_string(&string);
-    lm_fonts_populate_string(&string, text, font);
+    lm_fonts_populate_string(library, &string, text, font);
     lm_fonts_render_string(matrix, &string, x, y, rgb);
     free_glyphs(&string);
 }
 
-void lm_fonts_print_wstring(lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
+void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
         uint16_t x, uint16_t y,
         rgb rgb) {
     lmString string;
     init_string(&string);
-    lm_fonts_populate_wstring(&string, text, font);
+    lm_fonts_populate_wstring(library, &string, text, font);
     lm_fonts_render_string(matrix, &string, x, y, rgb);
     free_glyphs(&string);
 }
 
-void lm_fonts_font_free(lmFont *font) {
+void lm_fonts_font_free(lmFontLibrary *library, lmFont *font) {
     FTC_FaceID faceID = font->scaler.face_id;
-    FTC_Manager_RemoveFaceID(manager, faceID);
+    FTC_Manager_RemoveFaceID(library->manager, faceID);
     free(faceID);
     free(font);
 }
 
-void lm_fonts_free() {
-    FTC_Manager_Reset(manager);
-    FTC_Manager_Done(manager);
-    FT_Done_FreeType(library);
+void lm_fonts_free(lmFontLibrary *library) {
+    FTC_Manager_Reset(library->manager);
+    FTC_Manager_Done(library->manager);
+    FT_Done_FreeType(library->library);
 }
 
 #define TO_FT_STRING(text, len, out) int i; FT_ULong out[length]; for (i = 0; i < len; i++) {out[i] = (FT_ULong) text[i];}
 
-void lm_fonts_populate_string(lmString *string, const char *text, lmFont *font) {
+void lm_fonts_populate_string(lmFontLibrary *library, lmString *string, const char *text, lmFont *font) {
     int length = (int) strlen(text);
     TO_FT_STRING(text, length, ft_text);
-    create_string(string, ft_text, length, font);
+    create_string(library, string, ft_text, length, font);
 }
 
-void lm_fonts_populate_wstring(lmString *string, const wchar_t *text, lmFont *font) {
+void lm_fonts_populate_wstring(lmFontLibrary *library, lmString *string, const wchar_t *text, lmFont *font) {
     int length = (int) wcslen(text);
     TO_FT_STRING(text, length, ft_text);
-    create_string(string, ft_text, length, font);
+    create_string(library, string, ft_text, length, font);
 }
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,

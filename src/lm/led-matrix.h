@@ -7,13 +7,13 @@
 
 typedef struct lmLedMatrix_ lmLedMatrix;
 
+typedef struct rgb_ rgb;
+
 struct rgb_ {
     uint8_t r;
     uint8_t g;
     uint8_t b;
 };
-
-typedef struct rgb_ rgb;
 
 lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits);
 

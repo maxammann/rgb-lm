@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
-#include <lm.h>
+#include <lm/lm.h>
 
 int main() {
     rgb color = {255, 0, 0};
@@ -17,7 +17,7 @@ int main() {
     lm_matrix_fill(matrix, color);
     lm_matrix_swap_buffers(matrix);
 
-    lmThread *thread = lm_thread_new(matrix);
+    lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
     lm_thread_start(thread);
 
     lm_thread_wait(thread);

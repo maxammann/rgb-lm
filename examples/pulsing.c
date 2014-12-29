@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <lm.h>
+#include <lm/lm.h>
 
 int main() {
     printf("Starting\n");
@@ -10,7 +10,7 @@ int main() {
     lmLedMatrix *matrix = lm_matrix_new(32, 32, 6);
     lm_matrix_clear(matrix);
 
-    lmThread *thread = lm_thread_new(matrix);
+    lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
     lm_thread_start(thread);
 
 

@@ -5,28 +5,15 @@
 #include "gpio.h"
 #include "stdio.h"
 
-#define BASE_TIME_NANOS 200
-
 struct lmThread_ {
     int running;
     lmLedMatrix *matrix;
 
     pthread_t pthread;
+
+    long row_sleep_timings[MAX_BITPLANES];
 };
 
-const long row_sleep_timings[11] = {
-        (1 * BASE_TIME_NANOS),
-        (2 * BASE_TIME_NANOS),
-        (4 * BASE_TIME_NANOS),
-        (8 * BASE_TIME_NANOS),
-        (16 * BASE_TIME_NANOS),
-        (32 * BASE_TIME_NANOS),
-        (64 * BASE_TIME_NANOS),
-        (128 * BASE_TIME_NANOS),
-        (256 * BASE_TIME_NANOS),
-        (512 * BASE_TIME_NANOS),
-        (1024 * BASE_TIME_NANOS),
-};
 
 //Thanks to hzeller for these timings! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L48 :D
 static void sleep_nanos(long nanos) {
@@ -47,6 +34,8 @@ static void sleep_nanos(long nanos) {
 //bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L200
 static void *main(void *ch) {
     lmThread *thread = ch;
+
+    long *sleep_timings = thread->row_sleep_timings;
     lmLedMatrix *matrix = thread->matrix;
     int double_rows = lm_matrix_double_rows(matrix);
     io_bits *bitplane = lm_matrix_bit_plane(matrix);
@@ -102,7 +91,7 @@ static void *main(void *ch) {
 
                 // Now switch on for the sleep time necessary for that bit-plane.
                 lm_gpio_clear_bits(output_enable.raw);
-                sleep_nanos(row_sleep_timings[b]);
+                sleep_nanos(sleep_timings[b]);
                 lm_gpio_set_bits(output_enable.raw);
             }
         }
@@ -126,10 +115,16 @@ void lm_thread_wait(lmThread *thread) {
     pthread_join(thread->pthread, NULL);
 }
 
-lmThread *lm_thread_new(lmLedMatrix *matrix) {
+lmThread *lm_thread_new(lmLedMatrix *matrix, long base_time_nanos) {
+    int i;
+
     lmThread *thread = malloc(sizeof(lmThread));
     thread->running = 0;
     thread->matrix = matrix;
+
+    for (i = 0; i < MAX_BITPLANES; ++i) {
+        thread->row_sleep_timings[i] = (1 << i) * base_time_nanos;
+    }
     return thread;
 }
 

@@ -25,7 +25,7 @@ set_target_properties(pulsing
 
 
 add_executable(simple_font simple_font.c)
-target_link_libraries (simple_font rgb_led_matrix)
+target_link_libraries (simple_font lm)
 set_target_properties(simple_font
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

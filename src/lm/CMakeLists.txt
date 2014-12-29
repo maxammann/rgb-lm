@@ -4,7 +4,9 @@ find_library(MATH_LIB m)
 
 include_directories(/usr/include/freetype2/)
 
-set(SOURCE_FILES led-matrix.c font.c font.h gpio.c thread.c io_bits.c io_bits.h lm.h)
+set(SOURCE_HEADERS font.h led-matrix.h thread.h gpio.h io_bits.h lm.h)
+
+set(SOURCE_FILES ${SOURCE_HEADERS} led-matrix.c font.c gpio.c thread.c io_bits.c)
 
 add_library(rgb_led_matrix ${SOURCE_FILES})
 target_link_libraries (rgb_led_matrix ${CMAKE_THREAD_LIBS_INIT} ${FREETYPE_LIBRARIES} ${MATH_LIB})
@@ -13,9 +15,14 @@ set_target_properties(rgb_led_matrix
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
-add_library(rgb_led_matrix_shared SHARED ${SOURCE_FILES})
-target_link_libraries (rgb_led_matrix_shared ${CMAKE_THREAD_LIBS_INIT} ${FREETYPE_LIBRARIES} ${MATH_LIB})
-set_target_properties(rgb_led_matrix_shared
+
+
+add_library(lm SHARED ${SOURCE_FILES})
+target_link_libraries (lm ${CMAKE_THREAD_LIBS_INIT} ${FREETYPE_LIBRARIES} ${MATH_LIB})
+set_target_properties(lm
     PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
+
+install (TARGETS lm DESTINATION lib)
+install (FILES ${SOURCE_HEADERS} DESTINATION include/lm)

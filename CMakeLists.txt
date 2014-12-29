@@ -7,5 +7,5 @@ add_definitions(-DREV2)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-add_subdirectory(src)
+add_subdirectory(src/lm)
 add_subdirectory(examples)
