@@ -3,6 +3,7 @@ import com.ochafik.lang.jnaerator.runtime.CharByReference;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.WString;
@@ -17,142 +18,245 @@ public interface LmLibrary extends Library {
     public static final NativeLibrary JNA_NATIVE_LIB = NativeLibrary.getInstance(LmLibrary.JNA_LIBRARY_NAME);
     public static final LmLibrary INSTANCE = (LmLibrary)Native.loadLibrary(LmLibrary.JNA_LIBRARY_NAME, LmLibrary.class);
     public static final int MAX_BITPLANES = (int)11;
+    public static final int DEFAULT_BASE_TIME_NANOS = (int)200;
+    /**
+     * Original signature : <code>lmFontLibrary* lm_fonts_init()</code><br>
+     * <i>native declaration : line 17</i>
+     */
+    LmLibrary.lmFontLibrary lm_fonts_init();
+    /**
+     * Original signature : <code>void lm_fonts_free(lmFontLibrary*)</code><br>
+     * <i>native declaration : line 19</i>
+     */
+    void lm_fonts_free(LmLibrary.lmFontLibrary lmFontLibraryPtr1);
+    /**
+     * Original signature : <code>lmFont* lm_fonts_font_new(lmFontLibrary*, const char*, font_size_t)</code><br>
+     * <i>native declaration : line 21</i><br>
+     * @deprecated use the safer methods {@link #lm_fonts_font_new(lm.LmLibrary.lmFontLibrary, java.lang.String, int)} and {@link #lm_fonts_font_new(lm.LmLibrary.lmFontLibrary, com.sun.jna.Pointer, int)} instead
+     */
+    @Deprecated
+    LmLibrary.lmFont lm_fonts_font_new(LmLibrary.lmFontLibrary library, Pointer font, int size);
+    /**
+     * Original signature : <code>lmFont* lm_fonts_font_new(lmFontLibrary*, const char*, font_size_t)</code><br>
+     * <i>native declaration : line 21</i>
+     */
+    LmLibrary.lmFont lm_fonts_font_new(LmLibrary.lmFontLibrary library, String font, int size);
+    /**
+     * Original signature : <code>void lm_fonts_font_free(lmFontLibrary*, lmFont*)</code><br>
+     * <i>native declaration : line 23</i>
+     */
+    void lm_fonts_font_free(LmLibrary.lmFontLibrary library, LmLibrary.lmFont font);
+    /**
+     * Original signature : <code>lmString* lm_fonts_string_new()</code><br>
+     * <i>native declaration : line 26</i>
+     */
+    LmLibrary.lmString lm_fonts_string_new();
+    /**
+     * Original signature : <code>int lm_fonts_string_width(lmString*)</code><br>
+     * <i>native declaration : line 28</i>
+     */
+    int lm_fonts_string_width(LmLibrary.lmString string);
+    /**
+     * Original signature : <code>int lm_fonts_string_height(lmString*)</code><br>
+     * <i>native declaration : line 30</i>
+     */
+    int lm_fonts_string_height(LmLibrary.lmString string);
+    /**
+     * Original signature : <code>void lm_fonts_string_apply_transformation(lmString*, lmMatrix)</code><br>
+     * <i>native declaration : line 32</i>
+     */
+    void lm_fonts_string_apply_transformation(LmLibrary.lmString string, lm.lmMatrix_.ByValue matrix);
+    /**
+     * Original signature : <code>void lm_fonts_string_free(lmString*)</code><br>
+     * <i>native declaration : line 34</i>
+     */
+    void lm_fonts_string_free(LmLibrary.lmString string);
+    /**
+     * Original signature : <code>void lm_fonts_populate_string(lmFontLibrary*, lmString*, const char*, lmFont*)</code><br>
+     * <i>native declaration : line 36</i><br>
+     * @deprecated use the safer methods {@link #lm_fonts_populate_string(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmString, java.lang.String, lm.LmLibrary.lmFont)} and {@link #lm_fonts_populate_string(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmString, com.sun.jna.Pointer, lm.LmLibrary.lmFont)} instead
+     */
+    @Deprecated
+    void lm_fonts_populate_string(LmLibrary.lmFontLibrary library, LmLibrary.lmString string, Pointer text, LmLibrary.lmFont font);
+    /**
+     * Original signature : <code>void lm_fonts_populate_string(lmFontLibrary*, lmString*, const char*, lmFont*)</code><br>
+     * <i>native declaration : line 36</i>
+     */
+    void lm_fonts_populate_string(LmLibrary.lmFontLibrary library, LmLibrary.lmString string, String text, LmLibrary.lmFont font);
+    /**
+     * Original signature : <code>void lm_fonts_populate_wstring(lmFontLibrary*, lmString*, const wchar_t*, lmFont*)</code><br>
+     * <i>native declaration : line 38</i><br>
+     * @deprecated use the safer methods {@link #lm_fonts_populate_wstring(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmString, com.sun.jna.WString, lm.LmLibrary.lmFont)} and {@link #lm_fonts_populate_wstring(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmString, com.ochafik.lang.jnaerator.runtime.CharByReference, lm.LmLibrary.lmFont)} instead
+     */
+    @Deprecated
+    void lm_fonts_populate_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmString string, CharByReference text, LmLibrary.lmFont font);
+    /**
+     * Original signature : <code>void lm_fonts_populate_wstring(lmFontLibrary*, lmString*, const wchar_t*, lmFont*)</code><br>
+     * <i>native declaration : line 38</i>
+     */
+    void lm_fonts_populate_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmString string, WString text, LmLibrary.lmFont font);
+    /**
+     * Original signature : <code>void lm_fonts_render_string(lmLedMatrix*, lmString*, uint16_t, uint16_t, rgb)</code><br>
+     * <i>native declaration : line 40</i>
+     */
+    void lm_fonts_render_string(LmLibrary.lmLedMatrix matrix, LmLibrary.lmString string, short x, short y, lm.rgb_.ByValue rgb);
+    /**
+     * Original signature : <code>void lm_fonts_print_string(lmFontLibrary*, lmLedMatrix*, const char*, lmFont*, uint16_t, uint16_t, rgb)</code><br>
+     * <i>native declaration : line 44</i><br>
+     * @deprecated use the safer methods {@link #lm_fonts_print_string(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmLedMatrix, java.lang.String, lm.LmLibrary.lmFont, short, short, lm.rgb_.ByValue)} and {@link #lm_fonts_print_string(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmLedMatrix, com.sun.jna.Pointer, lm.LmLibrary.lmFont, short, short, lm.rgb_.ByValue)} instead
+     */
+    @Deprecated
+    void lm_fonts_print_string(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, Pointer text, LmLibrary.lmFont font, short x, short y, lm.rgb_.ByValue rgb);
+    /**
+     * Original signature : <code>void lm_fonts_print_string(lmFontLibrary*, lmLedMatrix*, const char*, lmFont*, uint16_t, uint16_t, rgb)</code><br>
+     * <i>native declaration : line 44</i>
+     */
+    void lm_fonts_print_string(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, String text, LmLibrary.lmFont font, short x, short y, lm.rgb_.ByValue rgb);
+    /**
+     * Original signature : <code>void lm_fonts_print_wstring(lmFontLibrary*, lmLedMatrix*, const wchar_t*, lmFont*, uint16_t, uint16_t, rgb)</code><br>
+     * <i>native declaration : line 48</i><br>
+     * @deprecated use the safer methods {@link #lm_fonts_print_wstring(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmLedMatrix, com.sun.jna.WString, lm.LmLibrary.lmFont, short, short, lm.rgb_.ByValue)} and {@link #lm_fonts_print_wstring(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmLedMatrix, com.ochafik.lang.jnaerator.runtime.CharByReference, lm.LmLibrary.lmFont, short, short, lm.rgb_.ByValue)} instead
+     */
+    @Deprecated
+    void lm_fonts_print_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, CharByReference text, LmLibrary.lmFont font, short x, short y, lm.rgb_.ByValue rgb);
+    /**
+     * Original signature : <code>void lm_fonts_print_wstring(lmFontLibrary*, lmLedMatrix*, const wchar_t*, lmFont*, uint16_t, uint16_t, rgb)</code><br>
+     * <i>native declaration : line 48</i>
+     */
+    void lm_fonts_print_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, WString text, LmLibrary.lmFont font, short x, short y, lm.rgb_.ByValue rgb);
     /**
      * Original signature : <code>int lm_gpio_init()</code><br>
-     * <i>native declaration : line 2</i>
+     * <i>native declaration : line 52</i>
      */
     int lm_gpio_init();
     /**
      * Original signature : <code>uint32_t lm_gpio_init_output(uint32_t)</code><br>
-     * <i>native declaration : line 4</i>
+     * <i>native declaration : line 54</i>
      */
     int lm_gpio_init_output(int outputs);
     /**
      * Original signature : <code>void lm_gpio_set_bits(uint32_t)</code><br>
-     * <i>native declaration : line 6</i>
+     * <i>native declaration : line 56</i>
      */
     void lm_gpio_set_bits(int value);
     /**
      * Clear the bits that are '1' in the output. Leave the rest untouched.<br>
      * Original signature : <code>void lm_gpio_clear_bits(uint32_t)</code><br>
-     * <i>native declaration : line 9</i>
+     * <i>native declaration : line 59</i>
      */
     void lm_gpio_clear_bits(int value);
     /**
      * Write all the bits of "value" mentioned in "mask". Leave the rest untouched.<br>
      * Original signature : <code>void lm_gpio_set_masked_bits(uint32_t, uint32_t)</code><br>
-     * <i>native declaration : line 12</i>
+     * <i>native declaration : line 62</i>
      */
     void lm_gpio_set_masked_bits(int value, int mask);
     /**
      * Original signature : <code>uint32_t lm_io_bits_new()</code><br>
-     * <i>native declaration : line 21</i>
+     * <i>native declaration : line 71</i>
      */
     int lm_io_bits_new();
     /**
      * Original signature : <code>io_bits* lm_io_bits_value_at(io_bits*, int, int, int, int)</code><br>
-     * <i>native declaration : line 23</i>
+     * <i>native declaration : line 73</i>
      */
     LmLibrary.io_bits lm_io_bits_value_at(LmLibrary.io_bits bitplane, int columns, int double_row, int column, int bit);
     /**
      * Original signature : <code>lmLedMatrix* lm_matrix_new(uint16_t, uint16_t, uint8_t)</code><br>
-     * <i>native declaration : line 27</i>
+     * <i>native declaration : line 85</i>
      */
     LmLibrary.lmLedMatrix lm_matrix_new(short columns, short rows, byte pwm_bits);
     /**
      * Original signature : <code>void lm_matrix_free(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 29</i>
+     * <i>native declaration : line 87</i>
      */
     void lm_matrix_free(LmLibrary.lmLedMatrix matrix);
     /**
      * Original signature : <code>uint16_t lm_matrix_columns(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 31</i>
+     * <i>native declaration : line 89</i>
      */
     short lm_matrix_columns(LmLibrary.lmLedMatrix matrix);
     /**
      * Original signature : <code>uint16_t lm_matrix_rows(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 33</i>
+     * <i>native declaration : line 91</i>
      */
     short lm_matrix_rows(LmLibrary.lmLedMatrix matrix);
     /**
      * Original signature : <code>uint16_t lm_matrix_pwm_bits(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 35</i>
+     * <i>native declaration : line 93</i>
      */
     short lm_matrix_pwm_bits(LmLibrary.lmLedMatrix matrix);
     /**
      * Original signature : <code>void lm_matrix_lock(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 37</i>
+     * <i>native declaration : line 95</i>
      */
     void lm_matrix_lock(LmLibrary.lmLedMatrix matrix);
     /**
      * Original signature : <code>void lm_matrix_unlock(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 39</i>
+     * <i>native declaration : line 97</i>
      */
     void lm_matrix_unlock(LmLibrary.lmLedMatrix matrix);
     /**
      * Original signature : <code>io_bits* lm_matrix_bit_plane(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 43</i>
+     * <i>native declaration : line 101</i>
      */
     LmLibrary.io_bits lm_matrix_bit_plane(LmLibrary.lmLedMatrix matrix);
     /**
-     * Original signature : <code>void lm_matrix_fill(lmLedMatrix*, uint8_t, uint8_t, uint8_t)</code><br>
-     * <i>native declaration : line 45</i>
+     * Original signature : <code>void lm_matrix_fill(lmLedMatrix*, rgb)</code><br>
+     * <i>native declaration : line 103</i>
      */
-    void lm_matrix_fill(LmLibrary.lmLedMatrix matrix, byte r, byte g, byte b);
+    void lm_matrix_fill(LmLibrary.lmLedMatrix matrix, lm.rgb_.ByValue rgb);
     /**
-     * Original signature : <code>void lm_matrix_set_pixel(lmLedMatrix*, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t)</code><br>
-     * <i>native declaration : line 48</i>
+     * Original signature : <code>void lm_matrix_set_pixel(lmLedMatrix*, uint16_t, uint16_t, rgb)</code><br>
+     * <i>native declaration : line 106</i>
      */
-    void lm_matrix_set_pixel(LmLibrary.lmLedMatrix matrix, short x, short y, byte red, byte green, byte blue);
-    /**
-     * Original signature : <code>void lm_matrix_print_string(lmLedMatrix*, const char*, char*, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t)</code><br>
-     * <i>native declaration : line 52</i><br>
-     * @deprecated use the safer methods {@link #lm_matrix_print_string(lm.LmLibrary.lmLedMatrix, java.lang.String, java.lang.String, short, short, byte, byte, byte)} and {@link #lm_matrix_print_string(lm.LmLibrary.lmLedMatrix, com.sun.jna.Pointer, com.sun.jna.Pointer, short, short, byte, byte, byte)} instead
-     */
-    @Deprecated
-    void lm_matrix_print_string(LmLibrary.lmLedMatrix matrix, Pointer text, Pointer font, short x, short y, byte red, byte green, byte blue);
-    /**
-     * Original signature : <code>void lm_matrix_print_string(lmLedMatrix*, const char*, char*, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t)</code><br>
-     * <i>native declaration : line 52</i>
-     */
-    void lm_matrix_print_string(LmLibrary.lmLedMatrix matrix, String text, String font, short x, short y, byte red, byte green, byte blue);
-    /**
-     * Original signature : <code>void lm_matrix_print_wstring(lmLedMatrix*, const wchar_t*, char*, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t)</code><br>
-     * <i>native declaration : line 56</i><br>
-     * @deprecated use the safer methods {@link #lm_matrix_print_wstring(lm.LmLibrary.lmLedMatrix, com.sun.jna.WString, java.lang.String, short, short, byte, byte, byte)} and {@link #lm_matrix_print_wstring(lm.LmLibrary.lmLedMatrix, com.ochafik.lang.jnaerator.runtime.CharByReference, com.sun.jna.Pointer, short, short, byte, byte, byte)} instead
-     */
-    @Deprecated
-    void lm_matrix_print_wstring(LmLibrary.lmLedMatrix matrix, CharByReference text, Pointer font, short x, short y, byte red, byte green, byte blue);
-    /**
-     * Original signature : <code>void lm_matrix_print_wstring(lmLedMatrix*, const wchar_t*, char*, uint16_t, uint16_t, uint8_t, uint8_t, uint8_t)</code><br>
-     * <i>native declaration : line 56</i>
-     */
-    void lm_matrix_print_wstring(LmLibrary.lmLedMatrix matrix, WString text, String font, short x, short y, byte red, byte green, byte blue);
+    void lm_matrix_set_pixel(LmLibrary.lmLedMatrix matrix, short x, short y, lm.rgb_.ByValue rgb);
     /**
      * Original signature : <code>void lm_matrix_clear(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 61</i>
+     * <i>native declaration : line 110</i>
      */
     void lm_matrix_clear(LmLibrary.lmLedMatrix matrix);
     /**
-     * Original signature : <code>lmThread* lm_thread_new(lmLedMatrix*)</code><br>
-     * <i>native declaration : line 66</i>
+     * Original signature : <code>void lm_matrix_swap_buffers(lmLedMatrix*)</code><br>
+     * <i>native declaration : line 112</i>
      */
-    LmLibrary.lmThread lm_thread_new(LmLibrary.lmLedMatrix matrix);
+    void lm_matrix_swap_buffers(LmLibrary.lmLedMatrix matrix);
+    /**
+     * Original signature : <code>lmThread* lm_thread_new(lmLedMatrix*, long)</code><br>
+     * <i>native declaration : line 118</i>
+     */
+    LmLibrary.lmThread lm_thread_new(LmLibrary.lmLedMatrix matrix, NativeLong base_time_nanos);
     /**
      * Original signature : <code>void lm_thread_free(lmThread*)</code><br>
-     * <i>native declaration : line 68</i>
+     * <i>native declaration : line 120</i>
      */
     void lm_thread_free(LmLibrary.lmThread thread);
     /**
      * Original signature : <code>void lm_thread_start(lmThread*)</code><br>
-     * <i>native declaration : line 70</i>
+     * <i>native declaration : line 122</i>
      */
     void lm_thread_start(LmLibrary.lmThread thread);
     /**
      * Original signature : <code>void lm_thread_wait(lmThread*)</code><br>
-     * <i>native declaration : line 72</i>
+     * <i>native declaration : line 124</i>
      */
     void lm_thread_wait(LmLibrary.lmThread thread);
+    public static class lmFontLibrary extends PointerType {
+        public lmFontLibrary(Pointer address) {
+            super(address);
+        }
+        public lmFontLibrary() {
+            super();
+        }
+    };
+    public static class lmString extends PointerType {
+        public lmString(Pointer address) {
+            super(address);
+        }
+        public lmString() {
+            super();
+        }
+    };
     public static class lmLedMatrix extends PointerType {
         public lmLedMatrix(Pointer address) {
             super(address);
@@ -166,6 +270,14 @@ public interface LmLibrary extends Library {
             super(address);
         }
         public lmThread() {
+            super();
+        }
+    };
+    public static class lmFont extends PointerType {
+        public lmFont(Pointer address) {
+            super(address);
+        }
+        public lmFont() {
             super();
         }
     };
