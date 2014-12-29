@@ -17,10 +17,12 @@ int main() {
 
     for (x = 0; x < 32; ++x) {
         for (y = 0; y < 32; ++y) {
-            lm_matrix_set_pixel(matrix, x, y, 0, 0, 255);
-        }
+            rgb color = {255, 0, 0};
+            lm_matrix_set_pixel(matrix, x, y, color);
+        };
     }
 
+    lm_matrix_swap_buffers(matrix);
 
     lmThread *thread = lm_thread_new(matrix);
     lm_thread_start(thread);

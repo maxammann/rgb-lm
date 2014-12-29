@@ -3,6 +3,8 @@
 #include <lm.h>
 
 int main() {
+    rgb color = {255, 0, 0};
+
     printf("Starting\n");
     lm_gpio_init();
 
@@ -12,7 +14,8 @@ int main() {
 
     lmLedMatrix *matrix = lm_matrix_new(32, 32, 1);
     lm_matrix_clear(matrix);
-    lm_matrix_fill(matrix, 255, 0, 0);
+    lm_matrix_fill(matrix, color);
+    lm_matrix_swap_buffers(matrix);
 
     lmThread *thread = lm_thread_new(matrix);
     lm_thread_start(thread);

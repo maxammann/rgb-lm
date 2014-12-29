@@ -8,25 +8,44 @@ typedef struct lmFont_ lmFont;
 
 typedef struct lmString_ lmString;
 
+struct lmMatrix_ {
+    int xx, xy;
+    int yx, yy;
+};
 
-lmFont *lm_matrix_font_create(char *font, font_size_t size);
+typedef struct lmMatrix_ lmMatrix;
 
-void lm_matrix_font_destroy(lmFont *font);
+int lm_fonts_init();
+
+void lm_fonts_free();
+
+lmFont *lm_fonts_font_new(char *font, font_size_t size);
+
+void lm_fonts_font_free(lmFont *font);
 
 
-void lm_matrix_create_string(lmString *string, const char *text, lmFont *font);
+lmString *lm_fonts_string_new();
 
-void lm_matrix_create_wstring(lmString *string, const wchar_t *text, lmFont *font);
+int lm_fonts_string_width(lmString *string);
 
-void lm_matrix_render_string(lmLedMatrix *matrix, lmString *string,
+int lm_fonts_string_height(lmString *string);
+
+void lm_fonts_string_apply_transformation(lmString *string, lmMatrix matrix);
+
+void lm_fonts_string_free(lmString *string);
+
+void lm_fonts_populate_string(lmString *string, const char *text, lmFont *font);
+
+void lm_fonts_populate_wstring(lmString *string, const wchar_t *text, lmFont *font);
+
+void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,
         uint16_t x, uint16_t y,
-        uint8_t red, uint8_t green, uint8_t blue);
+        rgb rgb);
 
-
-void lm_matrix_print_string(lmLedMatrix *matrix, const char *text, lmFont *font,
+void lm_fonts_print_string(lmLedMatrix *matrix, const char *text, lmFont *font,
         uint16_t x, uint16_t y,
-        uint8_t red, uint8_t green, uint8_t blue);
+        rgb rgb);
 
-void lm_matrix_print_wstring(lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
+void lm_fonts_print_wstring(lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
         uint16_t x, uint16_t y,
-        uint8_t red, uint8_t green, uint8_t blue);
+        rgb rgb);

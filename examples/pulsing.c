@@ -33,7 +33,14 @@ int main() {
             g = 255 - c;
             b = c;
         }
-        lm_matrix_fill(matrix, r, g, b);
+
+        rgb color;
+        color.r = (uint8_t) r;
+        color.g = (uint8_t) g;
+        color.b = (uint8_t) b;
+
+        lm_matrix_fill(matrix, color);
+        lm_matrix_swap_buffers(matrix);
     }
 
     lm_thread_wait(thread);

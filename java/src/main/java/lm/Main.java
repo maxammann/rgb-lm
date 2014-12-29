@@ -38,6 +38,8 @@ public class Main {
             }
         }
 
+        lm.lm_matrix_print_string(matrix, "Hey", "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", (short) 0, (short) 0, (byte) 128, (byte) 0, (byte) 0);
+
         LmLibrary.lmThread thread = lm.lm_thread_new(matrix);
         lm.lm_thread_start(thread);
 
