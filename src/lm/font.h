@@ -42,12 +42,12 @@ void lm_fonts_populate_wstring(lmFontLibrary *library, lmString *string, const w
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,
         uint16_t x, uint16_t y,
-        rgb rgb);
+        rgb *rgb);
 
 void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const char *text, lmFont *font,
         uint16_t x, uint16_t y,
-        rgb rgb);
+        rgb *rgb);
 
 void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
         uint16_t x, uint16_t y,
-        rgb rgb);
+        rgb *rgb);

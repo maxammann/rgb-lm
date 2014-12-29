@@ -14,7 +14,7 @@ int main() {
 
     lmLedMatrix *matrix = lm_matrix_new(32, 32, 1);
     lm_matrix_clear(matrix);
-    lm_matrix_fill(matrix, color);
+    lm_matrix_fill(matrix, &color);
     lm_matrix_swap_buffers(matrix);
 
     lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);

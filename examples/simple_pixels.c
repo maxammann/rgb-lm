@@ -18,7 +18,7 @@ int main() {
     for (x = 0; x < 32; ++x) {
         for (y = 0; y < 32; ++y) {
             rgb color = {255, 0, 0};
-            lm_matrix_set_pixel(matrix, x, y, color);
+            lm_matrix_set_pixel(matrix, x, y, &color);
         };
     }
 

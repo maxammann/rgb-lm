@@ -102,7 +102,7 @@ FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec scaler) {
 
 static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
         FT_Int x, FT_Int y,
-        rgb rgb) {
+        rgb *rgb) {
 
     FT_Int i, j;
 
@@ -259,7 +259,7 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
 
 void render_string(lmLedMatrix *matrix, lmString *string,
         uint16_t x, uint16_t y,
-        rgb rgb) {
+        rgb *rgb) {
     int n;
     FT_Error error;
     // Render font and apply transformations
@@ -342,7 +342,7 @@ void lm_fonts_string_free(lmString *string) {
 
 void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const char *text, lmFont *font,
         uint16_t x, uint16_t y,
-        rgb rgb) {
+        rgb *rgb) {
 
 //    printf("Matrix: %p\n", (void *)matrix);
 //    printf("text: %s\n", text);
@@ -361,7 +361,7 @@ void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const ch
 
 void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
         uint16_t x, uint16_t y,
-        rgb rgb) {
+        rgb *rgb) {
     lmString string;
     init_string(&string);
     lm_fonts_populate_wstring(library, &string, text, font);
@@ -398,7 +398,7 @@ void lm_fonts_populate_wstring(lmFontLibrary *library, lmString *string, const w
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,
         uint16_t x, uint16_t y,
-        rgb rgb) {
+        rgb *rgb) {
     render_string(matrix, string, x, y, rgb);
 }
 

@@ -26,12 +26,12 @@ int main() {
     for (x = 0; x < 32; ++x) {
         for (y = 0; y < 32; ++y) {
             rgb blue = {0, 0, 255};
-            lm_matrix_set_pixel(matrix, x, y, blue);
+            lm_matrix_set_pixel(matrix, x, y, &blue);
         };
     }
 
-    lm_fonts_print_string(library, matrix, "Fuck", font, 0, 2, color);
-    lm_fonts_print_wstring(library, matrix, L"❤", font, 7, 16, color);
+    lm_fonts_print_string(library, matrix, "Fuck", font, 0, 2, &color);
+    lm_fonts_print_wstring(library, matrix, L"❤", font, 7, 16, &color);
 
     lmString *fuck = lm_fonts_string_new();
     lm_fonts_populate_string(library, fuck, "Fuck", font);
@@ -44,7 +44,7 @@ int main() {
 
     lm_fonts_string_apply_transformation(fuck, m);
 
-    lm_fonts_render_string(matrix, fuck, 0, 32, color);
+    lm_fonts_render_string(matrix, fuck, 0, 32, &color);
 
     lm_fonts_string_free(fuck);
 

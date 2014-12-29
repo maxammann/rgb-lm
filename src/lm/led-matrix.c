@@ -82,14 +82,14 @@ static uint16_t map_color(uint16_t color) {
 }
 
 //bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L150
-void lm_matrix_fill(lmLedMatrix *matrix, rgb rgb) {
+void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
     int i, row, col;
     io_bits *bitplane = matrix->hot_bitplane_buffer;
     uint16_t columns = matrix->columns;
 
-    const uint16_t red = map_color(rgb.r);
-    const uint16_t green = map_color(rgb.g);
-    const uint16_t blue = map_color(rgb.b);
+    const uint16_t red = map_color(rgb->r);
+    const uint16_t green = map_color(rgb->g);
+    const uint16_t blue = map_color(rgb->b);
 
     uint8_t double_rows = lm_matrix_double_rows(matrix);
 
@@ -112,7 +112,7 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb rgb) {
 //bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L171
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
-        rgb rgb) {
+        rgb *rgb) {
     if (x < 0 || y < 0
             || x >= matrix->columns || y >= matrix->rows) {
         return;
@@ -120,9 +120,9 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
 
     int i;
 
-    uint16_t red = map_color(rgb.r);
-    uint16_t green = map_color(rgb.g);
-    uint16_t blue = map_color(rgb.b);
+    uint16_t red = map_color(rgb->r);
+    uint16_t green = map_color(rgb->g);
+    uint16_t blue = map_color(rgb->b);
 
     uint8_t pwm = matrix->pwm_bits;
     uint16_t columns = matrix->columns;

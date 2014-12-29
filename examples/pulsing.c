@@ -39,7 +39,7 @@ int main() {
         color.g = (uint8_t) g;
         color.b = (uint8_t) b;
 
-        lm_matrix_fill(matrix, color);
+        lm_matrix_fill(matrix, &color);
         lm_matrix_swap_buffers(matrix);
     }
 
