@@ -15,7 +15,7 @@ struct rgb_ {
     uint8_t b;
 };
 
-rgb* new_rgb(int r, int g, int b);
+rgb *new_rgb(int r, int g, int b);
 
 lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits);
 

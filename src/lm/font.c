@@ -12,9 +12,6 @@
 
 #include <ftcache.h>
 
-//#include <fterrdef.h>
-
-
 typedef struct CacheFace_ {
     const char *file_path;
     int face_index;

@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 int main() {
-    int x,y;
+    int x, y;
     rgb color = {255, 0, 0};
 
 
