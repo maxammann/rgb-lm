@@ -90,14 +90,13 @@ lmFont *lm_fonts_font_new(lmFontLibrary *library, const char *font_file, font_si
 }
 
 FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec scaler) {
-
-        printf("library: %p\n", (void *)library);
-    printf("FTC_ScalerRec: %p\n", (void *)scaler.face_id);
-    printf("manger: %p\n", (void *)library->manager);
-
     FT_Size size;
-    printf("e: %d\n", FTC_Manager_LookupSize(library->manager, &scaler, &size));
-    printf("size: %p\n", (void *)size);
+    FT_Error error = FTC_Manager_LookupSize(library->manager, &scaler, &size);
+
+    if (error) {
+        printf("FTC_Manager_LookupSize: %d\n", error);
+        return 0;
+    }
     return size->face;
 }
 
@@ -176,6 +175,10 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     // Get font face
     FT_Error error;
     FT_Face face = get_font_face(library, font->scaler);
+
+    if (face == 0) {
+        return;
+    }
 
     // Load glyphs
 
@@ -314,7 +317,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
 
 static inline void init_string(lmString *string) {
     string->use_matrix = 0;
-//    string->glyphs = 0;
+    string->glyphs = 0;
 }
 
 lmString *lm_fonts_string_new() {
