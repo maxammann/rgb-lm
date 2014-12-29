@@ -1,7 +1,6 @@
 package lm;
 
 import com.sun.jna.NativeLong;
-import com.sun.jna.WString;
 
 import java.io.IOException;
 
@@ -36,7 +35,7 @@ public class Main {
         LmLibrary lm = LmLibrary.INSTANCE;
 
         System.out.println("Font: " + args[0]);
-        rgb_.ByValue RED = new rgb_.ByValue();
+        LmLibrary.rgb_ RED = new LmLibrary.rgb_();
         RED.r = (byte) 128;
 
         lm.lm_gpio_init();
@@ -51,13 +50,19 @@ public class Main {
 
         for (int x = 0; x < 32; x++) {
             for (int y = 0; y < 32; y++) {
-                new rgb_.ByValue();
-                lm.lm_matrix_set_pixel(matrix, (short) x, (short) y, RED);
+//                Structure.newInstance(rgb_.class);
+                LmLibrary.rgb_ rgb = new LmLibrary.rgb_();
 
+
+//                rgb.r = rgb.b = rgb.g = 0;
+                lm.lm_matrix_set_pixel(matrix, (short) x, (short) y, new LmLibrary.rgb_((byte) 55, (byte) 55, (byte) 55));
+
+//                System.out.println(rgb.toString(true));
+//                rgb.clear();
             }
         }
 
-        lm.lm_fonts_print_wstring(library, matrix, new WString("Fuck"), font, (short) 0, (short) 2, RED);
+        lm.lm_fonts_print_string(library, matrix, "test", font, (short) 0, (short) 2, RED);
         lm.lm_fonts_font_free(library, font);
 
         lm.lm_matrix_swap_buffers(matrix);
