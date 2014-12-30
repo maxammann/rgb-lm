@@ -19,7 +19,7 @@ typedef struct CacheFace_ {
 } CacheFace, *PCacheFace;
 
 struct lmFont_ {
-    FTC_ScalerRec scaler;
+    FTC_ScalerRec *scaler;
 };
 
 struct lmFontLibrary_ {
@@ -74,21 +74,21 @@ lmFont *lm_fonts_font_new(lmFontLibrary *library, const char *font_file, font_si
     cache_face->face_index = 0;
     cache_face->file_path = font_file;
 
-    FTC_ScalerRec scaler;
+    FTC_ScalerRec *scaler = malloc(sizeof(FTC_ScalerRec));
 
-    scaler.face_id = cache_face;
-    scaler.width = size;
-    scaler.height = size;
-    scaler.pixel = 1;
+    scaler->face_id = cache_face;
+    scaler->width = size;
+    scaler->height = size;
+    scaler->pixel = 1;
 
     font->scaler = scaler;
 
     return font;
 }
 
-FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec scaler) {
+FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec *scaler) {
     FT_Size size;
-    FT_Error error = FTC_Manager_LookupSize(library->manager, &scaler, &size);
+    FT_Error error = FTC_Manager_LookupSize(library->manager, scaler, &size);
 
     if (error) {
         printf("FTC_Manager_LookupSize: %d\n", error);
@@ -127,7 +127,7 @@ static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
     }
 }
 
-static void compute_string_bbox(int num_glyphs, FT_Glyph *glyphs, FT_BBox *abbox) {
+static void compute_string_bbox(int num_glyphs, FT_Glyph *glyphs, FT_Vector *pos, FT_BBox *abbox) {
     int n;
     FT_BBox bbox;
     FT_BBox glyph_bbox;
@@ -140,8 +140,13 @@ static void compute_string_bbox(int num_glyphs, FT_Glyph *glyphs, FT_BBox *abbox
     /* for each glyph image, compute its bounding box, */
     /* translate it, and grow the string bbox          */
     for (n = 0; n < num_glyphs; n++) {
-        FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels,
+        FT_Glyph_Get_CBox(glyphs[n], FT_GLYPH_BBOX_PIXELS,
                 &glyph_bbox);
+
+        glyph_bbox.xMin += pos[n].x;
+        glyph_bbox.xMax += pos[n].x;
+        glyph_bbox.yMin += pos[n].y;
+        glyph_bbox.yMax += pos[n].y;
 
         if (glyph_bbox.xMin < bbox.xMin)
             bbox.xMin = glyph_bbox.xMin;
@@ -178,16 +183,16 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     }
 
     // Load glyphs
-
     FT_GlyphSlot slot = face->glyph;   // a small shortcut
     FT_UInt glyph_index;
     FT_Long use_kerning;
     FT_UInt previous;
     int pen_x, pen_y, n;
     FT_Glyph *glyphs = malloc(sizeof(FT_Glyph) * length);  // glyphs table
+    FT_Vector pos[length];
     FT_UInt num_glyphs;
 
-    // start at (0,0)
+
     pen_x = 0;
     pen_y = 0;
 
@@ -196,9 +201,26 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     previous = 0;
 
     for (n = 0; n < length; n++) {
-        FT_Vector pos;
-
         glyph_index = FT_Get_Char_Index(face, text[n]);
+
+//        For some reason this enabling this modifies the string's box
+//        FTC_Node node;
+//        FT_Glyph cachedGlyph;
+//        error = FTC_ImageCache_LookupScaler(library->image_cache, font->scaler, FT_LOAD_DEFAULT, glyph_index, &cachedGlyph, &node);
+//        if (error) { continue;}
+//        error = FT_Glyph_Copy(cachedGlyph, &glyphs[n]);
+//        FTC_Node_Unref(node, library->manager);
+
+        error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+        if (error) {
+            continue;
+        }
+
+        error = FT_Get_Glyph(face->glyph, &glyphs[n]);
+
+        if (error) {
+            continue;
+        }
 
         /* retrieve kerning distance and move pen position */
         if (use_kerning && previous && glyph_index) {
@@ -212,26 +234,8 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
         }
 
         /* store current pen position */
-        pos.x = pen_x;
-        pos.y = pen_y;
-
-        FTC_Node node;
-        FT_Glyph cachedGlyph;
-
-        error = FTC_ImageCache_LookupScaler(library->image_cache, &font->scaler, FT_LOAD_DEFAULT, glyph_index, &cachedGlyph, &node);
-
-        if (error) {
-            continue;  /* ignore errors, jump to next glyph */
-        }
-
-        error = FT_Glyph_Copy(cachedGlyph, &glyphs[n]);
-        FTC_Node_Unref(node, library->manager);
-
-        if (error) {
-            continue;  /* ignore errors, jump to next glyph */
-        }
-
-        FT_Glyph_Transform(glyphs[n], 0, &pos);
+        pos[n].x = pen_x;
+        pos[n].y = pen_y;
 
         /* increment pen position */
         pen_x += slot->advance.x >> 6;
@@ -246,10 +250,10 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     // Compute box
 
     FT_BBox string_bbox;
-    compute_string_bbox(num_glyphs, glyphs, &string_bbox);
+    compute_string_bbox(num_glyphs, glyphs, pos, &string_bbox);
 
-    string->height = (int) (string_bbox.xMax - string_bbox.xMin);
-    string->width = (int) (string_bbox.yMax - string_bbox.yMin);
+    string->width = (int) (string_bbox.xMax - string_bbox.xMin);
+    string->height = (int) (string_bbox.yMax - string_bbox.yMin);
     string->glyphs = glyphs;
     string->num_glyphs = num_glyphs;
 }
@@ -367,9 +371,10 @@ void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const w
 }
 
 void lm_fonts_font_free(lmFontLibrary *library, lmFont *font) {
-    FTC_FaceID faceID = font->scaler.face_id;
+    FTC_FaceID faceID = font->scaler->face_id;
     FTC_Manager_RemoveFaceID(library->manager, faceID);
     free(faceID);
+    free(font->scaler);
     free(font);
 }
 

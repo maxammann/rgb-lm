@@ -42,19 +42,17 @@ public interface LmLibrary extends Library {
         }
 
         public static class ByReference extends lmMatrix_ implements Structure.ByReference {
-
+            public ByReference(int xx, int xy, int yx, int yy) {
+                super(xx, xy, yx, yy);
+            }
         }
-
-        ;
 
         public static class ByValue extends lmMatrix_ implements Structure.ByValue {
-
+            public ByValue(int xx, int xy, int yx, int yy) {
+                super(xx, xy, yx, yy);
+            }
         }
-
-        ;
     }
-
-    ;
 
     /// <i>native declaration : line 84</i>
     /// <i>native declaration : line 84</i>
@@ -81,19 +79,17 @@ public interface LmLibrary extends Library {
         }
 
         public static class ByReference extends rgb_ implements Structure.ByReference {
-
+            public ByReference(byte r, byte g, byte b) {
+                super(r, g, b);
+            }
         }
-
-        ;
 
         public static class ByValue extends rgb_ implements Structure.ByValue {
-
+            public ByValue(byte r, byte g, byte b) {
+                super(r, g, b);
+            }
         }
-
-        ;
     }
-
-    ;
 
     /**
      * Original signature : <code>lmFontLibrary* lm_fonts_init()</code><br>
@@ -342,8 +338,6 @@ public interface LmLibrary extends Library {
         }
     }
 
-    ;
-
     public static class lmString extends PointerType {
         public lmString(Pointer address) {
             super(address);
@@ -353,8 +347,6 @@ public interface LmLibrary extends Library {
             super();
         }
     }
-
-    ;
 
     public static class lmLedMatrix extends PointerType {
         public lmLedMatrix(Pointer address) {
@@ -366,8 +358,6 @@ public interface LmLibrary extends Library {
         }
     }
 
-    ;
-
     public static class lmThread extends PointerType {
         public lmThread(Pointer address) {
             super(address);
@@ -377,8 +367,6 @@ public interface LmLibrary extends Library {
             super();
         }
     }
-
-    ;
 
     public static class lmFont extends PointerType {
         public lmFont(Pointer address) {
@@ -390,8 +378,6 @@ public interface LmLibrary extends Library {
         }
     }
 
-    ;
-
     public static class io_bits extends PointerType {
         public io_bits(Pointer address) {
             super(address);
@@ -401,6 +387,4 @@ public interface LmLibrary extends Library {
             super();
         }
     }
-
-    ;
 }
