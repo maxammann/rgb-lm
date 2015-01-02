@@ -33,6 +33,8 @@ struct lmString_ {
     FT_Glyph *glyphs;
     int num_glyphs;
 
+    FT_Pos shiftY;
+
     int use_matrix;
 
     lmMatrix matrix;
@@ -200,6 +202,8 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     use_kerning = FT_HAS_KERNING(face);
     previous = 0;
 
+    string->shiftY = 0;
+
     for (n = 0; n < length; n++) {
         glyph_index = FT_Get_Char_Index(face, text[n]);
 
@@ -214,6 +218,12 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
         error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
         if (error) {
             continue;
+        }
+
+        FT_Pos bearingY = slot->metrics.horiBearingY >> 6;
+
+        if (string->shiftY < bearingY) {
+            string->shiftY = bearingY;
         }
 
         error = FT_Get_Glyph(face->glyph, &glyphs[n]);
@@ -261,13 +271,28 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
 void render_string(lmLedMatrix *matrix, lmString *string,
         uint16_t x, uint16_t y,
         rgb *rgb) {
+    if (string->num_glyphs == 0) {
+        return;
+    }
+
     int n;
     FT_Error error;
     // Render font and apply transformations
     FT_Glyph image;
     FT_Vector pen;
+//    FT_BBox bbox;
     pen.x = 0;
     pen.y = 0;
+
+    FT_Pos shiftY;
+
+
+//    FT_Glyph_Get_CBox(string->glyphs[0], ft_glyph_bbox_pixels, &bbox);
+//    shiftY = (int) (bbox.yMax - bbox.yMin);
+
+//    shiftY = string->height;
+
+    shiftY = string->shiftY;
 
     for (n = 0; n < string->num_glyphs; n++) {
         image = string->glyphs[n];
@@ -292,6 +317,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
 
         FT_Glyph_Transform(image, ft_matrix, &delta);
 
+
         error = FT_Glyph_To_Bitmap(
                 &image,
                 FT_RENDER_MODE_MONO,
@@ -303,7 +329,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
 
             render_bitmap(matrix, bit->bitmap,
                     bit->left,
-                    string->height - bit->top,
+                    shiftY - bit->top,
                     rgb);
 
             /* increment pen position --                       */

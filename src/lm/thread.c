@@ -137,6 +137,9 @@ lmThread *lm_thread_new(lmLedMatrix *matrix, long base_time_nanos) {
     thread->halted = 0;
     thread->matrix = matrix;
 
+    pthread_cond_init(&thread->halt_cond, NULL);
+    pthread_mutex_init(&thread->halt_mutex, NULL);
+
     for (i = 0; i < MAX_BITPLANES; ++i) {
         thread->row_sleep_timings[i] = (1 << i) * base_time_nanos;
     }
@@ -146,6 +149,8 @@ lmThread *lm_thread_new(lmLedMatrix *matrix, long base_time_nanos) {
 void lm_thread_free(lmThread *thread) {
     lm_thread_stop(thread);
     lm_thread_wait(thread);
+    pthread_cond_destroy(&thread->halt_cond);
+    pthread_mutex_destroy(&thread->halt_mutex);
     pthread_detach(thread->pthread);
     free(thread);
 }
@@ -157,10 +162,10 @@ void lm_thread_pause(lmThread *thread) {
 }
 
 void lm_thread_unpause(lmThread *thread) {
-    pthread_mutex_lock(&thread->halt_mutex);
+//    pthread_mutex_lock(&thread->halt_mutex);
     thread->halted = 0;
     pthread_cond_signal(&thread->halt_cond);
-    pthread_mutex_unlock(&thread->halt_mutex);
+//    pthread_mutex_unlock(&thread->halt_mutex);
 }
 
 void lm_thread_stop(lmThread *thread) {
