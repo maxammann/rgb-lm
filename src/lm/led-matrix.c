@@ -4,12 +4,6 @@
 #include "stdint.h"
 #include "led-matrix.h"
 
-#ifdef INVERSE_RGB_DISPLAY_COLORS
-#  define COLOR_OUT_BITS(x) (x) ^ 0xffff
-#else
-#  define COLOR_OUT_BITS(x) (x)
-#endif
-
 #define COLOR_SHIFT MAX_BITPLANES - 8
 
 struct lmLedMatrix_ {
@@ -78,7 +72,7 @@ io_bits *lm_matrix_bit_plane(lmLedMatrix *matrix) {
 }
 
 static uint16_t map_color(uint16_t color) {
-    return COLOR_OUT_BITS((COLOR_SHIFT > 0) ? (color << COLOR_SHIFT) : (color >> -COLOR_SHIFT));
+    return color << COLOR_SHIFT;
 }
 
 //bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L150

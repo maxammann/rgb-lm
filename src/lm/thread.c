@@ -3,10 +3,13 @@
 #include "io_bits.h"
 #include "thread.h"
 #include "gpio.h"
-#include "stdio.h"
 
 struct lmThread_ {
-    int running;
+    int stopped;
+    volatile int halted;
+    pthread_mutex_t halt_mutex;
+    pthread_cond_t halt_cond;
+
     lmLedMatrix *matrix;
 
     pthread_t pthread;
@@ -62,7 +65,15 @@ static void *main(void *ch) {
     ENABLE_OUTPUT(output_enable.bits, 1);
     strobe.bits.strobe = 1;
 
-    while (thread->running) {
+    while (!thread->stopped) {
+
+        pthread_mutex_lock(&thread->halt_mutex);
+        while (thread->halted) {
+            pthread_cond_wait(&thread->halt_cond, &thread->halt_mutex);
+        }
+        pthread_mutex_unlock(&thread->halt_mutex);
+
+
         uint16_t pwm_bits = lm_matrix_pwm_bits(matrix);
 
         for (d_row = 0; d_row < double_rows; ++d_row) {
@@ -101,7 +112,8 @@ static void *main(void *ch) {
 }
 
 void lm_thread_start(lmThread *thread) {
-    thread->running = 1;
+    thread->stopped = 0;
+    thread->halted = 0;
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, main, thread);
@@ -112,14 +124,17 @@ void lm_thread_start(lmThread *thread) {
 }
 
 void lm_thread_wait(lmThread *thread) {
-    pthread_join(thread->pthread, NULL);
+    if (!thread->stopped) {
+        pthread_join(thread->pthread, NULL);
+    }
 }
 
 lmThread *lm_thread_new(lmLedMatrix *matrix, long base_time_nanos) {
     int i;
 
     lmThread *thread = malloc(sizeof(lmThread));
-    thread->running = 0;
+    thread->stopped = 0;
+    thread->halted = 0;
     thread->matrix = matrix;
 
     for (i = 0; i < MAX_BITPLANES; ++i) {
@@ -129,8 +144,35 @@ lmThread *lm_thread_new(lmLedMatrix *matrix, long base_time_nanos) {
 }
 
 void lm_thread_free(lmThread *thread) {
-    pthread_cancel(thread->pthread);
+    lm_thread_stop(thread);
+    lm_thread_wait(thread);
     pthread_detach(thread->pthread);
     free(thread);
 }
+
+void lm_thread_pause(lmThread *thread) {
+    pthread_mutex_lock(&thread->halt_mutex);
+    thread->halted = 1;
+    pthread_mutex_unlock(&thread->halt_mutex);
+}
+
+void lm_thread_unpause(lmThread *thread) {
+    pthread_mutex_lock(&thread->halt_mutex);
+    thread->halted = 0;
+    pthread_cond_signal(&thread->halt_cond);
+    pthread_mutex_unlock(&thread->halt_mutex);
+}
+
+void lm_thread_stop(lmThread *thread) {
+    thread->stopped = 1;
+}
+
+int lm_thread_is_halted(lmThread *thread) {
+    return thread->halted;
+}
+
+int lm_thread_is_stopped(lmThread *thread) {
+    return thread->stopped;
+}
+
 

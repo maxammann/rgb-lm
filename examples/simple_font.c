@@ -4,9 +4,7 @@
 #include <unistd.h>
 
 int main() {
-    int x, y;
     rgb color = {255, 0, 0};
-
 
     printf("Starting fonts\n");
     lm_gpio_init();
@@ -20,53 +18,20 @@ int main() {
 
     lmFontLibrary *library = lm_fonts_init();
 
-    lmFont *font = lm_fonts_font_new(library, "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 20);
+    lmFont *font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/arialbd.ttf", 20);
 
     lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
     lm_thread_start(thread);
 
-//    lm_fonts_print_string(library, matrix, "Fuck", font, 0, 2, &color);
-//    lm_fonts_print_wstring(library, matrix, L"❤", font, 7, 16, &color);
-
-
-
-
-
-
-    while (1) {
-        printf("print\n");
-        lm_matrix_clear(matrix);
-
-        lmString *string = lm_fonts_string_new();
-        lm_fonts_populate_string(library, string, "test", font);
-        lm_fonts_render_string(matrix, string, 16 - lm_fonts_string_width(string) / 2, 16 - lm_fonts_string_width(string) / 2, &color);
-
-        lm_fonts_string_free(string);
-
-        lm_matrix_swap_buffers(matrix);
-        usleep(1000000 * 2);
-    }
-
-//    lmMatrix m = {
-//            2, 0,
-//            0, 2
-//    };
-//
-//
-//    lm_fonts_string_apply_transformation(string, m);
-
-
+    lm_fonts_print_string(library, matrix, "1", font, 0, 0, &color);
 
     lm_fonts_font_free(library, font);
 
+    lm_matrix_swap_buffers(matrix);
 
+    usleep(3* 1000000);
 
-
-
-    lm_thread_wait(thread);
-
-    usleep(5);
-
+    lm_thread_stop(thread);
     lm_thread_free(thread);
     lm_matrix_free(matrix);
 
