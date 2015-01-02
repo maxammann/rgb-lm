@@ -15,82 +15,6 @@ public interface LmLibrary extends Library {
             .loadLibrary(LmLibrary.JNA_LIBRARY_NAME, LmLibrary.class);
     public static final int DEFAULT_BASE_TIME_NANOS = (int) 200;
 
-    /// <i>native declaration : line 12</i>
-    /// <i>native declaration : line 12</i>
-    public static class lmMatrix_ extends Structure {
-        public int xx;
-        public int xy;
-        public int yx;
-        public int yy;
-
-        public lmMatrix_() {
-            super();
-            initFieldOrder();
-        }
-
-        protected void initFieldOrder() {
-            setFieldOrder(new String[]{"xx", "xy", "yx", "yy"});
-        }
-
-        public lmMatrix_(int xx, int xy, int yx, int yy) {
-            super();
-            this.xx = xx;
-            this.xy = xy;
-            this.yx = yx;
-            this.yy = yy;
-            initFieldOrder();
-        }
-
-        public static class ByReference extends lmMatrix_ implements Structure.ByReference {
-            public ByReference(int xx, int xy, int yx, int yy) {
-                super(xx, xy, yx, yy);
-            }
-        }
-
-        public static class ByValue extends lmMatrix_ implements Structure.ByValue {
-            public ByValue(int xx, int xy, int yx, int yy) {
-                super(xx, xy, yx, yy);
-            }
-        }
-    }
-
-    /// <i>native declaration : line 84</i>
-    /// <i>native declaration : line 84</i>
-    public static class rgb_ extends Structure {
-        public byte r;
-        public byte g;
-        public byte b;
-
-        public rgb_() {
-            super();
-            initFieldOrder();
-        }
-
-        protected void initFieldOrder() {
-            setFieldOrder(new String[]{"r", "g", "b"});
-        }
-
-        public rgb_(byte r, byte g, byte b) {
-            super();
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            initFieldOrder();
-        }
-
-        public static class ByReference extends rgb_ implements Structure.ByReference {
-            public ByReference(byte r, byte g, byte b) {
-                super(r, g, b);
-            }
-        }
-
-        public static class ByValue extends rgb_ implements Structure.ByValue {
-            public ByValue(byte r, byte g, byte b) {
-                super(r, g, b);
-            }
-        }
-    }
-
     /**
      * Original signature : <code>lmFontLibrary* lm_fonts_init()</code><br>
      * <i>native declaration : line 17</i>
@@ -102,15 +26,6 @@ public interface LmLibrary extends Library {
      * <i>native declaration : line 19</i>
      */
     void lm_fonts_free(LmLibrary.lmFontLibrary lmFontLibraryPtr1);
-
-    /**
-     * Original signature : <code>lmFont* lm_fonts_font_new(lmFontLibrary*, const char*, font_size_t)</code><br>
-     * <i>native declaration : line 21</i><br>
-     *
-     * @deprecated use the safer methods {@link #lm_fonts_font_new(lm.LmLibrary.lmFontLibrary, java.lang.String, int)} and {@link #lm_fonts_font_new(lm.LmLibrary.lmFontLibrary, com.sun.jna.Pointer, int)} instead
-     */
-    @Deprecated
-    LmLibrary.lmFont lm_fonts_font_new(LmLibrary.lmFontLibrary library, Pointer font, int size);
 
     /**
      * Original signature : <code>lmFont* lm_fonts_font_new(lmFontLibrary*, const char*, font_size_t)</code><br>
@@ -146,7 +61,7 @@ public interface LmLibrary extends Library {
      * Original signature : <code>void lm_fonts_string_apply_transformation(lmString*, lmMatrix)</code><br>
      * <i>native declaration : line 32</i>
      */
-    void lm_fonts_string_apply_transformation(LmLibrary.lmString string, LmLibrary.lmMatrix_.ByValue matrix);
+    void lm_fonts_string_apply_transformation(LmLibrary.lmString string, Matrix.ByValue matrix);
 
     /**
      * Original signature : <code>void lm_fonts_string_free(lmString*)</code><br>
@@ -161,11 +76,6 @@ public interface LmLibrary extends Library {
     void lm_fonts_populate_string(LmLibrary.lmFontLibrary library, LmLibrary.lmString string, String text, LmLibrary.lmFont font);
     /**
      * Original signature : <code>void lm_fonts_populate_wstring(lmFontLibrary*, lmString*, const wchar_t*, lmFont*)</code><br>
-     * <i>native declaration : line 38</i><br>
-     * @deprecated use the safer methods {@link #lm_fonts_populate_wstring(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmString, com.sun.jna.WString, lm.LmLibrary.lmFont)} and {@link #lm_fonts_populate_wstring(lm.LmLibrary.lmFontLibrary, lm.LmLibrary.lmString, com.ochafik.lang.jnaerator.runtime.CharByReference, lm.LmLibrary.lmFont)} instead
-     */
-    /**
-     * Original signature : <code>void lm_fonts_populate_wstring(lmFontLibrary*, lmString*, const wchar_t*, lmFont*)</code><br>
      * <i>native declaration : line 38</i>
      */
     void lm_fonts_populate_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmString string, WString text, LmLibrary.lmFont font);
@@ -174,19 +84,19 @@ public interface LmLibrary extends Library {
      * Original signature : <code>void lm_fonts_render_string(lmLedMatrix*, lmString*, uint16_t, uint16_t, rgb*)</code><br>
      * <i>native declaration : line 40</i>
      */
-    void lm_fonts_render_string(LmLibrary.lmLedMatrix matrix, LmLibrary.lmString string, short x, short y, LmLibrary.rgb_ rgb);
+    void lm_fonts_render_string(LmLibrary.lmLedMatrix matrix, LmLibrary.lmString string, short x, short y, RGB rgb);
 
     /**
      * Original signature : <code>void lm_fonts_print_string(lmFontLibrary*, lmLedMatrix*, const char*, lmFont*, uint16_t, uint16_t, rgb*)</code><br>
      * <i>native declaration : line 44</i>
      */
-    void lm_fonts_print_string(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, String text, LmLibrary.lmFont font, short x, short y, LmLibrary.rgb_ rgb);
+    void lm_fonts_print_string(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, String text, LmLibrary.lmFont font, short x, short y, RGB rgb);
 
     /**
      * Original signature : <code>void lm_fonts_print_wstring(lmFontLibrary*, lmLedMatrix*, const wchar_t*, lmFont*, uint16_t, uint16_t, rgb*)</code><br>
      * <i>native declaration : line 48</i>
      */
-    void lm_fonts_print_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, WString text, LmLibrary.lmFont font, short x, short y, LmLibrary.rgb_ rgb);
+    void lm_fonts_print_wstring(LmLibrary.lmFontLibrary library, LmLibrary.lmLedMatrix matrix, WString text, LmLibrary.lmFont font, short x, short y, RGB rgb);
 
     /**
      * Original signature : <code>int lm_gpio_init()</code><br>
@@ -284,13 +194,13 @@ public interface LmLibrary extends Library {
      * Original signature : <code>void lm_matrix_fill(lmLedMatrix*, rgb*)</code><br>
      * <i>native declaration : line 108</i>
      */
-    void lm_matrix_fill(LmLibrary.lmLedMatrix matrix, LmLibrary.rgb_ rgb);
+    void lm_matrix_fill(LmLibrary.lmLedMatrix matrix, RGB rgb);
 
     /**
      * Original signature : <code>void lm_matrix_set_pixel(lmLedMatrix*, uint16_t, uint16_t, rgb*)</code><br>
      * <i>native declaration : line 111</i>
      */
-    void lm_matrix_set_pixel(LmLibrary.lmLedMatrix matrix, short x, short y, LmLibrary.rgb_ rgb);
+    void lm_matrix_set_pixel(LmLibrary.lmLedMatrix matrix, short x, short y, RGB rgb);
 
     /**
      * Original signature : <code>void lm_matrix_clear(lmLedMatrix*)</code><br>
@@ -327,6 +237,36 @@ public interface LmLibrary extends Library {
      * <i>native declaration : line 131</i>
      */
     void lm_thread_wait(LmLibrary.lmThread thread);
+
+    /**
+     * Original signature : <code>int lm_thread_is_paused(lmThread*)</code><br>
+     * <i>native declaration : line 2</i>
+     */
+    int lm_thread_is_paused(LmLibrary.lmThread thread);
+
+    /**
+     * Original signature : <code>void lm_thread_pause(lmThread*)</code><br>
+     * <i>native declaration : line 4</i>
+     */
+    void lm_thread_pause(LmLibrary.lmThread thread);
+
+    /**
+     * Original signature : <code>void lm_thread_unpause(lmThread*)</code><br>
+     * <i>native declaration : line 6</i>
+     */
+    void lm_thread_unpause(LmLibrary.lmThread thread);
+
+    /**
+     * Original signature : <code>void lm_thread_stop(lmThread*)</code><br>
+     * <i>native declaration : line 8</i>
+     */
+    void lm_thread_stop(LmLibrary.lmThread thread);
+
+    /**
+     * Original signature : <code>int lm_thread_is_stopped(lmThread*)</code><br>
+     * <i>native declaration : line 10</i>
+     */
+    int lm_thread_is_stopped(LmLibrary.lmThread thread);
 
     public static class lmFontLibrary extends PointerType {
         public lmFontLibrary(Pointer address) {
