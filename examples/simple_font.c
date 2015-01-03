@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 int main() {
-    rgb color = {255, 0, 255};
+    rgb color = {255, 255, 0};
 
     printf("Starting fonts\n");
     lm_gpio_init();
@@ -23,11 +23,14 @@ int main() {
     lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
     lm_thread_start(thread);
 
-    lm_fonts_print_string(library, matrix, "Hey", font, 0, 0, &color);
+
+    lm_fonts_print_string(library, matrix, "Hey", font, 16, 16, &color);
 
     lm_fonts_font_free(library, font);
 
     lm_matrix_swap_buffers(matrix);
+
+
 
 
 //    usleep(3* 1000000);
