@@ -1,4 +1,4 @@
-package lm;
+package lm.jna;
 
 /**
  * Represents a FontLibrary
