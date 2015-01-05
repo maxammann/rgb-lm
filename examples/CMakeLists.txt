@@ -1,6 +1,8 @@
 find_package (Threads)
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 add_executable(simple_fill simple_fill.c)
 target_link_libraries (simple_fill rgb_led_matrix)
 set_target_properties(simple_fill

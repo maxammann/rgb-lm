@@ -1,265 +1,165 @@
-#include <ctype.h>
-#include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <signal.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <stdlib.h>
-#include "test.pb-c.h"
-#include <protobuf-c-rpc/protobuf-c-rpc.h>
+#include <unistd.h>
+#include "lm/lm.h"
+#include "lm.pb-c.h"
 
-static unsigned database_size;
-static Foo__Person *database;		/* sorted by name */
+#define TO_RGB(net_rgb) {(uint8_t) net_rgb->r, (uint8_t) net_rgb->g, (uint8_t) net_rgb->b};
 
-static void
-die (const char *format, ...)
-{
-    va_list args;
-    va_start (args, format);
-    vfprintf (stderr, format, args);
-    va_end (args);
-    fprintf (stderr, "\n");
-    exit (1);
+char *socket_path = "./socket";
+
+lmLedMatrix *matrix;
+lmThread *thread;
+lmFontLibrary *library;
+
+
+uint32_t size = 0;
+u_int8_t *protoBuffer = NULL;
+
+uint32_t buffer_start = 0;
+uint32_t bytes_read = 0;
+
+void fill(Lm__Fill *fill) {
+    rgb rgb = TO_RGB(fill->rgb);
+//    lm_matrix_fill(matrix, &rgb);
 }
 
-static void
-usage (void)
-{
-    die ("usage: example-server [--port=NUM | --unix=PATH] --database=INPUT\n"
-            "\n"
-            "Run a protobuf server as specified by the DirLookup service\n"
-            "in the test.proto file in the protobuf-c distribution.\n"
-            "\n"
-            "Options:\n"
-            "  --port=NUM       Port to listen on for RPC clients.\n"
-            "  --unix=PATH      Unix-domain socket to listen on.\n"
-            "  --database=FILE  data which the server will use to answer requests.\n"
-            "\n"
-            "The database file is a sequence of stanzas, one per person:\n"
-            "\n"
-            "dave\n"
-            " email who@cares.com\n"
-            " mobile (123)123-1234\n"
-            " id 666\n"
-            "\n"
-            "notes:\n"
-            "- each stanza begins with a single unindented line, the person's name.\n");
+void set_pixel(Lm__SetPixel *set_pixel) {
+    rgb rgb = TO_RGB(set_pixel->rgb);
+    Lm__Position *position = set_pixel->pos;
+//    lm_matrix_set_pixel(matrix, (uint16_t) position->x, (uint16_t) position->y, &rgb);
 }
 
-static void *xmalloc (size_t size)
-{
-    void *rv;
-    if (size == 0)
-        return NULL;
-    rv = malloc (size);
-    if (rv == NULL)
-        die ("out-of-memory allocating %u bytes", (unsigned) size);
-    return rv;
-}
 
-static void *xrealloc (void *a, size_t size)
-{
-    void *rv;
-    if (size == 0)
-    {
-        free (a);
-        return NULL;
-    }
-    if (a == NULL)
-        return xmalloc (size);
-    rv = realloc (a, size);
-    if (rv == NULL)
-        die ("out-of-memory re-allocating %u bytes", (unsigned) size);
-    return rv;
-}
+static void processBuffer() {
+    Lm__Request *request = lm__request__unpack(NULL, size, (uint8_t const *) protoBuffer);
 
-static char *xstrdup (const char *str)
-{
-    if (str == NULL)
-        return NULL;
-    return strcpy (xmalloc (strlen (str) + 1), str);
-}
 
-static char *peek_next_token (char *buf)
-{
-    while (*buf && !isspace (*buf))
-        buf++;
-    while (*buf && isspace (*buf))
-        buf++;
-    return buf;
-}
-
-static protobuf_c_boolean is_whitespace (const char *text)
-{
-    while (*text != 0)
-    {
-        if (!isspace (*text))
-            return 0;
-        text++;
-    }
-    return 1;
-}
-static void chomp_trailing_whitespace (char *buf)
-{
-    unsigned len = strlen (buf);
-    while (len > 0)
-    {
-        if (!isspace (buf[len-1]))
+    switch (request->type) {
+        case LM__REQUEST__TYPE__SETPIXEL:
+            set_pixel(request->setpixel);
             break;
-        len--;
+        case LM__REQUEST__TYPE__FILL:
+            fill(request->fill);
+            break;
+        case LM__REQUEST__TYPE__CREATEFONT:
+            break;
+        case LM__REQUEST__TYPE__DESTROYFONT:
+            break;
+        case LM__REQUEST__TYPE__PRINTSTRING:
+            break;
+        case LM__REQUEST__TYPE__CREATESTRING:
+            break;
+        case LM__REQUEST__TYPE__DESTROYSTRING:
+            break;
+        case LM__REQUEST__TYPE__POPULATESTRING:
+            break;
+        case LM__REQUEST__TYPE__RENDERSTRING:
+            break;
+        case LM__REQUEST__TYPE__SWAPBUFFERS:
+            lm_matrix_swap_buffers(matrix);
+            break;
     }
-    buf[len] = 0;
-}
-static protobuf_c_boolean starts_with (const char *str, const char *prefix)
-{
-    return memcmp (str, prefix, strlen (prefix)) == 0;
+
+    printf("Type: %d\n", request->type);
 }
 
-static int
-compare_persons_by_name (const void *a, const void *b)
-{
-    return strcmp (((const Foo__Person*)a)->name, ((const Foo__Person*)b)->name);
+static void reset() {
+    buffer_start = 0;
+    bytes_read = 0;
+    size = 0;
+    if (protoBuffer != NULL) {
+        free(protoBuffer);
+    }
 }
-static void
-load_database (const char *filename)
-{
-    FILE *fp = fopen (filename, "r");
-    char buf[2048];
-    unsigned n_people = 0;
-    unsigned people_alloced = 32;
-    unsigned line_no;
-    Foo__Person *people = xmalloc (sizeof (Foo__Person) * people_alloced);
-    if (fp == NULL)
-        die ("error opening %s: %s", filename, strerror (errno));
-    line_no = 0;
-    while (fgets (buf, sizeof (buf), fp) != NULL)
-    {
-        line_no++;
-        if (buf[0] == '#')
+
+static void start_server() {
+    struct sockaddr_un addr;
+    u_int8_t buf[100];
+    int fd, cl;
+    ssize_t rc = 0;
+
+    if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        perror("socket error");
+        exit(-1);
+    }
+
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path) - 1);
+
+    unlink(socket_path);
+
+    if (bind(fd, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+        perror("bind error");
+        exit(-1);
+    }
+
+    if (listen(fd, 5) == -1) {
+        perror("listen error");
+        exit(-1);
+    }
+
+    while (1) {
+        if ((cl = accept(fd, NULL, NULL)) == -1) {
+            perror("accept error");
             continue;
-        if (is_whitespace (buf))
-            continue;
-        chomp_trailing_whitespace (buf);
-        if (isspace (buf[0]))
-        {
-            Foo__Person *person;
-            char *start = buf + 1;
-            if (n_people == 0)
-                die ("error on %s, line %u: line began with a space, but no person's name preceded it",
-                        filename, line_no);
-            person = people + (n_people - 1);
-            while (*start && isspace (*start))
-                start++;
-            if (starts_with (start, "id "))
-                person->id = atoi (peek_next_token (start));
-            else if (starts_with (start, "email "))
-                person->email = xstrdup (peek_next_token (start));
-            else if (starts_with (start, "mobile ")
-                    ||   starts_with (start, "home ")
-                    ||   starts_with (start, "work "))
-            {
-                Foo__Person__PhoneNumber *pn = xmalloc (sizeof (Foo__Person__PhoneNumber));
-                Foo__Person__PhoneNumber tmp = FOO__PERSON__PHONE_NUMBER__INIT;
-                tmp.has_type = 1;
-                tmp.type = start[0] == 'm' ? FOO__PERSON__PHONE_TYPE__MOBILE
-                        : start[0] == 'h' ? FOO__PERSON__PHONE_TYPE__HOME
-                                : FOO__PERSON__PHONE_TYPE__WORK;
-                tmp.number = xstrdup (peek_next_token (start));
-                person->phone = xrealloc (person->phone, sizeof (Foo__Person__PhoneNumber*) * (person->n_phone+1));
-                *pn = tmp;
-                person->phone[person->n_phone++] = pn;
+        }
+
+        while ((rc = read(cl, buf, sizeof(buf))) > 0) {
+
+            int already_written = bytes_read;
+
+            if (bytes_read == 0) {
+                size = buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24);
+                protoBuffer = malloc(size);
+
+                buffer_start = sizeof(int32_t);
             }
-            else
-                die ("error on %s, line %u: unrecognized field starting with %s", filename, line_no, start);
-        }
-        else
-        {
-            Foo__Person *person;
-            if (n_people == people_alloced)
-            {
-                people_alloced *= 2;
-                people = xrealloc (people, people_alloced * sizeof (Foo__Person));
+
+            bytes_read += rc - buffer_start;
+
+            memcpy(protoBuffer + already_written, buf + buffer_start, bytes_read);
+
+            if (bytes_read == size) {
+                processBuffer();
+                reset();
             }
-            person = people + n_people++;
-            foo__person__init (person);
-            person->name = xstrdup (buf);
+
+            buffer_start = 0;
+        }
+
+        if (rc == -1) {
+            perror("read");
+            exit(-1);
+        }
+        else if (rc == 0) {
+            printf("EOF\n");
+            close(cl);
         }
     }
-    if (n_people == 0)
-        die ("empty database: insufficiently interesting to procede");
 
-    qsort (people, n_people, sizeof (Foo__Person), compare_persons_by_name);
-
-    database = people;
-    database_size = n_people;
-    fclose (fp);
 }
 
-static int
-compare_name_to_person (const void *a, const void *b)
-{
-    return strcmp (a, ((const Foo__Person*)b)->name);
-}
-static void
-example__by_name (Foo__DirLookup_Service    *service,
-        const Foo__Name           *name,
-        Foo__LookupResult_Closure  closure,
-        void                      *closure_data)
-{
-    (void) service;
-    if (name == NULL || name->name == NULL)
-        closure (NULL, closure_data);
-    else
-    {
-        Foo__LookupResult result = FOO__LOOKUP_RESULT__INIT;
-        Foo__Person *rv = bsearch (name->name, database, database_size,
-                sizeof (Foo__Person), compare_name_to_person);
-        if (rv != NULL)
-            result.person = rv;
-        closure (&result, closure_data);
-    }
-}
+int main(int argc, char *argv[]) {
+//    lm_gpio_init();
+//    lm_gpio_init_output(lm_io_bits_new());
+//
+//    lmLedMatrix *matrix = lm_matrix_new(32, 32, 11);
+//    lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
+//    lmFontLibrary *library = lm_fonts_init();
+//
+//    lm_thread_pause(thread);
+//    lm_thread_start(thread);
 
-static Foo__DirLookup_Service the_dir_lookup_service =
-        FOO__DIR_LOOKUP__INIT(example__);
 
-int main(int argc, char**argv)
-{
-    ProtobufC_RPC_Server *server;
-    ProtobufC_RPC_AddressType address_type=0;
-    const char *name = NULL;
-    unsigned i;
+    start_server();
 
-    for (i = 1; i < (unsigned) argc; i++)
-    {
-        if (starts_with (argv[i], "--port="))
-        {
-            address_type = PROTOBUF_C_RPC_ADDRESS_TCP;
-            name = strchr (argv[i], '=') + 1;
-        }
-        else if (starts_with (argv[i], "--unix="))
-        {
-            address_type = PROTOBUF_C_RPC_ADDRESS_LOCAL;
-            name = strchr (argv[i], '=') + 1;
-        }
-        else if (starts_with (argv[i], "--database="))
-        {
-            load_database (strchr (argv[i], '=') + 1);
-        }
-        else
-            usage ();
-    }
 
-    if (database_size == 0)
-        die ("missing --database=FILE (try --database=example.database)");
-    if (name == NULL)
-        die ("missing --port=NUM or --unix=PATH");
-
-    signal (SIGPIPE, SIG_IGN);
-
-    server = protobuf_c_rpc_server_new (address_type, name, (ProtobufCService *) &the_dir_lookup_service, NULL);
-
-    for (;;)
-        protobuf_c_rpc_dispatch_run (protobuf_c_rpc_dispatch_default ());
+//    lm_matrix_free(matrix);
+//    lm_thread_free(thread);
+//    lm_fonts_free(library);
     return 0;
 }
