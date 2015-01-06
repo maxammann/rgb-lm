@@ -3,6 +3,7 @@
 #include <sys/un.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <netinet/in.h>
 #include "lm/lm.h"
 #include "lm.pb-c.h"
 
@@ -113,10 +114,10 @@ static void start_server() {
             int already_written = bytes_read;
 
             if (bytes_read == 0) {
-                size = buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24);
+                size = ntohl(buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24));
                 protoBuffer = malloc(size);
 
-                buffer_start = sizeof(int32_t);
+                buffer_start = sizeof(uint32_t);
             }
 
             bytes_read += rc - buffer_start;

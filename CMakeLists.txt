@@ -11,4 +11,4 @@ set(CMAKE_BUILD_TYPE Release)
 
 add_subdirectory(src/lm)
 add_subdirectory(examples)
-add_subdirectory(protocol)
+add_subdirectory(controller)
