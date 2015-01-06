@@ -1,6 +1,6 @@
 find_package (ProtobufC REQUIRED)
 
-set(CMAKE_BUILD_TYPE Debug)
+
 
 include_directories(${PROTOBUFC_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})

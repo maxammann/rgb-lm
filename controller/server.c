@@ -9,8 +9,6 @@
 
 #define TO_RGB(net_rgb) {(uint8_t) net_rgb->r, (uint8_t) net_rgb->g, (uint8_t) net_rgb->b};
 
-char *socket_path = "./socket";
-
 lmLedMatrix *matrix;
 lmThread *thread;
 lmFontLibrary *library;
@@ -24,13 +22,14 @@ uint32_t bytes_read = 0;
 
 void fill(Lm__Fill *fill) {
     rgb rgb = TO_RGB(fill->rgb);
-//    lm_matrix_fill(matrix, &rgb);
+    lm_matrix_fill(matrix, &rgb);
+    lm_matrix_swap_buffers(matrix);
 }
 
 void set_pixel(Lm__SetPixel *set_pixel) {
     rgb rgb = TO_RGB(set_pixel->rgb);
     Lm__Position *position = set_pixel->pos;
-//    lm_matrix_set_pixel(matrix, (uint16_t) position->x, (uint16_t) position->y, &rgb);
+    lm_matrix_set_pixel(matrix, (uint16_t) position->x, (uint16_t) position->y, &rgb);
 }
 
 
@@ -71,18 +70,44 @@ static void reset() {
     buffer_start = 0;
     bytes_read = 0;
     size = 0;
-    if (protoBuffer != NULL) {
-        free(protoBuffer);
-    }
+
+    free(protoBuffer);
 }
 
-static void start_server() {
-    struct sockaddr_un addr;
-    u_int8_t buf[100];
-    int fd, cl;
-    ssize_t rc = 0;
+static int bind_tcp_socket(uint16_t port) {
+    struct sockaddr_in addr;
+    int fd;
 
-    if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    fd = socket(AF_INET, SOCK_STREAM, 0);
+    
+    if (fd == -1) {
+        perror("socket error");
+        exit(-1);
+    }
+
+    bzero(&addr, sizeof(addr));
+
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port = htons(port);
+
+    int error = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
+
+    if (error == -1) {
+        perror("bind error");
+        exit(-1);
+    }
+    
+    return fd;
+}
+
+static int bind_unix_domain_socket(const char *socket_path) {
+    struct sockaddr_un addr;
+    int fd;
+
+    fd = socket(AF_UNIX, SOCK_STREAM, 0);
+
+    if (fd == -1) {
         perror("socket error");
         exit(-1);
     }
@@ -93,10 +118,21 @@ static void start_server() {
 
     unlink(socket_path);
 
-    if (bind(fd, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
+    int error = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
+
+    if (error == -1) {
         perror("bind error");
         exit(-1);
     }
+
+    return fd;
+}
+
+
+static void start_server(int fd) {
+    u_int8_t buf[5]; // sizeof(buf) > sizeof(uint32_t)
+    int cl;
+    ssize_t rc = 0;
 
     if (listen(fd, 5) == -1) {
         perror("listen error");
@@ -115,6 +151,7 @@ static void start_server() {
 
             if (bytes_read == 0) {
                 size = ntohl(buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24));
+
                 protoBuffer = malloc(size);
 
                 buffer_start = sizeof(uint32_t);
@@ -135,9 +172,8 @@ static void start_server() {
         if (rc == -1) {
             perror("read");
             exit(-1);
-        }
-        else if (rc == 0) {
-            printf("EOF\n");
+        } else if (rc == 0) {
+            printf("Closed connection");
             close(cl);
         }
     }
@@ -145,22 +181,24 @@ static void start_server() {
 }
 
 int main(int argc, char *argv[]) {
-//    lm_gpio_init();
-//    lm_gpio_init_output(lm_io_bits_new());
-//
-//    lmLedMatrix *matrix = lm_matrix_new(32, 32, 11);
-//    lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
-//    lmFontLibrary *library = lm_fonts_init();
-//
+    lm_gpio_init();
+    lm_gpio_init_output(lm_io_bits_new());
+
+    matrix = lm_matrix_new(32, 32, 11);
+    thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
+    library = lm_fonts_init();
+
 //    lm_thread_pause(thread);
-//    lm_thread_start(thread);
+    lm_thread_start(thread);
 
 
-    start_server();
+//    int fd = bind_unix_domain_socket("./socket");
+    int fd = bind_tcp_socket(6969);
+    start_server(fd);
 
 
-//    lm_matrix_free(matrix);
-//    lm_thread_free(thread);
-//    lm_fonts_free(library);
+    lm_matrix_free(matrix);
+    lm_thread_free(thread);
+    lm_fonts_free(library);
     return 0;
 }
