@@ -7,7 +7,7 @@ set( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules )
 
 add_definitions(-DREV2)
 
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_BUILD_TYPE Release)
 
 add_subdirectory(src/lm)

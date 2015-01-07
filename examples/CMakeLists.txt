@@ -33,3 +33,11 @@ set_target_properties(simple_font
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
+
+
+add_executable(mesmerizing mesmerizing.c)
+target_link_libraries (mesmerizing lm m)
+set_target_properties(mesmerizing
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)

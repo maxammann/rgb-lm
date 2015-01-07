@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <lm/lm.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
 int main() {
     printf("Starting\n");
     lm_gpio_init();
@@ -46,3 +48,5 @@ int main() {
     lm_thread_wait(thread);
     return 0;
 }
+
+#pragma clang diagnostic pop

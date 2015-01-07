@@ -1,10 +1,12 @@
 find_package (ProtobufC REQUIRED)
+find_package (PkgConfig REQUIRED)
 
+pkg_check_modules (GLIB2   glib-2.0>=2.10)
 
 
 include_directories(${PROTOBUFC_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories ("${PROJECT_SOURCE_DIR}/src")
+include_directories("${PROJECT_SOURCE_DIR}/src")
+include_directories(${GLIB2_INCLUDE_DIRS})
 
 
 set(SOURCE_HEADERS)
@@ -15,13 +17,8 @@ PROTOBUFC_GENERATE_C(PROTO_SRCS PROTO_HDRS lm.proto)
 set(SOURCE_FILES ${SOURCE_HEADERS} ${PROTO_SRCS} ${PROTO_HDRS})
 
 
-add_executable(client ${SOURCE_FILES} client.c)
-target_link_libraries (client rgb_led_matrix ${PROTOBUFC_LIBRARY})
-
-
-
-add_executable(server ${SOURCE_FILES} server.c )
-target_link_libraries (server rgb_led_matrix ${PROTOBUFC_LIBRARY})
+add_executable(server ${SOURCE_FILES} main.c controller.c server.c)
+target_link_libraries (server rgb_led_matrix ${PROTOBUFC_LIBRARY} ${GLIB2_LIBRARIES})
 
 
 #install (TARGETS protocol DESTINATION lib)
