@@ -2,18 +2,16 @@
 
 #include <lm/lm.h>
 
-typedef void (*start_screen)(long int);
+typedef void (*start_screen)(lmLedMatrix *matrix, long int);
 
 typedef start_screen screen_t;
 
 
-void init_screens(lmLedMatrix *matrix);
-
-lmLedMatrix *get_matrix();
+void init_screens(lmLedMatrix* matrix);
 
 screen_t get_current_screen();
 
-screen_t set_current_screen(lmLedMatrix *matrix, start_screen screen);
+screen_t set_current_screen(start_screen screen);
 
 screen_t get_screen(const char *name);
 

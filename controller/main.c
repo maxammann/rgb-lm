@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     init_controller();
     register_screens();
 
-    set_current_screen(get_matrix(), &clock_screen);
+    set_current_screen(get_screen("digital_clock"));
 
 //    int fd = bind_unix_domain_socket("./socket");
     int fd = bind_tcp_socket(6969);

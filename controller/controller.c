@@ -10,8 +10,9 @@
 lmLedMatrix *matrix;
 lmThread *thread;
 lmFontLibrary *library;
-GHashTable *fonts, *strings;
+lmFont *default_font;
 
+GHashTable *fonts, *strings;
 
 void init_controller() {
     lm_gpio_init();
@@ -21,15 +22,17 @@ void init_controller() {
     thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
 
     library = lm_fonts_init();
+
+//    default_font = lm_fonts_font_new(library, "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 16);
+    default_font = lm_fonts_font_new(library, "/root/projects/InputMono/InputMono-Medium.ttf", 16);
+
     fonts = g_hash_table_new(g_int_hash, g_int_equal);
     strings = g_hash_table_new(g_int_hash, g_int_equal);
 
-//    lm_thread_pause(thread);
+    lm_thread_pause(thread);
     lm_thread_start(thread);
 
     init_screens(matrix);
-
-
 }
 
 inline lmFont *get_font(uint32_t key) {
@@ -95,13 +98,17 @@ static void print_string(Lm__PrintString *print_string) {
 
 static void set_screen(Lm__SetScreen *set_screen) {
     char *name = set_screen->name;
+    if (name[0] == '\0') {
+        set_current_screen(NULL);
+    }
+
     screen_t screen = get_screen(name);
 
     if (screen == NULL) {
         printf("Screen does not exist! %s\n", name);
         return;
     }
-    set_current_screen(matrix, screen);
+    set_current_screen(screen);
 }
 
 void process_buffer(uint8_t *buffer, size_t size) {
@@ -152,8 +159,21 @@ void process_buffer(uint8_t *buffer, size_t size) {
     printf("Type: %d\n", request->type);
 }
 
+lmLedMatrix *get_matrix() {
+    return matrix;
+}
+
+lmFontLibrary *get_font_library() {
+    return library;
+}
+
+lmFont *get_default_font() {
+    return default_font;
+}
+
 void free_controller() {
     lm_matrix_free(matrix);
     lm_thread_free(thread);
+    lm_fonts_font_free(library, default_font);
     lm_fonts_free(library);
 }

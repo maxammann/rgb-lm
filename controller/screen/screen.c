@@ -3,9 +3,7 @@
 #include <string.h>
 #include "screen.h"
 
-
-lmLedMatrix *matrix_;
-
+lmLedMatrix *matrix;
 GHashTable *screens;
 screen_t current_screen;
 
@@ -35,7 +33,7 @@ static void *start(void *ptr) {
         pthread_mutex_unlock(&screen_mutex);
 
 
-        current_screen(elapsed / 1000000);
+        current_screen(matrix, elapsed / 1000000);
 
         struct timespec sleep, remaining;
         sleep.tv_sec = 0;
@@ -48,25 +46,23 @@ static void *start(void *ptr) {
 }
 
 
-void init_screens(lmLedMatrix *matrix__) {
+void init_screens(lmLedMatrix *matrix_) {
     screens = g_hash_table_new(g_str_hash, g_str_equal);
     pthread_create(&screen_thread, NULL, start, NULL);
-    matrix_ = matrix__;
-}
-
-inline lmLedMatrix *get_matrix() {
-    return matrix_;
+    matrix = matrix_;
 }
 
 inline screen_t get_current_screen() {
     return current_screen;
 }
 
-screen_t set_current_screen(lmLedMatrix *matrix, start_screen screen) {
-    screen_t previous = get_current_screen();
+screen_t set_current_screen(start_screen screen) {
+    screen_t previous = current_screen;
 
+    pthread_mutex_lock(&screen_mutex);
     current_screen = screen;
     pthread_cond_signal(&screen_cond);
+    pthread_mutex_unlock(&screen_mutex);
 
     return previous;
 }
@@ -76,7 +72,8 @@ screen_t get_screen(const char *name) {
 }
 
 int register_screen(const char *name, screen_t screen) {
-    char *key = malloc(sizeof(char) * strlen(name));
+    char *key = malloc(sizeof(const char) * strlen(name));
+    strcpy(key, name);
     return g_hash_table_insert(screens, key, screen);
 }
 

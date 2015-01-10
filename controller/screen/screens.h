@@ -2,7 +2,10 @@
 
 #include <lm/lm.h>
 #include <math.h>
+#include <glib.h>
+#include <stdio.h>
 #include "screen.h"
+#include "../controller.h"
 
 #define NUM_BALL 24
 
@@ -16,21 +19,21 @@ inline double getY(double_t x, double_t t) {
     return 32. * sin(mod * M_PI);
 }
 
-void mesmerizing_screen(long int elapsed) {
+void mesmerizing_screen(lmLedMatrix *matrix, long int elapsed) {
     t += 1;
     int i;
     rgb color = {68 / 2, 73 / 2, 219 / 2};
 
-    lm_matrix_clear(get_matrix());
+    lm_matrix_clear(matrix);
 
     for (i = 0; i < NUM_BALL; ++i) {
         uint16_t y = (uint16_t) getY(i, t);
         uint16_t x = (uint16_t) (3 * i);
 
-        lm_matrix_set_pixel(get_matrix(), x, y, &color);
+        lm_matrix_set_pixel(matrix, x, y, &color);
     }
 
-    lm_matrix_swap_buffers(get_matrix());
+    lm_matrix_swap_buffers(matrix);
 }
 
 void matrix_vector_mult(double mat[][2], double *vec, double *result, int m, int n) {
@@ -47,24 +50,14 @@ void matrix_vector_mult(double mat[][2], double *vec, double *result, int m, int
     }
 }
 
-void clock_screen(long int elapsed) {
-    lm_matrix_clear(get_matrix());
-
-
-    rgb color = {68 / 2, 73 / 2, 219 / 2};
-
-    time_t rawtime;
-    time(&rawtime);
-    struct tm *tm_struct = localtime(&rawtime);
-    int second = tm_struct->tm_sec;
-
-    double angle = TO_RADIANS(360.0 * ((float) second / 60.0));
+inline void draw_hand(lmLedMatrix *matrix, float t, double length, rgb *color) {
+    double angle = TO_RADIANS(360.0 * t);
 
     // shift origin
     int16_t delta_x = 16;
     int16_t delta_y = 16;
 
-    double v[] = {0, 16};
+    double v[] = {0, length};
 
     double rotation[2][2] = {
             {cos(angle), -sin(angle)},
@@ -79,46 +72,71 @@ void clock_screen(long int elapsed) {
     double target_x = result[0];
     double target_y = result[1];
 
-//    lm_matrix_line(get_matrix(), (uint16_t) delta_x, (uint16_t) delta_y, (uint16_t) (delta_x + target_x), (uint16_t) (delta_y + target_y), &color);
+    lm_matrix_line(matrix, (uint16_t) delta_x, (uint16_t) delta_y, (uint16_t) (delta_x + target_x), (uint16_t) (delta_y + target_y), color);
+}
 
+void clock_screen(lmLedMatrix *matrix, long int elapsed) {
+    lm_matrix_clear(matrix);
 
-    // Catching 180° and 360° cases
-    if ((int) target_x == 0) {
-        int16_t i;
+    rgb color = {68 / 2, 73 / 2, 219 / 2};
 
-        // Start with smaller, end with greater
-        int16_t start = (int16_t) (target_x > target_y ? target_y : target_x);
-        int16_t end = (int16_t) (target_x > target_y ? target_x : target_y);
+    time_t rawtime;
+    time(&rawtime);
+    struct tm *tm_struct = localtime(&rawtime);
+    float hour = tm_struct->tm_hour;
+    float minute = tm_struct->tm_min;
+//    float second = tm_struct->tm_sec;
 
-        for (i = start; i < end; ++i) {
-            lm_matrix_set_pixel(get_matrix(), delta_x, delta_y + -i, &color);
-        }
+    draw_hand(matrix, hour / 24, 12, &color);
+    draw_hand(matrix, minute / 60, 16, &color);
+//    draw_hand(second / 60, 16, &color);
 
-    } else {
-
-        // Decide whether to draw on the left side of the clock or right side
-        int left = (target_x < 0 && target_y < 0) || (target_x < 0 && target_y >= 0);
-
-        // Find start points
-        int16_t start = (int16_t) (left ? -16 : 0);
-        int16_t end = (int16_t) (left ? 0 : 16);
-
-        double m = target_y / target_x;
-
-        int x;
-        for (x = start; x < end; ++x) {
-            // Calculate y position
-            double y = m * x;
-
-            lm_matrix_set_pixel(get_matrix(), (uint16_t) (delta_x + x), (uint16_t) (delta_y + y), &color);
-        }
-    }
-
-    lm_matrix_swap_buffers(get_matrix());
+    lm_matrix_swap_buffers(matrix);
 };
 
+void digital_clock_screen(lmLedMatrix *matrix, long int elapsed) {
+    lm_matrix_clear(matrix);
+
+    rgb color = {68, 73, 219};
+
+    uint16_t delta_x = 16;
+    uint16_t delta_y = 2;
+    uint16_t spacing_y = 4;
+
+    time_t rawtime;
+    time(&rawtime);
+    struct tm *tm_struct = localtime(&rawtime);
+
+    char *time_hour;
+    char *time_minute;
+
+    // Hex representation
+    time_hour = g_strdup_printf("%X", tm_struct->tm_hour);
+    time_minute = g_strdup_printf("%X", tm_struct->tm_min);
+//    time_hour = g_strdup_printf("%i", tm_struct->tm_hour);
+//    time_minute = g_strdup_printf("%i", tm_struct->tm_min);
+
+    lmString *hour = lm_fonts_string_new();
+    lmString *minute = lm_fonts_string_new();
+
+    lm_fonts_populate_string(get_font_library(), hour, time_hour, get_default_font());
+    lm_fonts_populate_string(get_font_library(), minute, time_minute, get_default_font());
+
+    int hour_width = lm_fonts_string_width(hour);
+    int minute_width = lm_fonts_string_width(minute);
+    int hour_height = lm_fonts_string_height(hour);
+
+    lm_fonts_render_string(matrix, hour, (uint16_t) (delta_x - hour_width / 2), delta_y, &color);
+    lm_fonts_render_string(matrix, minute, (uint16_t) (delta_x - minute_width / 2), (uint16_t) (delta_y + hour_height + spacing_y), &color);
+
+    lm_matrix_swap_buffers(matrix);
+
+    lm_fonts_string_free(hour);
+    lm_fonts_string_free(minute);
+};
 
 void register_screens() {
+    register_screen("digital_clock", &digital_clock_screen);
     register_screen("clock", &clock_screen);
     register_screen("mesmerizing", &mesmerizing_screen);
 }
