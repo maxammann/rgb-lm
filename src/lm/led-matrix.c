@@ -3,6 +3,7 @@
 #include <string.h>
 #include "stdint.h"
 #include "led-matrix.h"
+#include "math.h"
 
 #define COLOR_SHIFT MAX_BITPLANES - 8
 
@@ -11,6 +12,8 @@ struct lmLedMatrix_ {
     uint8_t row_mask;
 
     uint8_t pwm_bits;
+
+    int correct_luminance;
 
     long unsigned int bitplane_size;
     io_bits *hot_bitplane_buffer;
@@ -31,6 +34,7 @@ lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
     matrix->bitplane_size = sizeof(io_bits) * double_rows * columns * MAX_BITPLANES;
     matrix->hot_bitplane_buffer = calloc(1, matrix->bitplane_size);
     matrix->bitplane_buffer = calloc(1, matrix->bitplane_size);
+    matrix->correct_luminance = 1;
     pthread_mutex_init(&matrix->buffer_mutex, NULL);
 
     return matrix;
@@ -49,6 +53,10 @@ uint16_t lm_matrix_columns(lmLedMatrix *matrix) {
 
 uint16_t lm_matrix_rows(lmLedMatrix *matrix) {
     return matrix->rows;
+}
+
+void lm_matrix_set_correct_luminance(lmLedMatrix *matrix, int value) {
+    matrix->correct_luminance = value;
 }
 
 void lm_matrix_lock(lmLedMatrix *matrix) {
@@ -71,7 +79,33 @@ io_bits *lm_matrix_bit_plane(lmLedMatrix *matrix) {
     return matrix->bitplane_buffer;
 }
 
-static uint16_t map_color(uint16_t color) {
+uint16_t *luminance_table = NULL;
+
+static uint16_t luminance_cie1931(uint8_t c) {
+    float out_factor = ((1 << MAX_BITPLANES) - 1);
+    double v = c * 100.0 / 255.0;
+    return (uint16_t) (out_factor * ((v <= 8) ? v / 902.3 : pow((v + 16) / 116.0, 3)));
+}
+
+static void create_luminance_cie1931_table() {
+    if (luminance_table != NULL) {
+        return;
+    }
+
+    luminance_table = malloc(sizeof(uint16_t) * 255);
+
+    uint16_t i;
+    for (i = 0; i < 256; ++i)
+        luminance_table[i] = luminance_cie1931((uint8_t) i);
+}
+
+static inline uint16_t map_color(lmLedMatrix *matrix, uint16_t color) {
+    if (matrix->correct_luminance) {
+        create_luminance_cie1931_table();
+
+        return luminance_table[color];
+    }
+
     return color << COLOR_SHIFT;
 }
 
@@ -81,9 +115,9 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
     io_bits *bitplane = matrix->hot_bitplane_buffer;
     uint16_t columns = matrix->columns;
 
-    const uint16_t red = map_color(rgb->r);
-    const uint16_t green = map_color(rgb->g);
-    const uint16_t blue = map_color(rgb->b);
+    const uint16_t red = map_color(matrix, rgb->r);
+    const uint16_t green = map_color(matrix, rgb->g);
+    const uint16_t blue = map_color(matrix, rgb->b);
 
     uint8_t double_rows = lm_matrix_double_rows(matrix);
 
@@ -114,9 +148,9 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
 
     int i;
 
-    uint16_t red = map_color(rgb->r);
-    uint16_t green = map_color(rgb->g);
-    uint16_t blue = map_color(rgb->b);
+    uint16_t red = map_color(matrix, rgb->r);
+    uint16_t green = map_color(matrix, rgb->g);
+    uint16_t blue = map_color(matrix, rgb->b);
 
     uint8_t pwm = matrix->pwm_bits;
     uint16_t columns = matrix->columns;
@@ -143,6 +177,71 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
             bits->bits.b2 = (bits_t) ((blue & mask) == mask);
             bits += columns;
         }
+    }
+}
+
+int sgn(int x) {
+    return (x > 0) ? 1 : (x < 0) ? -1 : 0;
+}
+
+void lm_matrix_line(lmLedMatrix *matrix,
+        uint16_t xstart, uint16_t ystart,
+        uint16_t xend, uint16_t yend,
+        rgb *rgb) {
+    int x, y, t, dx, dy, incx, incy, pdx, pdy, ddx, ddy, es, el, err;
+
+/* Entfernung in beiden Dimensionen berechnen */
+    dx = xend - xstart;
+    dy = yend - ystart;
+
+/* Vorzeichen des Inkrements bestimmen */
+    incx = sgn(dx);
+    incy = sgn(dy);
+    if (dx < 0) dx = -dx;
+    if (dy < 0) dy = -dy;
+
+/* feststellen, welche Entfernung größer ist */
+    if (dx > dy) {
+        /* x ist schnelle Richtung */
+        pdx = incx;
+        pdy = 0;    /* pd. ist Parallelschritt */
+        ddx = incx;
+        ddy = incy; /* dd. ist Diagonalschritt */
+        es = dy;
+        el = dx;   /* Fehlerschritte schnell, langsam */
+    } else {
+        /* y ist schnelle Richtung */
+        pdx = 0;
+        pdy = incy; /* pd. ist Parallelschritt */
+        ddx = incx;
+        ddy = incy; /* dd. ist Diagonalschritt */
+        es = dx;
+        el = dy;   /* Fehlerschritte schnell, langsam */
+    }
+
+/* Initialisierungen vor Schleifenbeginn */
+    x = xstart;
+    y = ystart;
+    err = el / 2;
+    lm_matrix_set_pixel(matrix, x, y, rgb);
+
+/* Pixel berechnen */
+    for (t = 0; t < el; ++t) /* t zaehlt die Pixel, el ist auch Anzahl */
+    {
+        /* Aktualisierung Fehlerterm */
+        err -= es;
+        if (err < 0) {
+            /* Fehlerterm wieder positiv (>=0) machen */
+            err += el;
+            /* Schritt in langsame Richtung, Diagonalschritt */
+            x += ddx;
+            y += ddy;
+        } else {
+            /* Schritt in schnelle Richtung, Parallelschritt */
+            x += pdx;
+            y += pdy;
+        }
+        lm_matrix_set_pixel(matrix, x, y, rgb);
     }
 }
 

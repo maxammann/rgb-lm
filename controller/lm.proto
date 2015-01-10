@@ -3,8 +3,9 @@ package lm;
 message Request {
 	enum Type {
 		SETPIXEL = 1; FILL = 2; CREATEFONT = 3; DESTROYFONT = 4; PRINTSTRING = 5;
-		CREATESTRING = 6; DESTROYSTRING = 7; POPULATESTRING = 8; RENDERSTRING = 9;
-		SWAPBUFFERS = 10;
+		DESTROYSTRING = 6; POPULATESTRING = 7; RENDERSTRING = 8; SETSCREEN = 9;
+
+		SWAPBUFFERS = 32; PAUSE = 33; UNPAUSE = 34;
 	}
 
 	required Type type = 1;
@@ -17,11 +18,10 @@ message Request {
 
     optional PrintString printstring = 6;
 
-    optional CreateString createstring = 7;
-    optional DestroyString destroystring = 8;
-    optional PopulateString populatestring = 9;
-    optional RenderString renderstring = 10;
-    optional SwapBuffers swapbuffers = 11;
+    optional DestroyString destroystring = 7;
+    optional PopulateString populatestring = 8;
+    optional RenderString renderstring = 9;
+    optional SetScreen setscreen = 10;
 }
 
 message Position {
@@ -68,10 +68,6 @@ message PrintString {
 }
 
 
-message CreateString {
-	required uint32 id = 1;
-}
-
 message DestroyString {
 	required uint32 id = 1;
 }
@@ -87,10 +83,12 @@ message RenderString {
 	required uint32 id = 1;
 
 	required Position pos = 2;
+
+	   required RGB rgb = 3;
 }
 
 
-message SwapBuffers {
+message SetScreen {
+    required string name = 1;
 }
-
 

@@ -18,13 +18,13 @@ int main() {
 
     lmFontLibrary *library = lm_fonts_init();
 
-    lmFont *font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/arialbd.ttf", 20);
+    lmFont *font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/arialbd.ttf", 16);
 
     lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
     lm_thread_start(thread);
 
 
-    lm_fonts_print_string(library, matrix, "Hey", font, 16, 16, &color);
+    lm_fonts_print_string(library, matrix, "Pierre", font, 0, 0, &color);
 
     lm_fonts_font_free(library, font);
 

@@ -61,14 +61,14 @@ int bind_unix_domain_socket(const char *socket_path) {
     return fd;
 }
 
-void start_server(int fd, void (process)(u_int8_t *, size_t)) {
-    u_int8_t buf[5]; // sizeof(buf) > sizeof(uint32_t)
+void start_server(int fd, void (*process)(uint8_t *, size_t)) {
+    uint8_t buf[5]; // sizeof(buf) > sizeof(uint32_t)
     int cl;
     ssize_t rc = 0;
 
 
     uint32_t size = 0;
-    u_int8_t *target_buffer = NULL;
+    uint8_t *target_buffer = NULL;
     uint32_t buffer_start = 0;
     uint32_t bytes_read = 0;
 

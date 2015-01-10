@@ -42,6 +42,12 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
         rgb *rgb);
 
+
+void lm_matrix_line(lmLedMatrix *matrix,
+        uint16_t xstart, uint16_t ystart,
+        uint16_t xend, uint16_t yend,
+        rgb *rgb);
+
 void lm_matrix_clear(lmLedMatrix *matrix);
 
 void lm_matrix_swap_buffers(lmLedMatrix *matrix);
