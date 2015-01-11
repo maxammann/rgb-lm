@@ -3,9 +3,9 @@
 #include <lm/lm.h>
 #include "lm.pb-c.h"
 
-void init_controller();
+static const int UTF8_BUFERR_SIZE = 256;
 
-lmLedMatrix *get_matrix();
+void init_controller();
 
 lmFontLibrary *get_font_library();
 

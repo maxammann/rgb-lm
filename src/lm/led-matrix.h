@@ -5,6 +5,8 @@
 #include "io_bits.h"
 #include <wchar.h>
 
+#define POS(x) (uint16_t)x
+
 typedef struct lmLedMatrix_ lmLedMatrix;
 
 typedef struct rgb_ rgb;

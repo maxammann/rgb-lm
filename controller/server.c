@@ -7,6 +7,10 @@
 #include <unistd.h>
 #include <netinet/in.h>
 
+typedef uint32_t request_size_t;
+
+#define SIZE sizeof(request_size_t)
+
 int bind_tcp_socket(uint16_t port) {
     struct sockaddr_in addr;
     int fd;
@@ -62,23 +66,13 @@ int bind_unix_domain_socket(const char *socket_path) {
 }
 
 void start_server(int fd, void (*process)(uint8_t *, size_t)) {
-    uint8_t buf[5]; // sizeof(buf) > sizeof(uint32_t)
+    uint8_t buf[256]; // sizeof(buf) > sizeof(uint32_t)
     int cl;
     ssize_t rc = 0;
 
 
-    uint32_t size = 0;
-    uint8_t *target_buffer = NULL;
-    uint32_t buffer_start = 0;
-    uint32_t bytes_read = 0;
-
-    void reset() {
-        buffer_start = 0;
-        bytes_read = 0;
-        size = 0;
-
-        free(target_buffer);
-    }
+    uint8_t msg_buff[256];
+    request_size_t msg_buff_size = 0;
 
     if (listen(fd, 5) == -1) {
         perror("listen error");
@@ -92,34 +86,50 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
         }
 
         while ((rc = read(cl, buf, sizeof(buf))) > 0) {
+            memcpy(msg_buff + msg_buff_size, buf, (size_t) rc);
+            msg_buff_size += rc;
 
-            int already_written = bytes_read;
 
-            if (bytes_read == 0) {
-                size = ntohl(buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24));
+            while (1) {
+                if (msg_buff_size < SIZE) {
+                    // basically no data
+                    break;
+                }
 
-                target_buffer = malloc(size);
+                request_size_t size = ntohl(msg_buff[0] + (msg_buff[1] << 8) + (msg_buff[2] << 16) + (msg_buff[3] << 24));
 
-                buffer_start = sizeof(uint32_t);
+                if (size > 256 || size < 1) {
+                    close(cl);
+                    break;
+                }
+
+                if (msg_buff_size - SIZE < size) {
+                    // not enough data
+                    break;
+                }
+
+                process(msg_buff + SIZE, size);
+
+
+                msg_buff_size -= SIZE + size;
+
+                if (msg_buff_size > 0) {
+                    memcpy(msg_buff, msg_buff + SIZE + size, msg_buff_size);
+                } else {
+                    break;
+                }
             }
+        }
 
-            bytes_read += rc - buffer_start;
-
-            memcpy(target_buffer + already_written, buf + buffer_start, bytes_read);
-
-            if (bytes_read == size) {
-                process(target_buffer, size);
-                reset();
-            }
-
-            buffer_start = 0;
+        if (msg_buff_size > 0) {
+            printf("data still in buffer!\n");
         }
 
         if (rc == -1) {
             perror("read");
             exit(-1);
         } else if (rc == 0) {
-            printf("Closed connection");
+            printf("closed\n");
             close(cl);
         }
     }

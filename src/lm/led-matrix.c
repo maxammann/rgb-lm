@@ -92,7 +92,7 @@ static void create_luminance_cie1931_table() {
         return;
     }
 
-    luminance_table = malloc(sizeof(uint16_t) * 255);
+    luminance_table = malloc(sizeof(uint16_t) * 256);
 
     uint16_t i;
     for (i = 0; i < 256; ++i)

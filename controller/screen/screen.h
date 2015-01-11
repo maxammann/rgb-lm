@@ -16,3 +16,6 @@ screen_t set_current_screen(start_screen screen);
 screen_t get_screen(const char *name);
 
 int register_screen(const char *name, screen_t screen);
+
+
+void close_screens();

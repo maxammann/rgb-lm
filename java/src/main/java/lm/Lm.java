@@ -87,69 +87,56 @@ public final class Lm {
     lm.Lm.PrintStringOrBuilder getPrintstringOrBuilder();
 
     /**
-     * <code>optional .lm.CreateString createstring = 7;</code>
-     */
-    boolean hasCreatestring();
-    /**
-     * <code>optional .lm.CreateString createstring = 7;</code>
-     */
-    lm.Lm.CreateString getCreatestring();
-    /**
-     * <code>optional .lm.CreateString createstring = 7;</code>
-     */
-    lm.Lm.CreateStringOrBuilder getCreatestringOrBuilder();
-
-    /**
-     * <code>optional .lm.DestroyString destroystring = 8;</code>
+     * <code>optional .lm.DestroyString destroystring = 7;</code>
      */
     boolean hasDestroystring();
     /**
-     * <code>optional .lm.DestroyString destroystring = 8;</code>
+     * <code>optional .lm.DestroyString destroystring = 7;</code>
      */
     lm.Lm.DestroyString getDestroystring();
     /**
-     * <code>optional .lm.DestroyString destroystring = 8;</code>
+     * <code>optional .lm.DestroyString destroystring = 7;</code>
      */
     lm.Lm.DestroyStringOrBuilder getDestroystringOrBuilder();
 
     /**
-     * <code>optional .lm.PopulateString populatestring = 9;</code>
+     * <code>optional .lm.PopulateString populatestring = 8;</code>
      */
     boolean hasPopulatestring();
     /**
-     * <code>optional .lm.PopulateString populatestring = 9;</code>
+     * <code>optional .lm.PopulateString populatestring = 8;</code>
      */
     lm.Lm.PopulateString getPopulatestring();
     /**
-     * <code>optional .lm.PopulateString populatestring = 9;</code>
+     * <code>optional .lm.PopulateString populatestring = 8;</code>
      */
     lm.Lm.PopulateStringOrBuilder getPopulatestringOrBuilder();
 
     /**
-     * <code>optional .lm.RenderString renderstring = 10;</code>
+     * <code>optional .lm.RenderString renderstring = 9;</code>
      */
     boolean hasRenderstring();
     /**
-     * <code>optional .lm.RenderString renderstring = 10;</code>
+     * <code>optional .lm.RenderString renderstring = 9;</code>
      */
     lm.Lm.RenderString getRenderstring();
     /**
-     * <code>optional .lm.RenderString renderstring = 10;</code>
+     * <code>optional .lm.RenderString renderstring = 9;</code>
      */
     lm.Lm.RenderStringOrBuilder getRenderstringOrBuilder();
 
     /**
-     * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+     * <code>optional .lm.SetScreen setscreen = 10;</code>
      */
-    boolean hasSwapbuffers();
+    boolean hasSetscreen();
     /**
-     * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+     * <code>optional .lm.SetScreen setscreen = 10;</code>
      */
-    lm.Lm.SwapBuffers getSwapbuffers();
+    lm.Lm.SetScreen getSetscreen();
     /**
-     * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+     * <code>optional .lm.SetScreen setscreen = 10;</code>
      */
-    lm.Lm.SwapBuffersOrBuilder getSwapbuffersOrBuilder();
+    lm.Lm.SetScreenOrBuilder getSetscreenOrBuilder();
   }
   /**
    * Protobuf type {@code lm.Request}
@@ -280,21 +267,8 @@ public final class Lm {
               break;
             }
             case 58: {
-              lm.Lm.CreateString.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000040) == 0x00000040)) {
-                subBuilder = createstring_.toBuilder();
-              }
-              createstring_ = input.readMessage(lm.Lm.CreateString.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(createstring_);
-                createstring_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000040;
-              break;
-            }
-            case 66: {
               lm.Lm.DestroyString.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000080) == 0x00000080)) {
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
                 subBuilder = destroystring_.toBuilder();
               }
               destroystring_ = input.readMessage(lm.Lm.DestroyString.PARSER, extensionRegistry);
@@ -302,12 +276,12 @@ public final class Lm {
                 subBuilder.mergeFrom(destroystring_);
                 destroystring_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000080;
+              bitField0_ |= 0x00000040;
               break;
             }
-            case 74: {
+            case 66: {
               lm.Lm.PopulateString.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000100) == 0x00000100)) {
+              if (((bitField0_ & 0x00000080) == 0x00000080)) {
                 subBuilder = populatestring_.toBuilder();
               }
               populatestring_ = input.readMessage(lm.Lm.PopulateString.PARSER, extensionRegistry);
@@ -315,12 +289,12 @@ public final class Lm {
                 subBuilder.mergeFrom(populatestring_);
                 populatestring_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000100;
+              bitField0_ |= 0x00000080;
               break;
             }
-            case 82: {
+            case 74: {
               lm.Lm.RenderString.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000200) == 0x00000200)) {
+              if (((bitField0_ & 0x00000100) == 0x00000100)) {
                 subBuilder = renderstring_.toBuilder();
               }
               renderstring_ = input.readMessage(lm.Lm.RenderString.PARSER, extensionRegistry);
@@ -328,20 +302,20 @@ public final class Lm {
                 subBuilder.mergeFrom(renderstring_);
                 renderstring_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000200;
+              bitField0_ |= 0x00000100;
               break;
             }
-            case 90: {
-              lm.Lm.SwapBuffers.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000400) == 0x00000400)) {
-                subBuilder = swapbuffers_.toBuilder();
+            case 82: {
+              lm.Lm.SetScreen.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000200) == 0x00000200)) {
+                subBuilder = setscreen_.toBuilder();
               }
-              swapbuffers_ = input.readMessage(lm.Lm.SwapBuffers.PARSER, extensionRegistry);
+              setscreen_ = input.readMessage(lm.Lm.SetScreen.PARSER, extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(swapbuffers_);
-                swapbuffers_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(setscreen_);
+                setscreen_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000400;
+              bitField0_ |= 0x00000200;
               break;
             }
           }
@@ -409,25 +383,37 @@ public final class Lm {
        */
       PRINTSTRING(4, 5),
       /**
-       * <code>CREATESTRING = 6;</code>
+       * <code>DESTROYSTRING = 6;</code>
        */
-      CREATESTRING(5, 6),
+      DESTROYSTRING(5, 6),
       /**
-       * <code>DESTROYSTRING = 7;</code>
+       * <code>POPULATESTRING = 7;</code>
        */
-      DESTROYSTRING(6, 7),
+      POPULATESTRING(6, 7),
       /**
-       * <code>POPULATESTRING = 8;</code>
+       * <code>RENDERSTRING = 8;</code>
        */
-      POPULATESTRING(7, 8),
+      RENDERSTRING(7, 8),
       /**
-       * <code>RENDERSTRING = 9;</code>
+       * <code>SETSCREEN = 9;</code>
        */
-      RENDERSTRING(8, 9),
+      SETSCREEN(8, 9),
       /**
-       * <code>SWAPBUFFERS = 10;</code>
+       * <code>SWAPBUFFERS = 32;</code>
        */
-      SWAPBUFFERS(9, 10),
+      SWAPBUFFERS(9, 32),
+      /**
+       * <code>PAUSE = 33;</code>
+       */
+      PAUSE(10, 33),
+      /**
+       * <code>UNPAUSE = 34;</code>
+       */
+      UNPAUSE(11, 34),
+      /**
+       * <code>CLEAR = 36;</code>
+       */
+      CLEAR(12, 36),
       ;
 
       /**
@@ -451,25 +437,37 @@ public final class Lm {
        */
       public static final int PRINTSTRING_VALUE = 5;
       /**
-       * <code>CREATESTRING = 6;</code>
+       * <code>DESTROYSTRING = 6;</code>
        */
-      public static final int CREATESTRING_VALUE = 6;
+      public static final int DESTROYSTRING_VALUE = 6;
       /**
-       * <code>DESTROYSTRING = 7;</code>
+       * <code>POPULATESTRING = 7;</code>
        */
-      public static final int DESTROYSTRING_VALUE = 7;
+      public static final int POPULATESTRING_VALUE = 7;
       /**
-       * <code>POPULATESTRING = 8;</code>
+       * <code>RENDERSTRING = 8;</code>
        */
-      public static final int POPULATESTRING_VALUE = 8;
+      public static final int RENDERSTRING_VALUE = 8;
       /**
-       * <code>RENDERSTRING = 9;</code>
+       * <code>SETSCREEN = 9;</code>
        */
-      public static final int RENDERSTRING_VALUE = 9;
+      public static final int SETSCREEN_VALUE = 9;
       /**
-       * <code>SWAPBUFFERS = 10;</code>
+       * <code>SWAPBUFFERS = 32;</code>
        */
-      public static final int SWAPBUFFERS_VALUE = 10;
+      public static final int SWAPBUFFERS_VALUE = 32;
+      /**
+       * <code>PAUSE = 33;</code>
+       */
+      public static final int PAUSE_VALUE = 33;
+      /**
+       * <code>UNPAUSE = 34;</code>
+       */
+      public static final int UNPAUSE_VALUE = 34;
+      /**
+       * <code>CLEAR = 36;</code>
+       */
+      public static final int CLEAR_VALUE = 36;
 
 
       public final int getNumber() { return value; }
@@ -481,11 +479,14 @@ public final class Lm {
           case 3: return CREATEFONT;
           case 4: return DESTROYFONT;
           case 5: return PRINTSTRING;
-          case 6: return CREATESTRING;
-          case 7: return DESTROYSTRING;
-          case 8: return POPULATESTRING;
-          case 9: return RENDERSTRING;
-          case 10: return SWAPBUFFERS;
+          case 6: return DESTROYSTRING;
+          case 7: return POPULATESTRING;
+          case 8: return RENDERSTRING;
+          case 9: return SETSCREEN;
+          case 32: return SWAPBUFFERS;
+          case 33: return PAUSE;
+          case 34: return UNPAUSE;
+          case 36: return CLEAR;
           default: return null;
         }
       }
@@ -658,109 +659,88 @@ public final class Lm {
       return printstring_;
     }
 
-    public static final int CREATESTRING_FIELD_NUMBER = 7;
-    private lm.Lm.CreateString createstring_;
+    public static final int DESTROYSTRING_FIELD_NUMBER = 7;
+    private lm.Lm.DestroyString destroystring_;
     /**
-     * <code>optional .lm.CreateString createstring = 7;</code>
+     * <code>optional .lm.DestroyString destroystring = 7;</code>
      */
-    public boolean hasCreatestring() {
+    public boolean hasDestroystring() {
       return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
-     * <code>optional .lm.CreateString createstring = 7;</code>
-     */
-    public lm.Lm.CreateString getCreatestring() {
-      return createstring_;
-    }
-    /**
-     * <code>optional .lm.CreateString createstring = 7;</code>
-     */
-    public lm.Lm.CreateStringOrBuilder getCreatestringOrBuilder() {
-      return createstring_;
-    }
-
-    public static final int DESTROYSTRING_FIELD_NUMBER = 8;
-    private lm.Lm.DestroyString destroystring_;
-    /**
-     * <code>optional .lm.DestroyString destroystring = 8;</code>
-     */
-    public boolean hasDestroystring() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
-    }
-    /**
-     * <code>optional .lm.DestroyString destroystring = 8;</code>
+     * <code>optional .lm.DestroyString destroystring = 7;</code>
      */
     public lm.Lm.DestroyString getDestroystring() {
       return destroystring_;
     }
     /**
-     * <code>optional .lm.DestroyString destroystring = 8;</code>
+     * <code>optional .lm.DestroyString destroystring = 7;</code>
      */
     public lm.Lm.DestroyStringOrBuilder getDestroystringOrBuilder() {
       return destroystring_;
     }
 
-    public static final int POPULATESTRING_FIELD_NUMBER = 9;
+    public static final int POPULATESTRING_FIELD_NUMBER = 8;
     private lm.Lm.PopulateString populatestring_;
     /**
-     * <code>optional .lm.PopulateString populatestring = 9;</code>
+     * <code>optional .lm.PopulateString populatestring = 8;</code>
      */
     public boolean hasPopulatestring() {
-      return ((bitField0_ & 0x00000100) == 0x00000100);
+      return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
-     * <code>optional .lm.PopulateString populatestring = 9;</code>
+     * <code>optional .lm.PopulateString populatestring = 8;</code>
      */
     public lm.Lm.PopulateString getPopulatestring() {
       return populatestring_;
     }
     /**
-     * <code>optional .lm.PopulateString populatestring = 9;</code>
+     * <code>optional .lm.PopulateString populatestring = 8;</code>
      */
     public lm.Lm.PopulateStringOrBuilder getPopulatestringOrBuilder() {
       return populatestring_;
     }
 
-    public static final int RENDERSTRING_FIELD_NUMBER = 10;
+    public static final int RENDERSTRING_FIELD_NUMBER = 9;
     private lm.Lm.RenderString renderstring_;
     /**
-     * <code>optional .lm.RenderString renderstring = 10;</code>
+     * <code>optional .lm.RenderString renderstring = 9;</code>
      */
     public boolean hasRenderstring() {
-      return ((bitField0_ & 0x00000200) == 0x00000200);
+      return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
-     * <code>optional .lm.RenderString renderstring = 10;</code>
+     * <code>optional .lm.RenderString renderstring = 9;</code>
      */
     public lm.Lm.RenderString getRenderstring() {
       return renderstring_;
     }
     /**
-     * <code>optional .lm.RenderString renderstring = 10;</code>
+     * <code>optional .lm.RenderString renderstring = 9;</code>
      */
     public lm.Lm.RenderStringOrBuilder getRenderstringOrBuilder() {
       return renderstring_;
     }
 
-    public static final int SWAPBUFFERS_FIELD_NUMBER = 11;
-    private lm.Lm.SwapBuffers swapbuffers_;
+    public static final int SETSCREEN_FIELD_NUMBER = 10;
+    private lm.Lm.SetScreen setscreen_;
     /**
-     * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+     * <code>optional .lm.SetScreen setscreen = 10;</code>
      */
-    public boolean hasSwapbuffers() {
-      return ((bitField0_ & 0x00000400) == 0x00000400);
+    public boolean hasSetscreen() {
+      return ((bitField0_ & 0x00000200) == 0x00000200);
     }
     /**
-     * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+     * <code>optional .lm.SetScreen setscreen = 10;</code>
      */
-    public lm.Lm.SwapBuffers getSwapbuffers() {
-      return swapbuffers_;
+    public lm.Lm.SetScreen getSetscreen() {
+      return setscreen_;
     }
     /**
-     * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+     * <code>optional .lm.SetScreen setscreen = 10;</code>
      */
-    public lm.Lm.SwapBuffersOrBuilder getSwapbuffersOrBuilder() {
-      return swapbuffers_;
+    public lm.Lm.SetScreenOrBuilder getSetscreenOrBuilder() {
+      return setscreen_;
     }
 
     private void initFields() {
@@ -770,11 +750,10 @@ public final class Lm {
       createfont_ = lm.Lm.CreateFont.getDefaultInstance();
       destroyfont_ = lm.Lm.DestroyFont.getDefaultInstance();
       printstring_ = lm.Lm.PrintString.getDefaultInstance();
-      createstring_ = lm.Lm.CreateString.getDefaultInstance();
       destroystring_ = lm.Lm.DestroyString.getDefaultInstance();
       populatestring_ = lm.Lm.PopulateString.getDefaultInstance();
       renderstring_ = lm.Lm.RenderString.getDefaultInstance();
-      swapbuffers_ = lm.Lm.SwapBuffers.getDefaultInstance();
+      setscreen_ = lm.Lm.SetScreen.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -816,12 +795,6 @@ public final class Lm {
           return false;
         }
       }
-      if (hasCreatestring()) {
-        if (!getCreatestring().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       if (hasDestroystring()) {
         if (!getDestroystring().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -836,6 +809,12 @@ public final class Lm {
       }
       if (hasRenderstring()) {
         if (!getRenderstring().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasSetscreen()) {
+        if (!getSetscreen().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -866,19 +845,16 @@ public final class Lm {
         output.writeMessage(6, printstring_);
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeMessage(7, createstring_);
+        output.writeMessage(7, destroystring_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
-        output.writeMessage(8, destroystring_);
+        output.writeMessage(8, populatestring_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
-        output.writeMessage(9, populatestring_);
+        output.writeMessage(9, renderstring_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
-        output.writeMessage(10, renderstring_);
-      }
-      if (((bitField0_ & 0x00000400) == 0x00000400)) {
-        output.writeMessage(11, swapbuffers_);
+        output.writeMessage(10, setscreen_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -915,23 +891,19 @@ public final class Lm {
       }
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, createstring_);
+          .computeMessageSize(7, destroystring_);
       }
       if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, destroystring_);
+          .computeMessageSize(8, populatestring_);
       }
       if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, populatestring_);
+          .computeMessageSize(9, renderstring_);
       }
       if (((bitField0_ & 0x00000200) == 0x00000200)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(10, renderstring_);
-      }
-      if (((bitField0_ & 0x00000400) == 0x00000400)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(11, swapbuffers_);
+          .computeMessageSize(10, setscreen_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1047,11 +1019,10 @@ public final class Lm {
           getCreatefontFieldBuilder();
           getDestroyfontFieldBuilder();
           getPrintstringFieldBuilder();
-          getCreatestringFieldBuilder();
           getDestroystringFieldBuilder();
           getPopulatestringFieldBuilder();
           getRenderstringFieldBuilder();
-          getSwapbuffersFieldBuilder();
+          getSetscreenFieldBuilder();
         }
       }
       private static Builder create() {
@@ -1092,36 +1063,30 @@ public final class Lm {
           printstringBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000020);
-        if (createstringBuilder_ == null) {
-          createstring_ = lm.Lm.CreateString.getDefaultInstance();
-        } else {
-          createstringBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000040);
         if (destroystringBuilder_ == null) {
           destroystring_ = lm.Lm.DestroyString.getDefaultInstance();
         } else {
           destroystringBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000040);
         if (populatestringBuilder_ == null) {
           populatestring_ = lm.Lm.PopulateString.getDefaultInstance();
         } else {
           populatestringBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000080);
         if (renderstringBuilder_ == null) {
           renderstring_ = lm.Lm.RenderString.getDefaultInstance();
         } else {
           renderstringBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000200);
-        if (swapbuffersBuilder_ == null) {
-          swapbuffers_ = lm.Lm.SwapBuffers.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        if (setscreenBuilder_ == null) {
+          setscreen_ = lm.Lm.SetScreen.getDefaultInstance();
         } else {
-          swapbuffersBuilder_.clear();
+          setscreenBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
 
@@ -1197,42 +1162,34 @@ public final class Lm {
         if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
           to_bitField0_ |= 0x00000040;
         }
-        if (createstringBuilder_ == null) {
-          result.createstring_ = createstring_;
-        } else {
-          result.createstring_ = createstringBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-          to_bitField0_ |= 0x00000080;
-        }
         if (destroystringBuilder_ == null) {
           result.destroystring_ = destroystring_;
         } else {
           result.destroystring_ = destroystringBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
-          to_bitField0_ |= 0x00000100;
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000080;
         }
         if (populatestringBuilder_ == null) {
           result.populatestring_ = populatestring_;
         } else {
           result.populatestring_ = populatestringBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
-          to_bitField0_ |= 0x00000200;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000100;
         }
         if (renderstringBuilder_ == null) {
           result.renderstring_ = renderstring_;
         } else {
           result.renderstring_ = renderstringBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
-          to_bitField0_ |= 0x00000400;
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+          to_bitField0_ |= 0x00000200;
         }
-        if (swapbuffersBuilder_ == null) {
-          result.swapbuffers_ = swapbuffers_;
+        if (setscreenBuilder_ == null) {
+          result.setscreen_ = setscreen_;
         } else {
-          result.swapbuffers_ = swapbuffersBuilder_.build();
+          result.setscreen_ = setscreenBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -1268,9 +1225,6 @@ public final class Lm {
         if (other.hasPrintstring()) {
           mergePrintstring(other.getPrintstring());
         }
-        if (other.hasCreatestring()) {
-          mergeCreatestring(other.getCreatestring());
-        }
         if (other.hasDestroystring()) {
           mergeDestroystring(other.getDestroystring());
         }
@@ -1280,8 +1234,8 @@ public final class Lm {
         if (other.hasRenderstring()) {
           mergeRenderstring(other.getRenderstring());
         }
-        if (other.hasSwapbuffers()) {
-          mergeSwapbuffers(other.getSwapbuffers());
+        if (other.hasSetscreen()) {
+          mergeSetscreen(other.getSetscreen());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1322,12 +1276,6 @@ public final class Lm {
             return false;
           }
         }
-        if (hasCreatestring()) {
-          if (!getCreatestring().isInitialized()) {
-            
-            return false;
-          }
-        }
         if (hasDestroystring()) {
           if (!getDestroystring().isInitialized()) {
             
@@ -1342,6 +1290,12 @@ public final class Lm {
         }
         if (hasRenderstring()) {
           if (!getRenderstring().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasSetscreen()) {
+          if (!getSetscreen().isInitialized()) {
             
             return false;
           }
@@ -1983,133 +1937,17 @@ public final class Lm {
         return printstringBuilder_;
       }
 
-      private lm.Lm.CreateString createstring_ = lm.Lm.CreateString.getDefaultInstance();
-      private com.google.protobuf.SingleFieldBuilder<
-          lm.Lm.CreateString, lm.Lm.CreateString.Builder, lm.Lm.CreateStringOrBuilder> createstringBuilder_;
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public boolean hasCreatestring() {
-        return ((bitField0_ & 0x00000040) == 0x00000040);
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public lm.Lm.CreateString getCreatestring() {
-        if (createstringBuilder_ == null) {
-          return createstring_;
-        } else {
-          return createstringBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public Builder setCreatestring(lm.Lm.CreateString value) {
-        if (createstringBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          createstring_ = value;
-          onChanged();
-        } else {
-          createstringBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000040;
-        return this;
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public Builder setCreatestring(
-          lm.Lm.CreateString.Builder builderForValue) {
-        if (createstringBuilder_ == null) {
-          createstring_ = builderForValue.build();
-          onChanged();
-        } else {
-          createstringBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000040;
-        return this;
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public Builder mergeCreatestring(lm.Lm.CreateString value) {
-        if (createstringBuilder_ == null) {
-          if (((bitField0_ & 0x00000040) == 0x00000040) &&
-              createstring_ != lm.Lm.CreateString.getDefaultInstance()) {
-            createstring_ =
-              lm.Lm.CreateString.newBuilder(createstring_).mergeFrom(value).buildPartial();
-          } else {
-            createstring_ = value;
-          }
-          onChanged();
-        } else {
-          createstringBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000040;
-        return this;
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public Builder clearCreatestring() {
-        if (createstringBuilder_ == null) {
-          createstring_ = lm.Lm.CreateString.getDefaultInstance();
-          onChanged();
-        } else {
-          createstringBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000040);
-        return this;
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public lm.Lm.CreateString.Builder getCreatestringBuilder() {
-        bitField0_ |= 0x00000040;
-        onChanged();
-        return getCreatestringFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      public lm.Lm.CreateStringOrBuilder getCreatestringOrBuilder() {
-        if (createstringBuilder_ != null) {
-          return createstringBuilder_.getMessageOrBuilder();
-        } else {
-          return createstring_;
-        }
-      }
-      /**
-       * <code>optional .lm.CreateString createstring = 7;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          lm.Lm.CreateString, lm.Lm.CreateString.Builder, lm.Lm.CreateStringOrBuilder> 
-          getCreatestringFieldBuilder() {
-        if (createstringBuilder_ == null) {
-          createstringBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              lm.Lm.CreateString, lm.Lm.CreateString.Builder, lm.Lm.CreateStringOrBuilder>(
-                  getCreatestring(),
-                  getParentForChildren(),
-                  isClean());
-          createstring_ = null;
-        }
-        return createstringBuilder_;
-      }
-
       private lm.Lm.DestroyString destroystring_ = lm.Lm.DestroyString.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
           lm.Lm.DestroyString, lm.Lm.DestroyString.Builder, lm.Lm.DestroyStringOrBuilder> destroystringBuilder_;
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public boolean hasDestroystring() {
-        return ((bitField0_ & 0x00000080) == 0x00000080);
+        return ((bitField0_ & 0x00000040) == 0x00000040);
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public lm.Lm.DestroyString getDestroystring() {
         if (destroystringBuilder_ == null) {
@@ -2119,7 +1957,7 @@ public final class Lm {
         }
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public Builder setDestroystring(lm.Lm.DestroyString value) {
         if (destroystringBuilder_ == null) {
@@ -2131,11 +1969,11 @@ public final class Lm {
         } else {
           destroystringBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public Builder setDestroystring(
           lm.Lm.DestroyString.Builder builderForValue) {
@@ -2145,15 +1983,15 @@ public final class Lm {
         } else {
           destroystringBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public Builder mergeDestroystring(lm.Lm.DestroyString value) {
         if (destroystringBuilder_ == null) {
-          if (((bitField0_ & 0x00000080) == 0x00000080) &&
+          if (((bitField0_ & 0x00000040) == 0x00000040) &&
               destroystring_ != lm.Lm.DestroyString.getDefaultInstance()) {
             destroystring_ =
               lm.Lm.DestroyString.newBuilder(destroystring_).mergeFrom(value).buildPartial();
@@ -2164,11 +2002,11 @@ public final class Lm {
         } else {
           destroystringBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public Builder clearDestroystring() {
         if (destroystringBuilder_ == null) {
@@ -2177,19 +2015,19 @@ public final class Lm {
         } else {
           destroystringBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public lm.Lm.DestroyString.Builder getDestroystringBuilder() {
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000040;
         onChanged();
         return getDestroystringFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       public lm.Lm.DestroyStringOrBuilder getDestroystringOrBuilder() {
         if (destroystringBuilder_ != null) {
@@ -2199,7 +2037,7 @@ public final class Lm {
         }
       }
       /**
-       * <code>optional .lm.DestroyString destroystring = 8;</code>
+       * <code>optional .lm.DestroyString destroystring = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           lm.Lm.DestroyString, lm.Lm.DestroyString.Builder, lm.Lm.DestroyStringOrBuilder> 
@@ -2219,13 +2057,13 @@ public final class Lm {
       private com.google.protobuf.SingleFieldBuilder<
           lm.Lm.PopulateString, lm.Lm.PopulateString.Builder, lm.Lm.PopulateStringOrBuilder> populatestringBuilder_;
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public boolean hasPopulatestring() {
-        return ((bitField0_ & 0x00000100) == 0x00000100);
+        return ((bitField0_ & 0x00000080) == 0x00000080);
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public lm.Lm.PopulateString getPopulatestring() {
         if (populatestringBuilder_ == null) {
@@ -2235,7 +2073,7 @@ public final class Lm {
         }
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public Builder setPopulatestring(lm.Lm.PopulateString value) {
         if (populatestringBuilder_ == null) {
@@ -2247,11 +2085,11 @@ public final class Lm {
         } else {
           populatestringBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000080;
         return this;
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public Builder setPopulatestring(
           lm.Lm.PopulateString.Builder builderForValue) {
@@ -2261,15 +2099,15 @@ public final class Lm {
         } else {
           populatestringBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000080;
         return this;
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public Builder mergePopulatestring(lm.Lm.PopulateString value) {
         if (populatestringBuilder_ == null) {
-          if (((bitField0_ & 0x00000100) == 0x00000100) &&
+          if (((bitField0_ & 0x00000080) == 0x00000080) &&
               populatestring_ != lm.Lm.PopulateString.getDefaultInstance()) {
             populatestring_ =
               lm.Lm.PopulateString.newBuilder(populatestring_).mergeFrom(value).buildPartial();
@@ -2280,11 +2118,11 @@ public final class Lm {
         } else {
           populatestringBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000080;
         return this;
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public Builder clearPopulatestring() {
         if (populatestringBuilder_ == null) {
@@ -2293,19 +2131,19 @@ public final class Lm {
         } else {
           populatestringBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000100);
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public lm.Lm.PopulateString.Builder getPopulatestringBuilder() {
-        bitField0_ |= 0x00000100;
+        bitField0_ |= 0x00000080;
         onChanged();
         return getPopulatestringFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       public lm.Lm.PopulateStringOrBuilder getPopulatestringOrBuilder() {
         if (populatestringBuilder_ != null) {
@@ -2315,7 +2153,7 @@ public final class Lm {
         }
       }
       /**
-       * <code>optional .lm.PopulateString populatestring = 9;</code>
+       * <code>optional .lm.PopulateString populatestring = 8;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           lm.Lm.PopulateString, lm.Lm.PopulateString.Builder, lm.Lm.PopulateStringOrBuilder> 
@@ -2335,13 +2173,13 @@ public final class Lm {
       private com.google.protobuf.SingleFieldBuilder<
           lm.Lm.RenderString, lm.Lm.RenderString.Builder, lm.Lm.RenderStringOrBuilder> renderstringBuilder_;
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public boolean hasRenderstring() {
-        return ((bitField0_ & 0x00000200) == 0x00000200);
+        return ((bitField0_ & 0x00000100) == 0x00000100);
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public lm.Lm.RenderString getRenderstring() {
         if (renderstringBuilder_ == null) {
@@ -2351,7 +2189,7 @@ public final class Lm {
         }
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public Builder setRenderstring(lm.Lm.RenderString value) {
         if (renderstringBuilder_ == null) {
@@ -2363,11 +2201,11 @@ public final class Lm {
         } else {
           renderstringBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000100;
         return this;
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public Builder setRenderstring(
           lm.Lm.RenderString.Builder builderForValue) {
@@ -2377,15 +2215,15 @@ public final class Lm {
         } else {
           renderstringBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000100;
         return this;
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public Builder mergeRenderstring(lm.Lm.RenderString value) {
         if (renderstringBuilder_ == null) {
-          if (((bitField0_ & 0x00000200) == 0x00000200) &&
+          if (((bitField0_ & 0x00000100) == 0x00000100) &&
               renderstring_ != lm.Lm.RenderString.getDefaultInstance()) {
             renderstring_ =
               lm.Lm.RenderString.newBuilder(renderstring_).mergeFrom(value).buildPartial();
@@ -2396,11 +2234,11 @@ public final class Lm {
         } else {
           renderstringBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000100;
         return this;
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public Builder clearRenderstring() {
         if (renderstringBuilder_ == null) {
@@ -2409,19 +2247,19 @@ public final class Lm {
         } else {
           renderstringBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000200);
+        bitField0_ = (bitField0_ & ~0x00000100);
         return this;
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public lm.Lm.RenderString.Builder getRenderstringBuilder() {
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000100;
         onChanged();
         return getRenderstringFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       public lm.Lm.RenderStringOrBuilder getRenderstringOrBuilder() {
         if (renderstringBuilder_ != null) {
@@ -2431,7 +2269,7 @@ public final class Lm {
         }
       }
       /**
-       * <code>optional .lm.RenderString renderstring = 10;</code>
+       * <code>optional .lm.RenderString renderstring = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           lm.Lm.RenderString, lm.Lm.RenderString.Builder, lm.Lm.RenderStringOrBuilder> 
@@ -2447,120 +2285,120 @@ public final class Lm {
         return renderstringBuilder_;
       }
 
-      private lm.Lm.SwapBuffers swapbuffers_ = lm.Lm.SwapBuffers.getDefaultInstance();
+      private lm.Lm.SetScreen setscreen_ = lm.Lm.SetScreen.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
-          lm.Lm.SwapBuffers, lm.Lm.SwapBuffers.Builder, lm.Lm.SwapBuffersOrBuilder> swapbuffersBuilder_;
+          lm.Lm.SetScreen, lm.Lm.SetScreen.Builder, lm.Lm.SetScreenOrBuilder> setscreenBuilder_;
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public boolean hasSwapbuffers() {
-        return ((bitField0_ & 0x00000400) == 0x00000400);
+      public boolean hasSetscreen() {
+        return ((bitField0_ & 0x00000200) == 0x00000200);
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public lm.Lm.SwapBuffers getSwapbuffers() {
-        if (swapbuffersBuilder_ == null) {
-          return swapbuffers_;
+      public lm.Lm.SetScreen getSetscreen() {
+        if (setscreenBuilder_ == null) {
+          return setscreen_;
         } else {
-          return swapbuffersBuilder_.getMessage();
+          return setscreenBuilder_.getMessage();
         }
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public Builder setSwapbuffers(lm.Lm.SwapBuffers value) {
-        if (swapbuffersBuilder_ == null) {
+      public Builder setSetscreen(lm.Lm.SetScreen value) {
+        if (setscreenBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          swapbuffers_ = value;
+          setscreen_ = value;
           onChanged();
         } else {
-          swapbuffersBuilder_.setMessage(value);
+          setscreenBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public Builder setSwapbuffers(
-          lm.Lm.SwapBuffers.Builder builderForValue) {
-        if (swapbuffersBuilder_ == null) {
-          swapbuffers_ = builderForValue.build();
+      public Builder setSetscreen(
+          lm.Lm.SetScreen.Builder builderForValue) {
+        if (setscreenBuilder_ == null) {
+          setscreen_ = builderForValue.build();
           onChanged();
         } else {
-          swapbuffersBuilder_.setMessage(builderForValue.build());
+          setscreenBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public Builder mergeSwapbuffers(lm.Lm.SwapBuffers value) {
-        if (swapbuffersBuilder_ == null) {
-          if (((bitField0_ & 0x00000400) == 0x00000400) &&
-              swapbuffers_ != lm.Lm.SwapBuffers.getDefaultInstance()) {
-            swapbuffers_ =
-              lm.Lm.SwapBuffers.newBuilder(swapbuffers_).mergeFrom(value).buildPartial();
+      public Builder mergeSetscreen(lm.Lm.SetScreen value) {
+        if (setscreenBuilder_ == null) {
+          if (((bitField0_ & 0x00000200) == 0x00000200) &&
+              setscreen_ != lm.Lm.SetScreen.getDefaultInstance()) {
+            setscreen_ =
+              lm.Lm.SetScreen.newBuilder(setscreen_).mergeFrom(value).buildPartial();
           } else {
-            swapbuffers_ = value;
+            setscreen_ = value;
           }
           onChanged();
         } else {
-          swapbuffersBuilder_.mergeFrom(value);
+          setscreenBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00000200;
         return this;
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public Builder clearSwapbuffers() {
-        if (swapbuffersBuilder_ == null) {
-          swapbuffers_ = lm.Lm.SwapBuffers.getDefaultInstance();
+      public Builder clearSetscreen() {
+        if (setscreenBuilder_ == null) {
+          setscreen_ = lm.Lm.SetScreen.getDefaultInstance();
           onChanged();
         } else {
-          swapbuffersBuilder_.clear();
+          setscreenBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000400);
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public lm.Lm.SwapBuffers.Builder getSwapbuffersBuilder() {
-        bitField0_ |= 0x00000400;
+      public lm.Lm.SetScreen.Builder getSetscreenBuilder() {
+        bitField0_ |= 0x00000200;
         onChanged();
-        return getSwapbuffersFieldBuilder().getBuilder();
+        return getSetscreenFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
-      public lm.Lm.SwapBuffersOrBuilder getSwapbuffersOrBuilder() {
-        if (swapbuffersBuilder_ != null) {
-          return swapbuffersBuilder_.getMessageOrBuilder();
+      public lm.Lm.SetScreenOrBuilder getSetscreenOrBuilder() {
+        if (setscreenBuilder_ != null) {
+          return setscreenBuilder_.getMessageOrBuilder();
         } else {
-          return swapbuffers_;
+          return setscreen_;
         }
       }
       /**
-       * <code>optional .lm.SwapBuffers swapbuffers = 11;</code>
+       * <code>optional .lm.SetScreen setscreen = 10;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          lm.Lm.SwapBuffers, lm.Lm.SwapBuffers.Builder, lm.Lm.SwapBuffersOrBuilder> 
-          getSwapbuffersFieldBuilder() {
-        if (swapbuffersBuilder_ == null) {
-          swapbuffersBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              lm.Lm.SwapBuffers, lm.Lm.SwapBuffers.Builder, lm.Lm.SwapBuffersOrBuilder>(
-                  getSwapbuffers(),
+          lm.Lm.SetScreen, lm.Lm.SetScreen.Builder, lm.Lm.SetScreenOrBuilder> 
+          getSetscreenFieldBuilder() {
+        if (setscreenBuilder_ == null) {
+          setscreenBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              lm.Lm.SetScreen, lm.Lm.SetScreen.Builder, lm.Lm.SetScreenOrBuilder>(
+                  getSetscreen(),
                   getParentForChildren(),
                   isClean());
-          swapbuffers_ = null;
+          setscreen_ = null;
         }
-        return swapbuffersBuilder_;
+        return setscreenBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:lm.Request)
@@ -4918,13 +4756,18 @@ public final class Lm {
     int getSize();
 
     /**
-     * <code>required bytes font = 3;</code>
+     * <code>required string font = 3;</code>
      */
     boolean hasFont();
     /**
-     * <code>required bytes font = 3;</code>
+     * <code>required string font = 3;</code>
      */
-    com.google.protobuf.ByteString getFont();
+    java.lang.String getFont();
+    /**
+     * <code>required string font = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getFontBytes();
   }
   /**
    * Protobuf type {@code lm.CreateFont}
@@ -4989,8 +4832,9 @@ public final class Lm {
               break;
             }
             case 26: {
+              com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000004;
-              font_ = input.readBytes();
+              font_ = bs;
               break;
             }
           }
@@ -5064,24 +4908,51 @@ public final class Lm {
     }
 
     public static final int FONT_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString font_;
+    private java.lang.Object font_;
     /**
-     * <code>required bytes font = 3;</code>
+     * <code>required string font = 3;</code>
      */
     public boolean hasFont() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required bytes font = 3;</code>
+     * <code>required string font = 3;</code>
      */
-    public com.google.protobuf.ByteString getFont() {
-      return font_;
+    public java.lang.String getFont() {
+      java.lang.Object ref = font_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          font_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string font = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getFontBytes() {
+      java.lang.Object ref = font_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        font_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private void initFields() {
       id_ = 0;
       size_ = 0;
-      font_ = com.google.protobuf.ByteString.EMPTY;
+      font_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5115,7 +4986,7 @@ public final class Lm {
         output.writeUInt32(2, size_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, font_);
+        output.writeBytes(3, getFontBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -5136,7 +5007,7 @@ public final class Lm {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, font_);
+          .computeBytesSize(3, getFontBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -5259,7 +5130,7 @@ public final class Lm {
         bitField0_ = (bitField0_ & ~0x00000001);
         size_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        font_ = com.google.protobuf.ByteString.EMPTY;
+        font_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -5324,7 +5195,9 @@ public final class Lm {
           setSize(other.getSize());
         }
         if (other.hasFont()) {
-          setFont(other.getFont());
+          bitField0_ |= 0x00000004;
+          font_ = other.font_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -5429,23 +5302,51 @@ public final class Lm {
         return this;
       }
 
-      private com.google.protobuf.ByteString font_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object font_ = "";
       /**
-       * <code>required bytes font = 3;</code>
+       * <code>required string font = 3;</code>
        */
       public boolean hasFont() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required bytes font = 3;</code>
+       * <code>required string font = 3;</code>
        */
-      public com.google.protobuf.ByteString getFont() {
-        return font_;
+      public java.lang.String getFont() {
+        java.lang.Object ref = font_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            font_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>required bytes font = 3;</code>
+       * <code>required string font = 3;</code>
        */
-      public Builder setFont(com.google.protobuf.ByteString value) {
+      public com.google.protobuf.ByteString
+          getFontBytes() {
+        java.lang.Object ref = font_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          font_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string font = 3;</code>
+       */
+      public Builder setFont(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -5455,11 +5356,24 @@ public final class Lm {
         return this;
       }
       /**
-       * <code>required bytes font = 3;</code>
+       * <code>required string font = 3;</code>
        */
       public Builder clearFont() {
         bitField0_ = (bitField0_ & ~0x00000004);
         font_ = getDefaultInstance().getFont();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string font = 3;</code>
+       */
+      public Builder setFontBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        font_ = value;
         onChanged();
         return this;
       }
@@ -5920,13 +5834,18 @@ public final class Lm {
     int getFont();
 
     /**
-     * <code>required bytes string = 4;</code>
+     * <code>required string text = 4;</code>
      */
-    boolean hasString();
+    boolean hasText();
     /**
-     * <code>required bytes string = 4;</code>
+     * <code>required string text = 4;</code>
      */
-    com.google.protobuf.ByteString getString();
+    java.lang.String getText();
+    /**
+     * <code>required string text = 4;</code>
+     */
+    com.google.protobuf.ByteString
+        getTextBytes();
   }
   /**
    * Protobuf type {@code lm.PrintString}
@@ -6012,8 +5931,9 @@ public final class Lm {
               break;
             }
             case 34: {
+              com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000008;
-              string_ = input.readBytes();
+              text_ = bs;
               break;
             }
           }
@@ -6113,26 +6033,53 @@ public final class Lm {
       return font_;
     }
 
-    public static final int STRING_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString string_;
+    public static final int TEXT_FIELD_NUMBER = 4;
+    private java.lang.Object text_;
     /**
-     * <code>required bytes string = 4;</code>
+     * <code>required string text = 4;</code>
      */
-    public boolean hasString() {
+    public boolean hasText() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>required bytes string = 4;</code>
+     * <code>required string text = 4;</code>
      */
-    public com.google.protobuf.ByteString getString() {
-      return string_;
+    public java.lang.String getText() {
+      java.lang.Object ref = text_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          text_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string text = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTextBytes() {
+      java.lang.Object ref = text_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        text_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private void initFields() {
       pos_ = lm.Lm.Position.getDefaultInstance();
       rgb_ = lm.Lm.RGB.getDefaultInstance();
       font_ = 0;
-      string_ = com.google.protobuf.ByteString.EMPTY;
+      text_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -6152,7 +6099,7 @@ public final class Lm {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasString()) {
+      if (!hasText()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -6181,7 +6128,7 @@ public final class Lm {
         output.writeUInt32(3, font_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, string_);
+        output.writeBytes(4, getTextBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -6206,7 +6153,7 @@ public final class Lm {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, string_);
+          .computeBytesSize(4, getTextBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -6341,7 +6288,7 @@ public final class Lm {
         bitField0_ = (bitField0_ & ~0x00000002);
         font_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
-        string_ = com.google.protobuf.ByteString.EMPTY;
+        text_ = "";
         bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
@@ -6394,7 +6341,7 @@ public final class Lm {
         if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000008;
         }
-        result.string_ = string_;
+        result.text_ = text_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -6420,8 +6367,10 @@ public final class Lm {
         if (other.hasFont()) {
           setFont(other.getFont());
         }
-        if (other.hasString()) {
-          setString(other.getString());
+        if (other.hasText()) {
+          bitField0_ |= 0x00000008;
+          text_ = other.text_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -6440,7 +6389,7 @@ public final class Lm {
           
           return false;
         }
-        if (!hasString()) {
+        if (!hasText()) {
           
           return false;
         }
@@ -6738,37 +6687,78 @@ public final class Lm {
         return this;
       }
 
-      private com.google.protobuf.ByteString string_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object text_ = "";
       /**
-       * <code>required bytes string = 4;</code>
+       * <code>required string text = 4;</code>
        */
-      public boolean hasString() {
+      public boolean hasText() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>required bytes string = 4;</code>
+       * <code>required string text = 4;</code>
        */
-      public com.google.protobuf.ByteString getString() {
-        return string_;
+      public java.lang.String getText() {
+        java.lang.Object ref = text_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            text_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>required bytes string = 4;</code>
+       * <code>required string text = 4;</code>
        */
-      public Builder setString(com.google.protobuf.ByteString value) {
+      public com.google.protobuf.ByteString
+          getTextBytes() {
+        java.lang.Object ref = text_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          text_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string text = 4;</code>
+       */
+      public Builder setText(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000008;
-        string_ = value;
+        text_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required bytes string = 4;</code>
+       * <code>required string text = 4;</code>
        */
-      public Builder clearString() {
+      public Builder clearText() {
         bitField0_ = (bitField0_ & ~0x00000008);
-        string_ = getDefaultInstance().getString();
+        text_ = getDefaultInstance().getText();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string text = 4;</code>
+       */
+      public Builder setTextBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        text_ = value;
         onChanged();
         return this;
       }
@@ -6782,411 +6772,6 @@ public final class Lm {
     }
 
     // @@protoc_insertion_point(class_scope:lm.PrintString)
-  }
-
-  public interface CreateStringOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:lm.CreateString)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>required uint32 id = 1;</code>
-     */
-    boolean hasId();
-    /**
-     * <code>required uint32 id = 1;</code>
-     */
-    int getId();
-  }
-  /**
-   * Protobuf type {@code lm.CreateString}
-   */
-  public static final class CreateString extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:lm.CreateString)
-      CreateStringOrBuilder {
-    // Use CreateString.newBuilder() to construct.
-    private CreateString(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-      this.unknownFields = builder.getUnknownFields();
-    }
-    private CreateString(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final CreateString defaultInstance;
-    public static CreateString getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public CreateString getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
-      return this.unknownFields;
-    }
-    private CreateString(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 8: {
-              bitField0_ |= 0x00000001;
-              id_ = input.readUInt32();
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return lm.Lm.internal_static_lm_CreateString_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return lm.Lm.internal_static_lm_CreateString_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              lm.Lm.CreateString.class, lm.Lm.CreateString.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<CreateString> PARSER =
-        new com.google.protobuf.AbstractParser<CreateString>() {
-      public CreateString parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new CreateString(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<CreateString> getParserForType() {
-      return PARSER;
-    }
-
-    private int bitField0_;
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_;
-    /**
-     * <code>required uint32 id = 1;</code>
-     */
-    public boolean hasId() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required uint32 id = 1;</code>
-     */
-    public int getId() {
-      return id_;
-    }
-
-    private void initFields() {
-      id_ = 0;
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      if (!hasId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeUInt32(1, id_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(1, id_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static lm.Lm.CreateString parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static lm.Lm.CreateString parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static lm.Lm.CreateString parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static lm.Lm.CreateString parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static lm.Lm.CreateString parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static lm.Lm.CreateString parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static lm.Lm.CreateString parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static lm.Lm.CreateString parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static lm.Lm.CreateString parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static lm.Lm.CreateString parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(lm.Lm.CreateString prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code lm.CreateString}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:lm.CreateString)
-        lm.Lm.CreateStringOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return lm.Lm.internal_static_lm_CreateString_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return lm.Lm.internal_static_lm_CreateString_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                lm.Lm.CreateString.class, lm.Lm.CreateString.Builder.class);
-      }
-
-      // Construct using lm.Lm.CreateString.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        id_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return lm.Lm.internal_static_lm_CreateString_descriptor;
-      }
-
-      public lm.Lm.CreateString getDefaultInstanceForType() {
-        return lm.Lm.CreateString.getDefaultInstance();
-      }
-
-      public lm.Lm.CreateString build() {
-        lm.Lm.CreateString result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public lm.Lm.CreateString buildPartial() {
-        lm.Lm.CreateString result = new lm.Lm.CreateString(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.id_ = id_;
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof lm.Lm.CreateString) {
-          return mergeFrom((lm.Lm.CreateString)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(lm.Lm.CreateString other) {
-        if (other == lm.Lm.CreateString.getDefaultInstance()) return this;
-        if (other.hasId()) {
-          setId(other.getId());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        if (!hasId()) {
-          
-          return false;
-        }
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        lm.Lm.CreateString parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (lm.Lm.CreateString) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      private int id_ ;
-      /**
-       * <code>required uint32 id = 1;</code>
-       */
-      public boolean hasId() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required uint32 id = 1;</code>
-       */
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <code>required uint32 id = 1;</code>
-       */
-      public Builder setId(int value) {
-        bitField0_ |= 0x00000001;
-        id_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required uint32 id = 1;</code>
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:lm.CreateString)
-    }
-
-    static {
-      defaultInstance = new CreateString(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:lm.CreateString)
   }
 
   public interface DestroyStringOrBuilder extends
@@ -7617,13 +7202,18 @@ public final class Lm {
     int getFont();
 
     /**
-     * <code>required bytes string = 3;</code>
+     * <code>required string text = 3;</code>
      */
-    boolean hasString();
+    boolean hasText();
     /**
-     * <code>required bytes string = 3;</code>
+     * <code>required string text = 3;</code>
      */
-    com.google.protobuf.ByteString getString();
+    java.lang.String getText();
+    /**
+     * <code>required string text = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getTextBytes();
   }
   /**
    * Protobuf type {@code lm.PopulateString}
@@ -7688,8 +7278,9 @@ public final class Lm {
               break;
             }
             case 26: {
+              com.google.protobuf.ByteString bs = input.readBytes();
               bitField0_ |= 0x00000004;
-              string_ = input.readBytes();
+              text_ = bs;
               break;
             }
           }
@@ -7762,25 +7353,52 @@ public final class Lm {
       return font_;
     }
 
-    public static final int STRING_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString string_;
+    public static final int TEXT_FIELD_NUMBER = 3;
+    private java.lang.Object text_;
     /**
-     * <code>required bytes string = 3;</code>
+     * <code>required string text = 3;</code>
      */
-    public boolean hasString() {
+    public boolean hasText() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required bytes string = 3;</code>
+     * <code>required string text = 3;</code>
      */
-    public com.google.protobuf.ByteString getString() {
-      return string_;
+    public java.lang.String getText() {
+      java.lang.Object ref = text_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          text_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string text = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTextBytes() {
+      java.lang.Object ref = text_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        text_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private void initFields() {
       id_ = 0;
       font_ = 0;
-      string_ = com.google.protobuf.ByteString.EMPTY;
+      text_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -7796,7 +7414,7 @@ public final class Lm {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (!hasString()) {
+      if (!hasText()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -7814,7 +7432,7 @@ public final class Lm {
         output.writeUInt32(2, font_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, string_);
+        output.writeBytes(3, getTextBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -7835,7 +7453,7 @@ public final class Lm {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, string_);
+          .computeBytesSize(3, getTextBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -7958,7 +7576,7 @@ public final class Lm {
         bitField0_ = (bitField0_ & ~0x00000001);
         font_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        string_ = com.google.protobuf.ByteString.EMPTY;
+        text_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -7999,7 +7617,7 @@ public final class Lm {
         if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
           to_bitField0_ |= 0x00000004;
         }
-        result.string_ = string_;
+        result.text_ = text_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -8022,8 +7640,10 @@ public final class Lm {
         if (other.hasFont()) {
           setFont(other.getFont());
         }
-        if (other.hasString()) {
-          setString(other.getString());
+        if (other.hasText()) {
+          bitField0_ |= 0x00000004;
+          text_ = other.text_;
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -8038,7 +7658,7 @@ public final class Lm {
           
           return false;
         }
-        if (!hasString()) {
+        if (!hasText()) {
           
           return false;
         }
@@ -8128,37 +7748,78 @@ public final class Lm {
         return this;
       }
 
-      private com.google.protobuf.ByteString string_ = com.google.protobuf.ByteString.EMPTY;
+      private java.lang.Object text_ = "";
       /**
-       * <code>required bytes string = 3;</code>
+       * <code>required string text = 3;</code>
        */
-      public boolean hasString() {
+      public boolean hasText() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required bytes string = 3;</code>
+       * <code>required string text = 3;</code>
        */
-      public com.google.protobuf.ByteString getString() {
-        return string_;
+      public java.lang.String getText() {
+        java.lang.Object ref = text_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            text_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
-       * <code>required bytes string = 3;</code>
+       * <code>required string text = 3;</code>
        */
-      public Builder setString(com.google.protobuf.ByteString value) {
+      public com.google.protobuf.ByteString
+          getTextBytes() {
+        java.lang.Object ref = text_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          text_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string text = 3;</code>
+       */
+      public Builder setText(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000004;
-        string_ = value;
+        text_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required bytes string = 3;</code>
+       * <code>required string text = 3;</code>
        */
-      public Builder clearString() {
+      public Builder clearText() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        string_ = getDefaultInstance().getString();
+        text_ = getDefaultInstance().getText();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string text = 3;</code>
+       */
+      public Builder setTextBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        text_ = value;
         onChanged();
         return this;
       }
@@ -8199,6 +7860,19 @@ public final class Lm {
      * <code>required .lm.Position pos = 2;</code>
      */
     lm.Lm.PositionOrBuilder getPosOrBuilder();
+
+    /**
+     * <code>required .lm.RGB rgb = 3;</code>
+     */
+    boolean hasRgb();
+    /**
+     * <code>required .lm.RGB rgb = 3;</code>
+     */
+    lm.Lm.RGB getRgb();
+    /**
+     * <code>required .lm.RGB rgb = 3;</code>
+     */
+    lm.Lm.RGBOrBuilder getRgbOrBuilder();
   }
   /**
    * Protobuf type {@code lm.RenderString}
@@ -8268,6 +7942,19 @@ public final class Lm {
                 pos_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000002;
+              break;
+            }
+            case 26: {
+              lm.Lm.RGB.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = rgb_.toBuilder();
+              }
+              rgb_ = input.readMessage(lm.Lm.RGB.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(rgb_);
+                rgb_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
               break;
             }
           }
@@ -8346,9 +8033,31 @@ public final class Lm {
       return pos_;
     }
 
+    public static final int RGB_FIELD_NUMBER = 3;
+    private lm.Lm.RGB rgb_;
+    /**
+     * <code>required .lm.RGB rgb = 3;</code>
+     */
+    public boolean hasRgb() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required .lm.RGB rgb = 3;</code>
+     */
+    public lm.Lm.RGB getRgb() {
+      return rgb_;
+    }
+    /**
+     * <code>required .lm.RGB rgb = 3;</code>
+     */
+    public lm.Lm.RGBOrBuilder getRgbOrBuilder() {
+      return rgb_;
+    }
+
     private void initFields() {
       id_ = 0;
       pos_ = lm.Lm.Position.getDefaultInstance();
+      rgb_ = lm.Lm.RGB.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -8364,7 +8073,15 @@ public final class Lm {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!hasRgb()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       if (!getPos().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getRgb().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -8380,6 +8097,9 @@ public final class Lm {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, pos_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(3, rgb_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -8397,6 +8117,10 @@ public final class Lm {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, pos_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, rgb_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -8508,6 +8232,7 @@ public final class Lm {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getPosFieldBuilder();
+          getRgbFieldBuilder();
         }
       }
       private static Builder create() {
@@ -8524,6 +8249,12 @@ public final class Lm {
           posBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
+        if (rgbBuilder_ == null) {
+          rgb_ = lm.Lm.RGB.getDefaultInstance();
+        } else {
+          rgbBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -8564,6 +8295,14 @@ public final class Lm {
         } else {
           result.pos_ = posBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        if (rgbBuilder_ == null) {
+          result.rgb_ = rgb_;
+        } else {
+          result.rgb_ = rgbBuilder_.build();
+        }
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -8586,6 +8325,9 @@ public final class Lm {
         if (other.hasPos()) {
           mergePos(other.getPos());
         }
+        if (other.hasRgb()) {
+          mergeRgb(other.getRgb());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -8599,7 +8341,15 @@ public final class Lm {
           
           return false;
         }
+        if (!hasRgb()) {
+          
+          return false;
+        }
         if (!getPos().isInitialized()) {
+          
+          return false;
+        }
+        if (!getRgb().isInitialized()) {
           
           return false;
         }
@@ -8773,6 +8523,122 @@ public final class Lm {
         return posBuilder_;
       }
 
+      private lm.Lm.RGB rgb_ = lm.Lm.RGB.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          lm.Lm.RGB, lm.Lm.RGB.Builder, lm.Lm.RGBOrBuilder> rgbBuilder_;
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public boolean hasRgb() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public lm.Lm.RGB getRgb() {
+        if (rgbBuilder_ == null) {
+          return rgb_;
+        } else {
+          return rgbBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public Builder setRgb(lm.Lm.RGB value) {
+        if (rgbBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          rgb_ = value;
+          onChanged();
+        } else {
+          rgbBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public Builder setRgb(
+          lm.Lm.RGB.Builder builderForValue) {
+        if (rgbBuilder_ == null) {
+          rgb_ = builderForValue.build();
+          onChanged();
+        } else {
+          rgbBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public Builder mergeRgb(lm.Lm.RGB value) {
+        if (rgbBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+              rgb_ != lm.Lm.RGB.getDefaultInstance()) {
+            rgb_ =
+              lm.Lm.RGB.newBuilder(rgb_).mergeFrom(value).buildPartial();
+          } else {
+            rgb_ = value;
+          }
+          onChanged();
+        } else {
+          rgbBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000004;
+        return this;
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public Builder clearRgb() {
+        if (rgbBuilder_ == null) {
+          rgb_ = lm.Lm.RGB.getDefaultInstance();
+          onChanged();
+        } else {
+          rgbBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public lm.Lm.RGB.Builder getRgbBuilder() {
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return getRgbFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      public lm.Lm.RGBOrBuilder getRgbOrBuilder() {
+        if (rgbBuilder_ != null) {
+          return rgbBuilder_.getMessageOrBuilder();
+        } else {
+          return rgb_;
+        }
+      }
+      /**
+       * <code>required .lm.RGB rgb = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          lm.Lm.RGB, lm.Lm.RGB.Builder, lm.Lm.RGBOrBuilder> 
+          getRgbFieldBuilder() {
+        if (rgbBuilder_ == null) {
+          rgbBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              lm.Lm.RGB, lm.Lm.RGB.Builder, lm.Lm.RGBOrBuilder>(
+                  getRgb(),
+                  getParentForChildren(),
+                  isClean());
+          rgb_ = null;
+        }
+        return rgbBuilder_;
+      }
+
       // @@protoc_insertion_point(builder_scope:lm.RenderString)
     }
 
@@ -8784,30 +8650,44 @@ public final class Lm {
     // @@protoc_insertion_point(class_scope:lm.RenderString)
   }
 
-  public interface SwapBuffersOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:lm.SwapBuffers)
+  public interface SetScreenOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:lm.SetScreen)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>required string name = 1;</code>
+     */
+    boolean hasName();
+    /**
+     * <code>required string name = 1;</code>
+     */
+    java.lang.String getName();
+    /**
+     * <code>required string name = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
   }
   /**
-   * Protobuf type {@code lm.SwapBuffers}
+   * Protobuf type {@code lm.SetScreen}
    */
-  public static final class SwapBuffers extends
+  public static final class SetScreen extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:lm.SwapBuffers)
-      SwapBuffersOrBuilder {
-    // Use SwapBuffers.newBuilder() to construct.
-    private SwapBuffers(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:lm.SetScreen)
+      SetScreenOrBuilder {
+    // Use SetScreen.newBuilder() to construct.
+    private SetScreen(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
     }
-    private SwapBuffers(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+    private SetScreen(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
 
-    private static final SwapBuffers defaultInstance;
-    public static SwapBuffers getDefaultInstance() {
+    private static final SetScreen defaultInstance;
+    public static SetScreen getDefaultInstance() {
       return defaultInstance;
     }
 
-    public SwapBuffers getDefaultInstanceForType() {
+    public SetScreen getDefaultInstanceForType() {
       return defaultInstance;
     }
 
@@ -8817,11 +8697,12 @@ public final class Lm {
         getUnknownFields() {
       return this.unknownFields;
     }
-    private SwapBuffers(
+    private SetScreen(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       initFields();
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -8839,6 +8720,12 @@ public final class Lm {
               }
               break;
             }
+            case 10: {
+              com.google.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000001;
+              name_ = bs;
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -8853,32 +8740,76 @@ public final class Lm {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return lm.Lm.internal_static_lm_SwapBuffers_descriptor;
+      return lm.Lm.internal_static_lm_SetScreen_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return lm.Lm.internal_static_lm_SwapBuffers_fieldAccessorTable
+      return lm.Lm.internal_static_lm_SetScreen_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              lm.Lm.SwapBuffers.class, lm.Lm.SwapBuffers.Builder.class);
+              lm.Lm.SetScreen.class, lm.Lm.SetScreen.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<SwapBuffers> PARSER =
-        new com.google.protobuf.AbstractParser<SwapBuffers>() {
-      public SwapBuffers parsePartialFrom(
+    public static com.google.protobuf.Parser<SetScreen> PARSER =
+        new com.google.protobuf.AbstractParser<SetScreen>() {
+      public SetScreen parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new SwapBuffers(input, extensionRegistry);
+        return new SetScreen(input, extensionRegistry);
       }
     };
 
     @java.lang.Override
-    public com.google.protobuf.Parser<SwapBuffers> getParserForType() {
+    public com.google.protobuf.Parser<SetScreen> getParserForType() {
       return PARSER;
     }
 
+    private int bitField0_;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private java.lang.Object name_;
+    /**
+     * <code>required string name = 1;</code>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required string name = 1;</code>
+     */
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          name_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string name = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
+      name_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -8886,6 +8817,10 @@ public final class Lm {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      if (!hasName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -8893,6 +8828,9 @@ public final class Lm {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, getNameBytes());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -8902,6 +8840,10 @@ public final class Lm {
       if (size != -1) return size;
 
       size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, getNameBytes());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
@@ -8914,53 +8856,53 @@ public final class Lm {
       return super.writeReplace();
     }
 
-    public static lm.Lm.SwapBuffers parseFrom(
+    public static lm.Lm.SetScreen parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static lm.Lm.SwapBuffers parseFrom(
+    public static lm.Lm.SetScreen parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static lm.Lm.SwapBuffers parseFrom(byte[] data)
+    public static lm.Lm.SetScreen parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static lm.Lm.SwapBuffers parseFrom(
+    public static lm.Lm.SetScreen parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static lm.Lm.SwapBuffers parseFrom(java.io.InputStream input)
+    public static lm.Lm.SetScreen parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static lm.Lm.SwapBuffers parseFrom(
+    public static lm.Lm.SetScreen parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static lm.Lm.SwapBuffers parseDelimitedFrom(java.io.InputStream input)
+    public static lm.Lm.SetScreen parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static lm.Lm.SwapBuffers parseDelimitedFrom(
+    public static lm.Lm.SetScreen parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static lm.Lm.SwapBuffers parseFrom(
+    public static lm.Lm.SetScreen parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static lm.Lm.SwapBuffers parseFrom(
+    public static lm.Lm.SetScreen parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -8969,7 +8911,7 @@ public final class Lm {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(lm.Lm.SwapBuffers prototype) {
+    public static Builder newBuilder(lm.Lm.SetScreen prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -8981,25 +8923,25 @@ public final class Lm {
       return builder;
     }
     /**
-     * Protobuf type {@code lm.SwapBuffers}
+     * Protobuf type {@code lm.SetScreen}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:lm.SwapBuffers)
-        lm.Lm.SwapBuffersOrBuilder {
+        // @@protoc_insertion_point(builder_implements:lm.SetScreen)
+        lm.Lm.SetScreenOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return lm.Lm.internal_static_lm_SwapBuffers_descriptor;
+        return lm.Lm.internal_static_lm_SetScreen_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return lm.Lm.internal_static_lm_SwapBuffers_fieldAccessorTable
+        return lm.Lm.internal_static_lm_SetScreen_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                lm.Lm.SwapBuffers.class, lm.Lm.SwapBuffers.Builder.class);
+                lm.Lm.SetScreen.class, lm.Lm.SetScreen.Builder.class);
       }
 
-      // Construct using lm.Lm.SwapBuffers.newBuilder()
+      // Construct using lm.Lm.SetScreen.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -9019,6 +8961,8 @@ public final class Lm {
 
       public Builder clear() {
         super.clear();
+        name_ = "";
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -9028,43 +8972,59 @@ public final class Lm {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return lm.Lm.internal_static_lm_SwapBuffers_descriptor;
+        return lm.Lm.internal_static_lm_SetScreen_descriptor;
       }
 
-      public lm.Lm.SwapBuffers getDefaultInstanceForType() {
-        return lm.Lm.SwapBuffers.getDefaultInstance();
+      public lm.Lm.SetScreen getDefaultInstanceForType() {
+        return lm.Lm.SetScreen.getDefaultInstance();
       }
 
-      public lm.Lm.SwapBuffers build() {
-        lm.Lm.SwapBuffers result = buildPartial();
+      public lm.Lm.SetScreen build() {
+        lm.Lm.SetScreen result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public lm.Lm.SwapBuffers buildPartial() {
-        lm.Lm.SwapBuffers result = new lm.Lm.SwapBuffers(this);
+      public lm.Lm.SetScreen buildPartial() {
+        lm.Lm.SetScreen result = new lm.Lm.SetScreen(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.name_ = name_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof lm.Lm.SwapBuffers) {
-          return mergeFrom((lm.Lm.SwapBuffers)other);
+        if (other instanceof lm.Lm.SetScreen) {
+          return mergeFrom((lm.Lm.SetScreen)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(lm.Lm.SwapBuffers other) {
-        if (other == lm.Lm.SwapBuffers.getDefaultInstance()) return this;
+      public Builder mergeFrom(lm.Lm.SetScreen other) {
+        if (other == lm.Lm.SetScreen.getDefaultInstance()) return this;
+        if (other.hasName()) {
+          bitField0_ |= 0x00000001;
+          name_ = other.name_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
+        if (!hasName()) {
+          
+          return false;
+        }
         return true;
       }
 
@@ -9072,11 +9032,11 @@ public final class Lm {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        lm.Lm.SwapBuffers parsedMessage = null;
+        lm.Lm.SetScreen parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (lm.Lm.SwapBuffers) e.getUnfinishedMessage();
+          parsedMessage = (lm.Lm.SetScreen) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -9085,16 +9045,93 @@ public final class Lm {
         }
         return this;
       }
+      private int bitField0_;
 
-      // @@protoc_insertion_point(builder_scope:lm.SwapBuffers)
+      private java.lang.Object name_ = "";
+      /**
+       * <code>required string name = 1;</code>
+       */
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string name = 1;</code>
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            name_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string name = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string name = 1;</code>
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string name = 1;</code>
+       */
+      public Builder clearName() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string name = 1;</code>
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:lm.SetScreen)
     }
 
     static {
-      defaultInstance = new SwapBuffers(true);
+      defaultInstance = new SetScreen(true);
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:lm.SwapBuffers)
+    // @@protoc_insertion_point(class_scope:lm.SetScreen)
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
@@ -9138,11 +9175,6 @@ public final class Lm {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_lm_PrintString_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_lm_CreateString_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_lm_CreateString_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_lm_DestroyString_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -9158,10 +9190,10 @@ public final class Lm {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_lm_RenderString_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_lm_SwapBuffers_descriptor;
+    internal_static_lm_SetScreen_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_lm_SwapBuffers_fieldAccessorTable;
+      internal_static_lm_SetScreen_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -9171,35 +9203,35 @@ public final class Lm {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\010lm.proto\022\002lm\"\314\004\n\007Request\022\036\n\004type\030\001 \002(\016" +
+      "\n\010lm.proto\022\002lm\"\300\004\n\007Request\022\036\n\004type\030\001 \002(\016" +
       "2\020.lm.Request.Type\022\036\n\010setpixel\030\002 \001(\0132\014.l" +
       "m.SetPixel\022\026\n\004fill\030\003 \001(\0132\010.lm.Fill\022\"\n\ncr" +
       "eatefont\030\004 \001(\0132\016.lm.CreateFont\022$\n\013destro" +
       "yfont\030\005 \001(\0132\017.lm.DestroyFont\022$\n\013printstr" +
-      "ing\030\006 \001(\0132\017.lm.PrintString\022&\n\014createstri" +
-      "ng\030\007 \001(\0132\020.lm.CreateString\022(\n\rdestroystr" +
-      "ing\030\010 \001(\0132\021.lm.DestroyString\022*\n\016populate" +
-      "string\030\t \001(\0132\022.lm.PopulateString\022&\n\014rend" +
-      "erstring\030\n \001(\0132\020.lm.RenderString\022$\n\013swap",
-      "buffers\030\013 \001(\0132\017.lm.SwapBuffers\"\254\001\n\004Type\022" +
-      "\014\n\010SETPIXEL\020\001\022\010\n\004FILL\020\002\022\016\n\nCREATEFONT\020\003\022" +
-      "\017\n\013DESTROYFONT\020\004\022\017\n\013PRINTSTRING\020\005\022\020\n\014CRE" +
-      "ATESTRING\020\006\022\021\n\rDESTROYSTRING\020\007\022\022\n\016POPULA" +
-      "TESTRING\020\010\022\020\n\014RENDERSTRING\020\t\022\017\n\013SWAPBUFF" +
-      "ERS\020\n\" \n\010Position\022\t\n\001x\030\001 \002(\r\022\t\n\001y\030\002 \002(\r\"" +
-      "&\n\003RGB\022\t\n\001r\030\001 \002(\r\022\t\n\001g\030\002 \002(\r\022\t\n\001b\030\003 \002(\r\"" +
-      ";\n\010SetPixel\022\031\n\003pos\030\001 \002(\0132\014.lm.Position\022\024" +
-      "\n\003rgb\030\002 \002(\0132\007.lm.RGB\"\034\n\004Fill\022\024\n\003rgb\030\001 \002(" +
-      "\0132\007.lm.RGB\"4\n\nCreateFont\022\n\n\002id\030\001 \002(\r\022\014\n\004",
-      "size\030\002 \002(\r\022\014\n\004font\030\003 \002(\014\"\031\n\013DestroyFont\022" +
-      "\n\n\002id\030\001 \002(\r\"\\\n\013PrintString\022\031\n\003pos\030\001 \002(\0132" +
-      "\014.lm.Position\022\024\n\003rgb\030\002 \002(\0132\007.lm.RGB\022\014\n\004f" +
-      "ont\030\003 \002(\r\022\016\n\006string\030\004 \002(\014\"\032\n\014CreateStrin" +
-      "g\022\n\n\002id\030\001 \002(\r\"\033\n\rDestroyString\022\n\n\002id\030\001 \002" +
-      "(\r\":\n\016PopulateString\022\n\n\002id\030\001 \002(\r\022\014\n\004font" +
-      "\030\002 \002(\r\022\016\n\006string\030\003 \002(\014\"5\n\014RenderString\022\n" +
-      "\n\002id\030\001 \002(\r\022\031\n\003pos\030\002 \002(\0132\014.lm.Position\"\r\n" +
-      "\013SwapBuffers"
+      "ing\030\006 \001(\0132\017.lm.PrintString\022(\n\rdestroystr" +
+      "ing\030\007 \001(\0132\021.lm.DestroyString\022*\n\016populate" +
+      "string\030\010 \001(\0132\022.lm.PopulateString\022&\n\014rend" +
+      "erstring\030\t \001(\0132\020.lm.RenderString\022 \n\tsets" +
+      "creen\030\n \001(\0132\r.lm.SetScreen\"\314\001\n\004Type\022\014\n\010S",
+      "ETPIXEL\020\001\022\010\n\004FILL\020\002\022\016\n\nCREATEFONT\020\003\022\017\n\013D" +
+      "ESTROYFONT\020\004\022\017\n\013PRINTSTRING\020\005\022\021\n\rDESTROY" +
+      "STRING\020\006\022\022\n\016POPULATESTRING\020\007\022\020\n\014RENDERST" +
+      "RING\020\010\022\r\n\tSETSCREEN\020\t\022\017\n\013SWAPBUFFERS\020 \022\t" +
+      "\n\005PAUSE\020!\022\013\n\007UNPAUSE\020\"\022\t\n\005CLEAR\020$\" \n\010Pos" +
+      "ition\022\t\n\001x\030\001 \002(\r\022\t\n\001y\030\002 \002(\r\"&\n\003RGB\022\t\n\001r\030" +
+      "\001 \002(\r\022\t\n\001g\030\002 \002(\r\022\t\n\001b\030\003 \002(\r\";\n\010SetPixel\022" +
+      "\031\n\003pos\030\001 \002(\0132\014.lm.Position\022\024\n\003rgb\030\002 \002(\0132" +
+      "\007.lm.RGB\"\034\n\004Fill\022\024\n\003rgb\030\001 \002(\0132\007.lm.RGB\"4" +
+      "\n\nCreateFont\022\n\n\002id\030\001 \002(\r\022\014\n\004size\030\002 \002(\r\022\014",
+      "\n\004font\030\003 \002(\t\"\031\n\013DestroyFont\022\n\n\002id\030\001 \002(\r\"" +
+      "Z\n\013PrintString\022\031\n\003pos\030\001 \002(\0132\014.lm.Positio" +
+      "n\022\024\n\003rgb\030\002 \002(\0132\007.lm.RGB\022\014\n\004font\030\003 \002(\r\022\014\n" +
+      "\004text\030\004 \002(\t\"\033\n\rDestroyString\022\n\n\002id\030\001 \002(\r" +
+      "\"8\n\016PopulateString\022\n\n\002id\030\001 \002(\r\022\014\n\004font\030\002" +
+      " \002(\r\022\014\n\004text\030\003 \002(\t\"K\n\014RenderString\022\n\n\002id" +
+      "\030\001 \002(\r\022\031\n\003pos\030\002 \002(\0132\014.lm.Position\022\024\n\003rgb" +
+      "\030\003 \002(\0132\007.lm.RGB\"\031\n\tSetScreen\022\014\n\004name\030\001 \002" +
+      "(\t"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -9218,7 +9250,7 @@ public final class Lm {
     internal_static_lm_Request_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_lm_Request_descriptor,
-        new java.lang.String[] { "Type", "Setpixel", "Fill", "Createfont", "Destroyfont", "Printstring", "Createstring", "Destroystring", "Populatestring", "Renderstring", "Swapbuffers", });
+        new java.lang.String[] { "Type", "Setpixel", "Fill", "Createfont", "Destroyfont", "Printstring", "Destroystring", "Populatestring", "Renderstring", "Setscreen", });
     internal_static_lm_Position_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_lm_Position_fieldAccessorTable = new
@@ -9260,37 +9292,31 @@ public final class Lm {
     internal_static_lm_PrintString_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_lm_PrintString_descriptor,
-        new java.lang.String[] { "Pos", "Rgb", "Font", "String", });
-    internal_static_lm_CreateString_descriptor =
-      getDescriptor().getMessageTypes().get(8);
-    internal_static_lm_CreateString_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_lm_CreateString_descriptor,
-        new java.lang.String[] { "Id", });
+        new java.lang.String[] { "Pos", "Rgb", "Font", "Text", });
     internal_static_lm_DestroyString_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_lm_DestroyString_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_lm_DestroyString_descriptor,
         new java.lang.String[] { "Id", });
     internal_static_lm_PopulateString_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_lm_PopulateString_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_lm_PopulateString_descriptor,
-        new java.lang.String[] { "Id", "Font", "String", });
+        new java.lang.String[] { "Id", "Font", "Text", });
     internal_static_lm_RenderString_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_lm_RenderString_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_lm_RenderString_descriptor,
-        new java.lang.String[] { "Id", "Pos", });
-    internal_static_lm_SwapBuffers_descriptor =
-      getDescriptor().getMessageTypes().get(12);
-    internal_static_lm_SwapBuffers_fieldAccessorTable = new
+        new java.lang.String[] { "Id", "Pos", "Rgb", });
+    internal_static_lm_SetScreen_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_lm_SetScreen_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_lm_SwapBuffers_descriptor,
-        new java.lang.String[] { });
+        internal_static_lm_SetScreen_descriptor,
+        new java.lang.String[] { "Name", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

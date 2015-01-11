@@ -156,16 +156,16 @@ void lm_thread_free(lmThread *thread) {
 }
 
 void lm_thread_pause(lmThread *thread) {
-    pthread_mutex_lock(&thread->halt_mutex);
+//    pthread_mutex_lock(&thread->halt_mutex);
     thread->halted = 1;
-    pthread_mutex_unlock(&thread->halt_mutex);
+//    pthread_mutex_unlock(&thread->halt_mutex);
 }
 
 void lm_thread_unpause(lmThread *thread) {
-    pthread_mutex_lock(&thread->halt_mutex);
+//    pthread_mutex_lock(&thread->halt_mutex);
     thread->halted = 0;
     pthread_cond_signal(&thread->halt_cond);
-    pthread_mutex_unlock(&thread->halt_mutex);
+//    pthread_mutex_unlock(&thread->halt_mutex);
 }
 
 void lm_thread_stop(lmThread *thread) {

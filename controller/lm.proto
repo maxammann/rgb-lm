@@ -5,7 +5,7 @@ message Request {
 		SETPIXEL = 1; FILL = 2; CREATEFONT = 3; DESTROYFONT = 4; PRINTSTRING = 5;
 		DESTROYSTRING = 6; POPULATESTRING = 7; RENDERSTRING = 8; SETSCREEN = 9;
 
-		SWAPBUFFERS = 32; PAUSE = 33; UNPAUSE = 34;
+		SWAPBUFFERS = 32; PAUSE = 33; UNPAUSE = 34; CLEAR = 36;
 	}
 
 	required Type type = 1;
@@ -49,7 +49,7 @@ message Fill {
 message CreateFont {
 	required uint32 id = 1;
 	required uint32 size = 2;
-	required bytes font = 3;
+	required string font = 3;
 
 }
 
@@ -64,7 +64,7 @@ message PrintString {
 	required RGB rgb = 2;
 
 	required uint32 font = 3;
-    required bytes string = 4;
+    required string text = 4;
 }
 
 
@@ -76,7 +76,7 @@ message PopulateString {
 	required uint32 id = 1;
 
 	required uint32 font = 2;
-    required bytes string = 3;
+    required string text = 3;
 }
 
 message RenderString {

@@ -93,7 +93,7 @@ FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec *scaler) {
     FT_Error error = FTC_Manager_LookupSize(library->manager, scaler, &size);
 
     if (error) {
-        char const *string = ((CacheFace*)(scaler->face_id))->file_path;
+//        char const *string = ((CacheFace*)(scaler->face_id))->file_path;
         printf("FTC_Manager_LookupSize: %d\n", error);
         return 0;
     }
@@ -323,7 +323,9 @@ void render_string(lmLedMatrix *matrix, lmString *string,
                 &image,
                 FT_RENDER_MODE_MONO,
                 &pen,     // Apply pen
-                0);       // Do not destroy!
+                1);       // Do not destroy!
+
+        string->glyphs[n] = image;
 
         if (!error) {
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
@@ -397,6 +399,16 @@ void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const w
     free_glyphs(&string);
 }
 
+void lm_fonts_print_lstring(lmFontLibrary *library, lmLedMatrix *matrix, unsigned long *text, int len, lmFont *font,
+        uint16_t x, uint16_t y,
+        rgb *rgb) {
+    lmString string;
+    init_string(&string);
+    lm_fonts_populate_lstring(library, &string, text, len, font);
+    lm_fonts_render_string(matrix, &string, x, y, rgb);
+    free_glyphs(&string);
+}
+
 void lm_fonts_font_free(lmFontLibrary *library, lmFont *font) {
     FTC_FaceID faceID = font->scaler->face_id;
     FTC_Manager_RemoveFaceID(library->manager, faceID);
@@ -423,6 +435,10 @@ void lm_fonts_populate_wstring(lmFontLibrary *library, lmString *string, const w
     int length = (int) wcslen(text);
     TO_FT_STRING(text, length, ft_text);
     create_string(library, string, ft_text, length, font);
+}
+
+void lm_fonts_populate_lstring(lmFontLibrary *library, lmString *string, unsigned long *text, int len, lmFont *font) {
+    create_string(library, string, text, len, font);
 }
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,

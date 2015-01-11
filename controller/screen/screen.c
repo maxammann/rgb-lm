@@ -49,6 +49,8 @@ static void *start(void *ptr) {
 void init_screens(lmLedMatrix *matrix_) {
     screens = g_hash_table_new(g_str_hash, g_str_equal);
     pthread_create(&screen_thread, NULL, start, NULL);
+    pthread_cond_init(&screen_cond, NULL);
+    pthread_mutex_init(&screen_mutex, NULL);
     matrix = matrix_;
 }
 
@@ -59,10 +61,10 @@ inline screen_t get_current_screen() {
 screen_t set_current_screen(start_screen screen) {
     screen_t previous = current_screen;
 
-    pthread_mutex_lock(&screen_mutex);
+//    pthread_mutex_lock(&screen_mutex);
     current_screen = screen;
     pthread_cond_signal(&screen_cond);
-    pthread_mutex_unlock(&screen_mutex);
+//    pthread_mutex_unlock(&screen_mutex);
 
     return previous;
 }
@@ -72,10 +74,15 @@ screen_t get_screen(const char *name) {
 }
 
 int register_screen(const char *name, screen_t screen) {
-    char *key = malloc(sizeof(const char) * strlen(name));
+    char *key = malloc(sizeof(const char) * strlen(name) + 1);
     strcpy(key, name);
     return g_hash_table_insert(screens, key, screen);
 }
 
+void close_screens() {
+    running = 0;
 
-
+    pthread_cond_destroy(&screen_cond);
+    pthread_mutex_destroy(&screen_mutex);
+    pthread_detach(screen_thread);
+}

@@ -1,6 +1,8 @@
 #include <glib.h>
 #include <stdlib.h>
 #include <lm.pb-c.h>
+#include <iconv.h>
+#include <string.h>
 #include "controller.h"
 #include "stdio.h"
 #include "screen/screen.h"
@@ -29,8 +31,8 @@ void init_controller() {
     fonts = g_hash_table_new(g_int_hash, g_int_equal);
     strings = g_hash_table_new(g_int_hash, g_int_equal);
 
-    lm_thread_pause(thread);
     lm_thread_start(thread);
+    lm_thread_pause(thread);
 
     init_screens(matrix);
 }
@@ -51,7 +53,9 @@ static void set_pixel(Lm__SetPixel *set_pixel) {
 }
 
 static void create_font(Lm__CreateFont *create_font) {
-    lmFont *font = lm_fonts_font_new(library, (char const *) create_font->font.data, create_font->size);
+    char *font_ = g_strdup(create_font->font);
+
+    lmFont *font = lm_fonts_font_new(library, font_, create_font->size);
 
     uint32_t *key = malloc(sizeof(uint32_t));
     *key = create_font->id;
@@ -59,15 +63,38 @@ static void create_font(Lm__CreateFont *create_font) {
     g_hash_table_insert(fonts, key, font);
 }
 
+static wchar_t *utf8towchar(char* utf8) {
+    wchar_t *text=malloc (UTF8_BUFERR_SIZE * sizeof(wchar_t));
+    char *output = (char *) text;
+
+//    setlocale(LC_CTYPE, "");
+//    mbstowcs(text, print_string->text,text_max_length);
+
+    gchar *input = g_strdup(utf8);
+    gchar *def_copy = input;
+
+    iconv_t foo = iconv_open("WCHAR_T", "UTF-8");
+    size_t ibl = strlen(input);
+    size_t obl = UTF8_BUFERR_SIZE;
+    iconv(foo, &input, &ibl, &output, &obl);
+    iconv_close(foo);
+
+    g_free(def_copy);
+
+    return text;
+}
+
 static void destroy_font(Lm__DestroyFont *destroyFont) {
     g_hash_table_remove(fonts, &destroyFont->id);
 }
 
-
 static void create_string(Lm__PopulateString *populateString) {
     lmString *string = lm_fonts_string_new();
-    lm_fonts_populate_string(library, string, populateString->string.data, get_font(populateString->font));
 
+    lmFont *font = get_font(populateString->font);
+
+    wchar_t *text= utf8towchar(populateString->text);
+    lm_fonts_populate_wstring(library, string, text, font);
 
     uint32_t *key = malloc(sizeof(uint32_t));
     *key = populateString->id;
@@ -84,16 +111,18 @@ static void render_string(Lm__RenderString *render_string) {
 
     rgb rgb = TO_RGB(render_string->rgb);
     Lm__Position *position = render_string->pos;
-    lm_fonts_render_string(matrix, string, position->x, position->y, &rgb);
+    lm_fonts_render_string(matrix, string, POS(position->x), POS(position->y), &rgb);
 }
 
 static void print_string(Lm__PrintString *print_string) {
     uint32_t font = print_string->font;
     Lm__Position *position = print_string->pos;
     rgb rgb = TO_RGB(print_string->rgb);
-    char *text = (char *) print_string->string.data;
 
-    lm_fonts_print_string(library, matrix, text, get_font(font), position->x, position->y, &rgb);
+    wchar_t *text= utf8towchar(print_string->text);
+    
+    lm_fonts_print_wstring(library, matrix, text, get_font(font), POS(position->x), POS(position->y), &rgb);
+    free(text);
 }
 
 static void set_screen(Lm__SetScreen *set_screen) {
@@ -151,12 +180,16 @@ void process_buffer(uint8_t *buffer, size_t size) {
         case LM__REQUEST__TYPE__SETSCREEN:
             set_screen(request->setscreen);
             break;
+        case LM__REQUEST__TYPE__CLEAR:
+            lm_matrix_clear(matrix);
+            break;
         default:
             printf("Unknown type: %d\n", request->type);
 
     }
 
     printf("Type: %d\n", request->type);
+    lm__request__free_unpacked(request, NULL);
 }
 
 lmLedMatrix *get_matrix() {
