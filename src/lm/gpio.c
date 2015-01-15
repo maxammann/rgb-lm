@@ -12,7 +12,6 @@
 
 #define BLOCK_SIZE (4*1024)
 
-// GPIO setup macros. Always use INP_GPIO(x) before using OUT_GPIO(x) or SET_GPIO_ALT(x,y)
 #define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
 #define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
 
@@ -81,18 +80,15 @@ uint32_t lm_gpio_init_output(uint32_t outputs) {
     return output_bits_;
 }
 
-void lm_gpio_set_bits(uint32_t value) {
-    gpio[0x1C / sizeof(uint32_t)] = value;
+inline void lm_gpio_set_bits(uint32_t value) {
+    gpio[0x1C / sizeof(uint32_t)] = value;     // writing to GPSET0 of BCM2835
 }
 
-void lm_gpio_clear_bits(uint32_t value) {
+inline void lm_gpio_clear_bits(uint32_t value) {
     gpio[0x28 / sizeof(uint32_t)] = value;
 }
 
-// Write all the bits of "value" mentioned in "mask". Leave the rest untouched.
 inline void lm_gpio_set_masked_bits(uint32_t value, uint32_t mask) {
-    // Writing a word is two operations. The IO is actually pretty slow, so
-    // this should probably  be unnoticable.
     lm_gpio_clear_bits(~value & mask);
     lm_gpio_set_bits(value & mask);
 }

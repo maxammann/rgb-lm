@@ -3,7 +3,6 @@
 #include <lm/lm.h>
 #include "lm.pb-c.h"
 
-static const int UTF8_BUFERR_SIZE = 256;
 
 void init_controller();
 

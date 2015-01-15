@@ -1,16 +1,15 @@
 #pragma once
 
 #include "stdint.h"
+#include "limits.h"
 
 #define MAX_BITPLANES 11
+#define COLOR_SHIFT MAX_BITPLANES - CHAR_BIT
 
 typedef unsigned int bits_t;
 
-//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer-internal.h#L66
 union io_bits_ {
     struct {
-        // These reflect the GPIO mapping. The Revision1 and Revision2 boards
-        // have different GPIO mappings for 0/1 vs 3/4. Just use both.
 #ifdef REV1
        bits_t output_enable_rev1 : 1;  // 0
        bits_t clock_rev1 : 1;          // 1
@@ -43,4 +42,4 @@ typedef union io_bits_ io_bits;
 
 uint32_t lm_io_bits_new();
 
-io_bits *lm_io_bits_value_at(io_bits *bitplane, int columns, int double_row, int column, int bit);
+io_bits *lm_io_bits_value_at(io_bits *bitplane, int columns, int double_row, int column, int io_bits);

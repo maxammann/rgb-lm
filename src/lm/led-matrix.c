@@ -5,25 +5,26 @@
 #include "led-matrix.h"
 #include "math.h"
 
-#define COLOR_SHIFT MAX_BITPLANES - 8
-
 struct lmLedMatrix_ {
     uint16_t columns, rows;
     uint8_t row_mask;
-
     uint8_t pwm_bits;
+    io_bits *bitplane_buffer;
 
     int correct_luminance;
 
+    pthread_mutex_t buffer_mutex;
     long unsigned int bitplane_size;
     io_bits *hot_bitplane_buffer;
-
-    io_bits *bitplane_buffer;
-
-    pthread_mutex_t buffer_mutex;
 };
 
+uint16_t *luminance_table = NULL;
+
 lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
+    return lm_matrix_new_lum(columns, rows, pwm_bits, 1);
+}
+
+lmLedMatrix *lm_matrix_new_lum(uint16_t columns, uint16_t rows, uint8_t pwm_bits, int correct_luminance) {
     lmLedMatrix *matrix = malloc(sizeof(lmLedMatrix));
 
     matrix->columns = columns;
@@ -34,7 +35,7 @@ lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits) {
     matrix->bitplane_size = sizeof(io_bits) * double_rows * columns * MAX_BITPLANES;
     matrix->hot_bitplane_buffer = calloc(1, matrix->bitplane_size);
     matrix->bitplane_buffer = calloc(1, matrix->bitplane_size);
-    matrix->correct_luminance = 1;
+    matrix->correct_luminance = correct_luminance;
     pthread_mutex_init(&matrix->buffer_mutex, NULL);
 
     return matrix;
@@ -79,12 +80,10 @@ io_bits *lm_matrix_bit_plane(lmLedMatrix *matrix) {
     return matrix->bitplane_buffer;
 }
 
-uint16_t *luminance_table = NULL;
-
 static uint16_t luminance_cie1931(uint8_t c) {
-    float out_factor = ((1 << MAX_BITPLANES) - 1);
+    float factor = ((1 << MAX_BITPLANES) - 1);
     double v = c * 100.0 / 255.0;
-    return (uint16_t) (out_factor * ((v <= 8) ? v / 902.3 : pow((v + 16) / 116.0, 3)));
+    return (uint16_t) (factor * ((v <= 8) ? v / 902.3 : pow((v + 16) / 116.0, 3)));
 }
 
 static void create_luminance_cie1931_table() {
@@ -109,7 +108,6 @@ static inline uint16_t map_color(lmLedMatrix *matrix, uint16_t color) {
     return color << COLOR_SHIFT;
 }
 
-//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L150
 void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
     int i, row, col;
     io_bits *bitplane = matrix->hot_bitplane_buffer;
@@ -121,13 +119,17 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
 
     uint8_t double_rows = lm_matrix_double_rows(matrix);
 
-    for (i = MAX_BITPLANES - matrix->pwm_bits; i < MAX_BITPLANES; ++i) {
+    for (i = COLOR_SHIFT + MAX_BITPLANES - matrix->pwm_bits; i < MAX_BITPLANES; ++i) {
         int mask = 1 << i;
-        io_bits plane_bits;
-        plane_bits.raw = 0;
-        plane_bits.bits.r1 = plane_bits.bits.r2 = (bits_t) ((red & mask) == mask);
-        plane_bits.bits.g1 = plane_bits.bits.g2 = (bits_t) ((green & mask) == mask);
-        plane_bits.bits.b1 = plane_bits.bits.b2 = (bits_t) ((blue & mask) == mask);
+
+        int r = (red & mask) == mask;
+        int b = (blue & mask) == mask;
+        int g = (green & mask) == mask;
+
+        io_bits plane_bits = { 0 };
+        plane_bits.bits.r1 = plane_bits.bits.r2 = (bits_t) r;
+        plane_bits.bits.g1 = plane_bits.bits.g2 = (bits_t) g;
+        plane_bits.bits.b1 = plane_bits.bits.b2 = (bits_t) b;
         for (row = 0; row < double_rows; ++row) {
             io_bits *row_data = lm_io_bits_value_at(bitplane, columns, row, 0, i);
             for (col = 0; col < columns; ++col) {
@@ -137,7 +139,6 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
     }
 }
 
-//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L171
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
         uint16_t x, uint16_t y,
         rgb *rgb) {
@@ -156,7 +157,7 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
     uint16_t columns = matrix->columns;
     uint8_t double_rows = lm_matrix_double_rows(matrix);
 
-    const int min_bit_plane = MAX_BITPLANES - pwm;
+    const int min_bit_plane = COLOR_SHIFT + MAX_BITPLANES - pwm;
 
 
     io_bits *bits = lm_io_bits_value_at(matrix->hot_bitplane_buffer, matrix->columns, y & matrix->row_mask, x, min_bit_plane);
@@ -180,7 +181,7 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
     }
 }
 
-int sgn(int x) {
+inline int sgn(int x) {
     return (x > 0) ? 1 : (x < 0) ? -1 : 0;
 }
 

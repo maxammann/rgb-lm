@@ -1,9 +1,9 @@
 #include "io_bits.h"
 #include "gpio.h"
 
-io_bits *lm_io_bits_value_at(io_bits *bitplane, int columns, int double_row, int column, int bit) {
+io_bits *lm_io_bits_value_at(io_bits *bitplane, int columns, int double_row, int column, int io_bits) {
     return &bitplane[double_row * (columns * MAX_BITPLANES)
-            + bit * columns
+            + io_bits * columns
             + column];
 };
 

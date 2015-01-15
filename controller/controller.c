@@ -7,6 +7,7 @@
 #include "stdio.h"
 #include "screen/screen.h"
 
+#define UTF8_BUFERR_SIZE 256
 #define TO_RGB(net_rgb) {(uint8_t) net_rgb->r, (uint8_t) net_rgb->g, (uint8_t) net_rgb->b};
 
 lmLedMatrix *matrix;
@@ -63,8 +64,8 @@ static void create_font(Lm__CreateFont *create_font) {
     g_hash_table_insert(fonts, key, font);
 }
 
-static wchar_t *utf8towchar(char* utf8) {
-    wchar_t *text=malloc (UTF8_BUFERR_SIZE * sizeof(wchar_t));
+static wchar_t *utf8towchar(char *utf8) {
+    wchar_t *text = malloc(UTF8_BUFERR_SIZE * sizeof(wchar_t));
     char *output = (char *) text;
 
 //    setlocale(LC_CTYPE, "");
@@ -93,7 +94,7 @@ static void create_string(Lm__PopulateString *populateString) {
 
     lmFont *font = get_font(populateString->font);
 
-    wchar_t *text= utf8towchar(populateString->text);
+    wchar_t *text = utf8towchar(populateString->text);
     lm_fonts_populate_wstring(library, string, text, font);
 
     uint32_t *key = malloc(sizeof(uint32_t));
@@ -119,8 +120,8 @@ static void print_string(Lm__PrintString *print_string) {
     Lm__Position *position = print_string->pos;
     rgb rgb = TO_RGB(print_string->rgb);
 
-    wchar_t *text= utf8towchar(print_string->text);
-    
+    wchar_t *text = utf8towchar(print_string->text);
+
     lm_fonts_print_wstring(library, matrix, text, get_font(font), POS(position->x), POS(position->y), &rgb);
     free(text);
 }

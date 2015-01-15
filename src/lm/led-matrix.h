@@ -21,6 +21,8 @@ rgb *new_rgb(int r, int g, int b);
 
 lmLedMatrix *lm_matrix_new(uint16_t columns, uint16_t rows, uint8_t pwm_bits);
 
+lmLedMatrix *lm_matrix_new_lum(uint16_t columns, uint16_t rows, uint8_t pwm_bits, int correct_luminance);
+
 void lm_matrix_free(lmLedMatrix *matrix);
 
 uint16_t lm_matrix_columns(lmLedMatrix *matrix);

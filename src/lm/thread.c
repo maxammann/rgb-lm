@@ -5,64 +5,64 @@
 #include "gpio.h"
 
 struct lmThread_ {
-    int stopped;
-    volatile int halted;
+
+    pthread_t pthread;
     pthread_mutex_t halt_mutex;
     pthread_cond_t halt_cond;
 
+    int stopped;
+    volatile int halted;
     lmLedMatrix *matrix;
-
-    pthread_t pthread;
-
     long row_sleep_timings[MAX_BITPLANES];
 };
 
 
-//Thanks to hzeller for these timings! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L48 :D
 static void sleep_nanos(long nanos) {
-
     if (nanos > 28000) {
         struct timespec sleep_time = {0, nanos - 20000};
         nanosleep(&sleep_time, NULL);
     } else {
         long i;
 
-        // The following loop is determined empirically on a 700Mhz RPi //Thanks to hzeller :D
         for (i = nanos >> 2; i != 0; --i) {
-            asm("");   // force GCC not to optimize this away.
+            asm("");   // skip gcc
         }
     }
 }
 
-//bitplanes code took from hzeller! https://github.com/hzeller/rpi-rgb-led-matrix/blob/440549553d58157cd3355b92fb791bf25f526fbd/lib/framebuffer.cc#L200
 static void *main(void *ch) {
-    lmThread *thread = ch;
 
+    uint8_t d_row;
+    int b;
+    int col;
+
+    lmThread *thread = ch;
     long *sleep_timings = thread->row_sleep_timings;
     lmLedMatrix *matrix = thread->matrix;
     int double_rows = lm_matrix_double_rows(matrix);
     io_bits *bitplane = lm_matrix_bit_plane(matrix);
     uint16_t columns = lm_matrix_columns(matrix);
 
-    uint8_t d_row;
-    int b;
-    int col;
 
-    io_bits color_clk_mask;   // Mask of bits we need to set while clocking in.
-    color_clk_mask.raw = 0;
-    color_clk_mask.bits.r1 = color_clk_mask.bits.g1 = color_clk_mask.bits.b1 = 1;
-    color_clk_mask.bits.r2 = color_clk_mask.bits.g2 = color_clk_mask.bits.b2 = 1;
-    SET_CLOCK(color_clk_mask.bits, 1);
+    io_bits color_clock_mask = { 0 };   // Mask of bits we need to set while clocking in.
+    io_bits clock = { 0 }, output_enable = { 0 }, strobe = { 0 }, row_address = { 0 };
+    io_bits row_mask = { 0 };
 
-    io_bits row_mask;
-    row_mask.raw = 0;
+    // Color & clock
+    color_clock_mask.bits.r1 = color_clock_mask.bits.g1 = color_clock_mask.bits.b1 = 1;
+    color_clock_mask.bits.r2 = color_clock_mask.bits.g2 = color_clock_mask.bits.b2 = 1;
+    SET_CLOCK(color_clock_mask.bits, 1);
+
+    // Row mask
     row_mask.bits.row = 0x0f;
 
-    io_bits clock, output_enable, strobe, row_address;
-    clock.raw = output_enable.raw = strobe.raw = row_address.raw = 0;
-
+    // Clock
     SET_CLOCK(clock.bits, 1);
+
+    // EO
     ENABLE_OUTPUT(output_enable.bits, 1);
+
+    // Strobe
     strobe.bits.strobe = 1;
 
     while (!thread->stopped) {
@@ -80,27 +80,23 @@ static void *main(void *ch) {
             row_address.bits.row = d_row;
             lm_gpio_set_masked_bits(row_address.raw, row_mask.raw);  // Set row address
 
-            // Rows can't be switched very quickly without ghosting, so we do the
-            // full PWM of one row before switching rows.
-            for (b = MAX_BITPLANES - pwm_bits; b < MAX_BITPLANES; ++b) {
+            for (b = COLOR_SHIFT + MAX_BITPLANES - pwm_bits; b < MAX_BITPLANES; ++b) {
 
                 lm_matrix_lock(matrix);
                 io_bits *row_data = lm_io_bits_value_at(bitplane, columns, d_row, 0, b);
-                // We clock these in while we are dark. This actually increases the
-                // dark time, but we ignore that a bit.
+
                 for (col = 0; col < columns; ++col) {
                     const io_bits out = *row_data++;
-                    lm_gpio_set_masked_bits(out.raw, color_clk_mask.raw);  // col + reset clock
-                    lm_gpio_set_bits(clock.raw);               // Rising edge: clock color in.
+                    lm_gpio_set_masked_bits(out.raw, color_clock_mask.raw);
+                    lm_gpio_set_bits(clock.raw);
                 }
                 lm_matrix_unlock(matrix);
 
-                lm_gpio_clear_bits(color_clk_mask.raw);    // clock back to normal.
+                lm_gpio_clear_bits(color_clock_mask.raw);
 
-                lm_gpio_set_bits(strobe.raw);   // Strobe in the previously clocked in row.
+                lm_gpio_set_bits(strobe.raw);
                 lm_gpio_clear_bits(strobe.raw);
 
-                // Now switch on for the sleep time necessary for that bit-plane.
                 lm_gpio_clear_bits(output_enable.raw);
                 sleep_nanos(sleep_timings[b]);
                 lm_gpio_set_bits(output_enable.raw);

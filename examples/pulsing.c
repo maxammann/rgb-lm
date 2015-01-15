@@ -9,7 +9,7 @@ int main() {
     lm_gpio_init();
     lm_gpio_init_output(lm_io_bits_new());
 
-    lmLedMatrix *matrix = lm_matrix_new(32, 32, 6);
+    lmLedMatrix *matrix = lm_matrix_new(32, 32, 11);
     lm_matrix_clear(matrix);
 
     lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
