@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <lm/lm.h>
+#include "math.h"
 
 int main() {
     rgb color = {255, 255, 0};
@@ -23,9 +24,22 @@ int main() {
     lm_thread_start(thread);
 
 
-    lm_fonts_print_string(library, matrix, "Pierre", font, 0, 0, &color);
+    lmString *string = lm_fonts_string_new();
+
+    lm_fonts_populate_string(library, string, "Fuck", font);
 
 
+    double angle = 45.0 / 180.0 * M_PI;
+    lmMatrix m;
+    m.xx = cos(angle) * 2;
+    m.xy = sin(angle);
+    m.yx = -sin(angle);
+    m.yy = cos(angle) * 2;
+
+    lm_fonts_string_apply_transformation(string, m);
+
+
+    lm_fonts_render_string(matrix, string, 16, 16, &color);
 
     lm_fonts_font_free(library, font);
 

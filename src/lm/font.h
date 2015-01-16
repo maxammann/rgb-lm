@@ -13,8 +13,8 @@ typedef struct lmMatrix_ lmMatrix;
 typedef struct lmFontLibrary_ lmFontLibrary;
 
 struct lmMatrix_ {
-    int xx, xy;
-    int yx, yy;
+    double xx, xy;
+    double yx, yy;
 };
 
 lmFontLibrary *lm_fonts_init();

@@ -4,8 +4,6 @@ find_package (Threads REQUIRED)
 find_package(Freetype)
 find_library(MATH_LIBRARIES m)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
 set(SOURCE_HEADERS font.h led-matrix.h thread.h gpio.h io_bits.h lm.h)

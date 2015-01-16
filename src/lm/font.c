@@ -186,15 +186,14 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     }
 
     // Load glyphs
-    FT_GlyphSlot slot = face->glyph;   // a small shortcut
-    FT_UInt glyph_index;
-    FT_Long use_kerning;
-    FT_UInt previous;
-    int pen_x, pen_y, n;
+    FT_GlyphSlot slot = face->glyph;    // a small shortcut
+    FT_UInt glyph_index;                // Current glyph
+    FT_Long use_kerning;                // Whether our font supports kerning
+    FT_UInt previous;                   // The glyph before glyph_index
+    int pen_x, pen_y, n;                // Pen position
     FT_Glyph *glyphs = malloc(sizeof(FT_Glyph) * length);  // glyphs table
-    FT_Vector pos[length];
-    FT_UInt num_glyphs;
-
+    FT_Vector pos[length];              // Transformed glyph vectors
+    FT_UInt num_glyphs;                 // Num of glyphs
 
     pen_x = 0;
     pen_y = 0;
@@ -259,7 +258,6 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
     }
 
     // Compute box
-
     FT_BBox string_bbox;
     compute_string_bbox(num_glyphs, glyphs, pos, &string_bbox);
 
@@ -278,29 +276,19 @@ void render_string(lmLedMatrix *matrix, lmString *string,
 
     int n;
     FT_Error error;
-    // Render font and apply transformations
     FT_Glyph image;
     FT_Vector pen;
-//    FT_BBox bbox;
     pen.x = 0;
     pen.y = 0;
 
-    FT_Pos shiftY;
-
-
-//    FT_Glyph_Get_CBox(string->glyphs[0], ft_glyph_bbox_pixels, &bbox);
-//    shiftY = (int) (bbox.yMax - bbox.yMin);
-
-//    shiftY = string->height;
-
-    shiftY = string->shiftY;
+    FT_Pos shiftY = string->shiftY;
 
     for (n = 0; n < string->num_glyphs; n++) {
         image = string->glyphs[n];
 
         FT_Vector delta;
-        delta.x = x * 64;
-        delta.y = -y * 64;
+        delta.x = x << 6;
+        delta.y = -y << 6;
 
 
         FT_Matrix *ft_matrix = 0;
@@ -308,13 +296,14 @@ void render_string(lmLedMatrix *matrix, lmString *string,
         if (string->use_matrix > 0) {
             FT_Matrix m;
 
-            m.xx = string->matrix.xx * 0x10000L;
-            m.xy = string->matrix.xy * 0x10000L;
-            m.yx = string->matrix.yx * 0x10000L;
-            m.yy = string->matrix.yy * 0x10000L;
+            m.xx = (FT_Fixed) (string->matrix.xx * 0x10000L); // pixel format to 16.16 fixed float format
+            m.xy = (FT_Fixed) (string->matrix.xy * 0x10000L);
+            m.yx = (FT_Fixed) (string->matrix.yx * 0x10000L);
+            m.yy = (FT_Fixed) (string->matrix.yy * 0x10000L);
 
             ft_matrix = &m;
         }
+
 
         FT_Glyph_Transform(image, ft_matrix, &delta);
 
@@ -323,7 +312,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
                 &image,
                 FT_RENDER_MODE_MONO,
                 &pen,     // Apply pen
-                1);       // Do not destroy!
+                1);       // Do destroy!
 
         string->glyphs[n] = image;
 
