@@ -181,7 +181,7 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
     }
 }
 
-inline int sgn(int x) {
+int sgn(int x) {
     return (x > 0) ? 1 : (x < 0) ? -1 : 0;
 }
 

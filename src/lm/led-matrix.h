@@ -35,7 +35,7 @@ void lm_matrix_lock(lmLedMatrix *matrix);
 
 void lm_matrix_unlock(lmLedMatrix *matrix);
 
-inline uint8_t lm_matrix_double_rows(lmLedMatrix *matrix);
+uint8_t lm_matrix_double_rows(lmLedMatrix *matrix);
 
 io_bits *lm_matrix_bit_plane(lmLedMatrix *matrix);
 

@@ -38,13 +38,3 @@ set_target_properties(transform_fonts
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
-
-
-
-add_executable(mesmerizing_screen mesmerizing.c)
-target_link_libraries (mesmerizing_screen rgb_led_matrix)
-target_link_libraries (mesmerizing_screen ${MATH_LIBRARIES})
-set_target_properties(mesmerizing_screen
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)

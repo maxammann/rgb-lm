@@ -1,5 +1,7 @@
 set(FREETYPE_INCLUDE_DIRS /usr/include/freetype2/)
 
+
+
 find_package (Threads REQUIRED)
 find_package(Freetype)
 find_library(MATH_LIBRARIES m)

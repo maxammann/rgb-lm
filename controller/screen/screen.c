@@ -6,6 +6,7 @@
 lmLedMatrix *matrix;
 GHashTable *screens;
 screen_t current_screen;
+void *current_user_data;
 
 pthread_t screen_thread;
 pthread_mutex_t screen_mutex;
@@ -33,7 +34,7 @@ static void *start(void *ptr) {
         pthread_mutex_unlock(&screen_mutex);
 
 
-        current_screen(matrix, elapsed / 1000000);
+        current_screen(matrix, elapsed / 1000000, current_user_data);
 
         struct timespec sleep, remaining;
         sleep.tv_sec = 0;
@@ -58,13 +59,16 @@ inline screen_t get_current_screen() {
     return current_screen;
 }
 
-screen_t set_current_screen(start_screen screen) {
+screen_t set_current_screen(start_screen screen, void *user_data) {
     screen_t previous = current_screen;
 
 //    pthread_mutex_lock(&screen_mutex);
     current_screen = screen;
+    current_user_data = user_data;
     pthread_cond_signal(&screen_cond);
 //    pthread_mutex_unlock(&screen_mutex);
+
+
 
     return previous;
 }

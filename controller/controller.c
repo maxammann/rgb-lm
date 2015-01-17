@@ -21,13 +21,18 @@ void init_controller() {
     lm_gpio_init();
     lm_gpio_init_output(lm_io_bits_new());
 
-    matrix = lm_matrix_new(32, 32, 11);
+    matrix = lm_matrix_new(32, 32, 4);
     thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
 
     library = lm_fonts_init();
 
 //    default_font = lm_fonts_font_new(library, "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 16);
-    default_font = lm_fonts_font_new(library, "/root/projects/InputMono/InputMono-Medium.ttf", 16);
+//    default_font = lm_fonts_font_new(library, "/root/projects/InputMono/InputMono-Medium.ttf", 16);
+//    default_font = lm_fonts_font_new(library, "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf", 16);
+//    default_font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/arial_uni.ttf", 16);
+//    default_font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/NotoSansSymbols-unhinted/NotoSansSymbols-Regular.ttf", 16);
+//    default_font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/UNC6-Fonts/u1.ttf", 16);
+    default_font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/Symbola/Symbola.ttf", 22);
 
     fonts = g_hash_table_new(g_int_hash, g_int_equal);
     strings = g_hash_table_new(g_int_hash, g_int_equal);
@@ -38,7 +43,7 @@ void init_controller() {
     init_screens(matrix);
 }
 
-inline lmFont *get_font(uint32_t key) {
+lmFont *get_font(uint32_t key) {
     return g_hash_table_lookup(fonts, &key);
 }
 
@@ -129,7 +134,7 @@ static void print_string(Lm__PrintString *print_string) {
 static void set_screen(Lm__SetScreen *set_screen) {
     char *name = set_screen->name;
     if (name[0] == '\0') {
-        set_current_screen(NULL);
+        set_current_screen(NULL, NULL);
     }
 
     screen_t screen = get_screen(name);
@@ -138,7 +143,7 @@ static void set_screen(Lm__SetScreen *set_screen) {
         printf("Screen does not exist! %s\n", name);
         return;
     }
-    set_current_screen(screen);
+    set_current_screen(screen, NULL);
 }
 
 void process_buffer(uint8_t *buffer, size_t size) {
@@ -195,6 +200,11 @@ void process_buffer(uint8_t *buffer, size_t size) {
 
 lmLedMatrix *get_matrix() {
     return matrix;
+}
+
+
+lmThread *get_thread() {
+    return thread;
 }
 
 lmFontLibrary *get_font_library() {

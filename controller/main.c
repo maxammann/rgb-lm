@@ -7,6 +7,9 @@ int main(int argc, char *argv[]) {
     init_controller();
     register_screens();
 
+    lm_thread_unpause(get_thread());
+    set_current_screen(get_screen("menu"), NULL);
+
 //    int fd = bind_unix_domain_socket("./socket");
     int fd = bind_tcp_socket(6969);
     start_server(fd, process_buffer);
