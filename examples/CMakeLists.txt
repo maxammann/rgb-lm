@@ -1,4 +1,3 @@
-find_package (Threads)
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 
 add_executable(simple_fill simple_fill.c)

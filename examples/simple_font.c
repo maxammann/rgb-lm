@@ -17,7 +17,7 @@ int main() {
 
     lmFontLibrary *library = lm_fonts_init();
 
-    lmFont *font = lm_fonts_font_new(library, "/root/projects/rgb-led-matrix/fonts/arialbd.ttf", 16);
+    lmFont *font = lm_fonts_font_new(library, "/root/projects/fonts/arialbd.ttf", 16);
 
     lmThread *thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
     lm_thread_start(thread);

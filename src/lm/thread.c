@@ -4,6 +4,21 @@
 #include "thread.h"
 #include "gpio.h"
 
+#ifdef RT
+
+#define CITICAL_NANOS 21300     //The amount of nanos when we're using "busy wait"
+#define BUSY_OPERATION / 3
+#define NANO_SLEEP_OFFSET 21300
+
+#else
+
+#define CITICAL_NANOS 28000
+#define BUSY_OPERATION >> 2
+#define NANO_SLEEP_OFFSET 20000
+
+#endif
+
+
 struct lmThread_ {
 
     pthread_t pthread;
@@ -18,13 +33,13 @@ struct lmThread_ {
 
 
 static void sleep_nanos(long nanos) {
-    if (nanos > 28000) {
-        struct timespec sleep_time = {0, nanos - 20000};
+    if (nanos > CITICAL_NANOS) {
+        struct timespec sleep_time = {0, nanos - NANO_SLEEP_OFFSET};
         nanosleep(&sleep_time, NULL);
     } else {
         long i;
 
-        for (i = nanos >> 2; i != 0; --i) {
+        for (i = nanos BUSY_OPERATION; i != 0; --i) {
             asm("");   // skip gcc
         }
     }
@@ -67,11 +82,11 @@ static void *main(void *ch) {
 
     while (!thread->stopped) {
 
-        pthread_mutex_lock(&thread->halt_mutex);
-        while (thread->halted) {
-            pthread_cond_wait(&thread->halt_cond, &thread->halt_mutex);
-        }
-        pthread_mutex_unlock(&thread->halt_mutex);
+//        pthread_mutex_lock(&thread->halt_mutex);
+//        while (thread->halted) {
+//            pthread_cond_wait(&thread->halt_cond, &thread->halt_mutex);
+//        }
+//        pthread_mutex_unlock(&thread->halt_mutex);
 
 
         uint16_t pwm_bits = lm_matrix_pwm_bits(matrix);
@@ -82,7 +97,7 @@ static void *main(void *ch) {
 
             for (b = COLOR_SHIFT + MAX_BITPLANES - pwm_bits; b < MAX_BITPLANES; ++b) {
 
-                lm_matrix_lock(matrix);
+//                lm_matrix_lock(matrix);
                 io_bits *row_data = lm_io_bits_value_at(bitplane, columns, d_row, 0, b);
 
                 for (col = 0; col < columns; ++col) {
@@ -90,7 +105,7 @@ static void *main(void *ch) {
                     lm_gpio_set_masked_bits(out.raw, color_clock_mask.raw);
                     lm_gpio_set_bits(clock.raw);
                 }
-                lm_matrix_unlock(matrix);
+//                lm_matrix_unlock(matrix);
 
                 lm_gpio_clear_bits(color_clock_mask.raw);
 
