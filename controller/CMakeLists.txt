@@ -18,7 +18,7 @@ PROTOBUFC_GENERATE_C(PROTO_SRCS PROTO_HDRS ../lm.proto)
 set(SOURCE_FILES ${SOURCE_HEADERS} ${PROTO_SRCS} ${PROTO_HDRS})
 
 
-add_executable(server ${SOURCE_FILES} main.c controller.c server.c screen/screen.c screen/menu_screens.c screen/example_screens.c screen/menu_screens.h screen/example_screens.h)
+add_executable(server ${SOURCE_FILES} main.c controller.c server.c alarms.c discovery_server.c screen/screen.c screen/menu_screens.c screen/alarms_screen.c screen/alarms_screen.h screen/example_screens.c screen/menu_screens.h screen/example_screens.h)
 target_link_libraries (server rgb_led_matrix ${PROTOBUFC_LIBRARY} ${GLIB2_LIBRARIES} ${THREADING})
 
 

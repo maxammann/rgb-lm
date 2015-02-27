@@ -6,6 +6,7 @@
 #include "controller.h"
 #include "stdio.h"
 #include "screen/screen.h"
+#include "alarms.h"
 
 #define UTF8_BUFERR_SIZE 256
 #define TO_RGB(net_rgb) {(uint8_t) net_rgb->r, (uint8_t) net_rgb->g, (uint8_t) net_rgb->b};
@@ -146,6 +147,22 @@ static void set_screen(Lm__SetScreen *set_screen) {
     set_current_screen(screen, NULL);
 }
 
+void set_alarms(Lm__Alarms *alarms) {
+    int i;
+
+    clear_alarms();
+
+    for (i = 0; i < alarms->n_alarms; i++) {
+        Lm__Alarm *proto_alarm = alarms->alarms[i];
+
+        char *name = strdup(proto_alarm->name);
+
+        Alarm *alarm = new_alarm(name, proto_alarm->time, proto_alarm->enabled);
+        add_alarm(alarm);
+        printf("Registered alarm %s", name);
+    }
+}
+
 void process_buffer(uint8_t *buffer, size_t size) {
     Lm__Request *request = lm__request__unpack(NULL, size, (uint8_t const *) buffer);
 
@@ -188,6 +205,9 @@ void process_buffer(uint8_t *buffer, size_t size) {
             break;
         case LM__REQUEST__TYPE__CLEAR:
             lm_matrix_clear(matrix);
+            break;
+        case LM__REQUEST__TYPE__ALARM_REQUST:
+            set_alarms(request->alarm_request->alarms);
             break;
         default:
             printf("Unknown type: %d\n", request->type);
