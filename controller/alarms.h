@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "glib.h"
 
 typedef struct Alarm_ Alarm;
 
@@ -10,8 +11,7 @@ void add_alarm(Alarm *alarm);
 
 void clear_alarms();
 
-Alarm *get_last_alarm();
-
+GSList *get_alarms();
 
 char *get_name(Alarm *alarm);
 

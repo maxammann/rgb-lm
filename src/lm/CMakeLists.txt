@@ -8,7 +8,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 
 set(SOURCE_HEADERS font.h led-matrix.h thread.h gpio.h io_bits.h lm.h)
 
-set(SOURCE_FILES ${SOURCE_HEADERS} led-matrix.c font.c gpio.c thread.c io_bits.c)
+set(SOURCE_FILES ${SOURCE_HEADERS} led-matrix.c font.c gpio.c thread.c io_bits.c ppm.c ppm.h)
 
 add_library(rgb_led_matrix ${SOURCE_FILES})
 target_link_libraries (rgb_led_matrix ${THREADING} ${FREETYPE_LIBRARIES} ${MATH_LIBRARIES})

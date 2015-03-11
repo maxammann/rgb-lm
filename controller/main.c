@@ -1,11 +1,14 @@
 #include <lm/lm.h>
+
 #include "controller.h"
 #include "server.h"
-#include "screen/example_screens.h"
-#include "screen/menu_screens.h"
-#include "screen/screen.h"
+
 #include "discovery_server.h"
-#include "screen/alarms_screen.h"
+
+#include "screen/screen.h"
+#include "screen/example.h"
+#include "screen/menu.h"
+#include "screen/alarms.h"
 
 void *discovery(void *nil) {
     start_discovery_server();
@@ -21,7 +24,7 @@ int main(int argc, char *argv[]) {
 
 
     lm_thread_unpause(get_thread());
-    set_current_screen(get_screen("alarms"), NULL);
+    set_current_screen(get_screen("mesmerizing"), NULL);
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);

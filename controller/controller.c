@@ -1,12 +1,16 @@
 #include <glib.h>
+
 #include <stdlib.h>
-#include <lm.pb-c.h>
 #include <iconv.h>
 #include <string.h>
-#include "controller.h"
 #include "stdio.h"
-#include "screen/screen.h"
+
+#include <lm.pb-c.h>
+#include "controller.h"
 #include "alarms.h"
+
+#include "screen/menu.h"
+#include "screen/screen.h"
 
 #define UTF8_BUFERR_SIZE 256
 #define TO_RGB(net_rgb) {(uint8_t) net_rgb->r, (uint8_t) net_rgb->g, (uint8_t) net_rgb->b};
@@ -22,7 +26,7 @@ void init_controller() {
     lm_gpio_init();
     lm_gpio_init_output(lm_io_bits_new());
 
-    matrix = lm_matrix_new(32, 32, 4);
+    matrix = lm_matrix_new(32, 32, 11);
     thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
 
     library = lm_fonts_init();
@@ -209,6 +213,12 @@ void process_buffer(uint8_t *buffer, size_t size) {
         case LM__REQUEST__TYPE__ALARM_REQUST:
             set_alarms(request->alarm_request->alarms);
             break;
+        case LM__REQUEST__TYPE__MENU_NEXT:
+            menu_next();
+            break;
+        case LM__REQUEST__TYPE__MENU_PREVIOUS:
+            menu_previous();
+            break;
         default:
             printf("Unknown type: %d\n", request->type);
 
@@ -234,7 +244,6 @@ lmFontLibrary *get_font_library() {
 lmFont *get_default_font() {
     return default_font;
 }
-
 
 void free_controller() {
     lm_matrix_free(matrix);

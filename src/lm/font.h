@@ -41,19 +41,19 @@ void lm_fonts_populate_string(lmFontLibrary *library, lmString *string, const ch
 void lm_fonts_populate_wstring(lmFontLibrary *library, lmString *string, const wchar_t *text, lmFont *font);
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb);
 
 void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const char *text, lmFont *font,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb);
 
 void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb);
 
 void lm_fonts_print_lstring(lmFontLibrary *library, lmLedMatrix *matrix, unsigned long *text, int len, lmFont *font,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb);
 
 void lm_fonts_populate_lstring(lmFontLibrary *library, lmString *string, unsigned long *text, int len, lmFont *font);

@@ -268,7 +268,7 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
 }
 
 void render_string(lmLedMatrix *matrix, lmString *string,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb) {
     if (string->num_glyphs == 0) {
         return;
@@ -286,9 +286,9 @@ void render_string(lmLedMatrix *matrix, lmString *string,
     for (n = 0; n < string->num_glyphs; n++) {
         image = string->glyphs[n];
 
-        FT_Vector delta;
-        delta.x = x << 6;
-        delta.y = -y << 6;
+//        FT_Vector delta;
+//        delta.x = x << 6;
+//        delta.y = -y << 6;
 
 
         FT_Matrix *ft_matrix = 0;
@@ -305,7 +305,7 @@ void render_string(lmLedMatrix *matrix, lmString *string,
         }
 
 
-        FT_Glyph_Transform(image, ft_matrix, &delta);
+        FT_Glyph_Transform(image, ft_matrix, NULL);
 
 
         error = FT_Glyph_To_Bitmap(
@@ -320,8 +320,8 @@ void render_string(lmLedMatrix *matrix, lmString *string,
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
 
             render_bitmap(matrix, bit->bitmap,
-                    bit->left,
-                    shiftY - bit->top,
+                    x + bit->left,
+                    y + shiftY - bit->top,
                     rgb);
 
             /* increment pen position --                       */
@@ -360,7 +360,7 @@ void lm_fonts_string_free(lmString *string) {
 }
 
 void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const char *text, lmFont *font,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb) {
 
 //    printf("Matrix: %p\n", (void *)matrix);
@@ -379,7 +379,7 @@ void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const ch
 }
 
 void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb) {
     lmString string;
     init_string(&string);
@@ -389,7 +389,7 @@ void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const w
 }
 
 void lm_fonts_print_lstring(lmFontLibrary *library, lmLedMatrix *matrix, unsigned long *text, int len, lmFont *font,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb) {
     lmString string;
     init_string(&string);
@@ -431,7 +431,7 @@ void lm_fonts_populate_lstring(lmFontLibrary *library, lmString *string, unsigne
 }
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb) {
     render_string(matrix, string, x, y, rgb);
 }

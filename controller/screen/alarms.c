@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include "alarms_screen.h"
+#include "alarms.h"
 #include "screen.h"
-#include "../alarms.h"
-#include "../controller.h"
 
 void alarms_screen(lmLedMatrix *matrix, long int elapsed) {
     lm_matrix_clear(matrix);
@@ -13,7 +10,9 @@ void alarms_screen(lmLedMatrix *matrix, long int elapsed) {
 
 //    printf("Alarm: %s\n", get_name(get_last_alarm()));
 
-    lm_fonts_populate_string(get_font_library(), str, get_name(get_last_alarm()), get_default_font());
+//    g_slist_foreach(get_alarms(), <#(GFunc)func#>, NULL);
+
+//    lm_fonts_populate_string(get_font_library(), str, get_name(get_last_alarm()), get_default_font());
 
     int width = lm_fonts_string_width(str);
     int height = lm_fonts_string_height(str);

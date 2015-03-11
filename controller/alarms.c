@@ -45,16 +45,8 @@ void free_nodes(gpointer data) {
     free(data);
 }
 
-Alarm *get_last_alarm() {
-//    GSList *last = g_slist_last(alarms);
-    if (alarms == NULL) {
-        return NULL;
-    }
-
-    if (alarms->next == NULL) {
-        return NULL;
-    }
-    return alarms->next->data;
+GSList *get_alarms() {
+    return alarms;
 }
 
 void clear_alarms() {

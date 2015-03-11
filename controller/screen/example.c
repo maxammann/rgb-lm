@@ -1,10 +1,11 @@
 #include <lm/lm.h>
 #include <math.h>
 #include <glib.h>
+#include <stdio.h>
 #include "screen.h"
 #include "../controller.h"
 
-#include "example_screens.h"
+#include "example.h"
 
 #define NUM_BALL 24
 
@@ -18,7 +19,7 @@ double getY(double_t x, double_t t) {
     return 32. * sin(mod * M_PI);
 }
 
-void mesmerizing_screen(lmLedMatrix *matrix, long int elapsed) {
+void mesmerizing_screen(lmLedMatrix *matrix, double elapsed) {
     t += 1;
     int i;
     rgb color = {68 / 2, 73 / 2, 219 / 2};
@@ -74,7 +75,7 @@ void draw_hand(lmLedMatrix *matrix, float t, double length, rgb *color) {
     lm_matrix_line(matrix, (uint16_t) delta_x, (uint16_t) delta_y, (uint16_t) (delta_x + target_x), (uint16_t) (delta_y + target_y), color);
 }
 
-void clock_screen(lmLedMatrix *matrix, long int elapsed) {
+void clock_screen(lmLedMatrix *matrix, double elapsed) {
     lm_matrix_clear(matrix);
 
     rgb color = {68 / 2, 73 / 2, 219 / 2};
@@ -93,7 +94,7 @@ void clock_screen(lmLedMatrix *matrix, long int elapsed) {
     lm_matrix_swap_buffers(matrix);
 };
 
-void digital_clock_screen(lmLedMatrix *matrix, long int elapsed) {
+void digital_clock_screen(lmLedMatrix *matrix, double elapsed) {
     lm_matrix_clear(matrix);
 
     rgb color = {68, 73, 219};

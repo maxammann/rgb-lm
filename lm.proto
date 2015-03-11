@@ -5,6 +5,8 @@ message Request {
 		SETPIXEL = 1; FILL = 2; CREATEFONT = 3; DESTROYFONT = 4; PRINTSTRING = 5;
 		DESTROYSTRING = 6; POPULATESTRING = 7; RENDERSTRING = 8; SETSCREEN = 9; ALARM_REQUST = 10;
 
+		MENU_NEXT = 20; MENU_PREVIOUS = 21;
+
 		SWAPBUFFERS = 32; PAUSE = 33; UNPAUSE = 34; CLEAR = 36;
 	}
 
@@ -114,5 +116,4 @@ message Alarm {
 message Alarms {
     repeated Alarm alarms = 1;
 }
-
 

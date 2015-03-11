@@ -140,7 +140,7 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
 }
 
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
-        uint16_t x, uint16_t y,
+        int16_t x, int16_t y,
         rgb *rgb) {
     if (x < 0 || y < 0
             || x >= matrix->columns || y >= matrix->rows) {
@@ -186,8 +186,8 @@ int sgn(int x) {
 }
 
 void lm_matrix_line(lmLedMatrix *matrix,
-        uint16_t xstart, uint16_t ystart,
-        uint16_t xend, uint16_t yend,
+        int16_t xstart, int16_t ystart,
+        int16_t xend, int16_t yend,
         rgb *rgb) {
     int x, y, t, dx, dy, incx, incy, pdx, pdy, ddx, ddy, es, el, err;
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "screen.h"
+#include "math.h"
 
 lmLedMatrix *matrix;
 GHashTable *screens;
@@ -21,10 +22,14 @@ static void *start(void *ptr) {
     clock_gettime(CLOCK_REALTIME, &last_time);
 
     while (running) {
+
         struct timespec current;
         clock_gettime(CLOCK_REALTIME, &current);
 
-        long int elapsed = current.tv_sec * 1000000000 + current.tv_nsec - last_time.tv_sec * 1000000000 + last_time.tv_nsec;
+        double elapsed = fabs(last_time.tv_sec * 10E9 + last_time.tv_nsec - current.tv_sec * 10E9 + current.tv_nsec);
+
+        last_time.tv_nsec = current.tv_nsec;
+        last_time.tv_sec = current.tv_sec;
 
         pthread_mutex_lock(&screen_mutex);
         while (current_screen == NULL) {
@@ -34,11 +39,11 @@ static void *start(void *ptr) {
         pthread_mutex_unlock(&screen_mutex);
 
 
-        current_screen(matrix, elapsed / 1000000, current_user_data);
+        current_screen(matrix, elapsed / 10E9, current_user_data);
 
         struct timespec sleep, remaining;
         sleep.tv_sec = 0;
-        sleep.tv_nsec = 16666666;
+        sleep.tv_nsec = 33333333;
 
         nanosleep(&sleep, &remaining);
     }
@@ -62,13 +67,11 @@ inline screen_t get_current_screen() {
 screen_t set_current_screen(start_screen screen, void *user_data) {
     screen_t previous = current_screen;
 
-//    pthread_mutex_lock(&screen_mutex);
+    pthread_mutex_lock(&screen_mutex);
     current_screen = screen;
     current_user_data = user_data;
     pthread_cond_signal(&screen_cond);
-//    pthread_mutex_unlock(&screen_mutex);
-
-
+    pthread_mutex_unlock(&screen_mutex);
 
     return previous;
 }
