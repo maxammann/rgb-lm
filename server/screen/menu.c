@@ -1,12 +1,15 @@
 #include <stdlib.h>
+#include <wiringPi.h>
 #include "screen.h"
 #include "lm/ppm.h"
 #include "math.h"
 
 #include "menu.h"
+#include "../rotary_encoder.h"
 
 #define MENUES 3
 
+#define ENCODER_EDGE 5
 #define SPEED 25.0
 
 #define NEW_MENU(i, path) ppm_load(path, menus[i]);
@@ -78,6 +81,17 @@ static inline void move_menu(image *current, double elapsed, int sign, double st
 }
 
 void menu_screen(lmLedMatrix *matrix, double elapsed) {
+    if (encoder.value / ENCODER_EDGE > 1) {
+        menu_next();
+        encoder.value = 0;
+//        printf("next\n");
+    }   else if (encoder.value / ENCODER_EDGE < -1) {
+        menu_previous();
+        encoder.value = 0;
+//        printf("previous\n");
+
+    }
+
     lm_matrix_clear(matrix);
 
     image *current = menus[current_menu];

@@ -9,6 +9,7 @@
 #include "screen/example.h"
 #include "screen/menu.h"
 #include "screen/alarms.h"
+#include "rotary_encoder.h"
 
 void *discovery(void *nil) {
     start_discovery_server();
@@ -16,14 +17,18 @@ void *discovery(void *nil) {
 }
 
 int main(int argc, char *argv[]) {
+
     init_controller();
+
+
+    setupencoder(15, 16);
 
     register_example_screens();
     register_menu_screens();
     register_alarms_screens();
 
 
-    lm_thread_unpause(get_thread());
+//    lm_thread_unpause(get_thread());
     set_current_screen(get_screen("menu"), NULL);
 
     pthread_t pthread;

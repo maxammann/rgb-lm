@@ -15,7 +15,7 @@
 #define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
 #define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
 
-volatile unsigned *gpio;
+static volatile unsigned *gpio;
 
 static const uint32_t gpios = (
 #ifdef REV1
@@ -58,6 +58,12 @@ int lm_gpio_init() {
 
     // Always use volatile pointer!
     gpio = (volatile unsigned *) gpio_map;
+
+    if (gpio == NULL) {
+        printf("gpio null %ld\n", (long) gpio_map);
+        return -3;
+    }
+
     return 1;
 }
 

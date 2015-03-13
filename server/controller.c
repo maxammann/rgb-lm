@@ -151,7 +151,7 @@ static inline void set_screen(Lm__SetScreen *set_screen) {
     set_current_screen(screen, NULL);
 }
 
-void inline set_alarms(Lm__Alarms *alarms) {
+void set_alarms(Lm__Alarms *alarms) {
     int i;
 
     clear_alarms();
