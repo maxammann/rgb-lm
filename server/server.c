@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 typedef uint32_t request_size_t;
 
@@ -126,10 +127,10 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
         }
 
         if (rc == -1) {
-            perror("read");
+            perror("Read Error!\n");
             exit(-1);
         } else if (rc == 0) {
-            printf("closed\n");
+            printf("Connection to client closed!\n");
             close(cl);
         }
     }

@@ -3,7 +3,7 @@
 #include "controller.h"
 #include "server.h"
 
-#include "discovery_server.h"
+#include "discovery/discovery_server.h"
 
 #include "screen/screen.h"
 #include "screen/example.h"
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 
 
     lm_thread_unpause(get_thread());
-    set_current_screen(get_screen("mesmerizing"), NULL);
+    set_current_screen(get_screen("menu"), NULL);
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);
