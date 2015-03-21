@@ -10,6 +10,7 @@
 #include "screen/menu.h"
 #include "screen/alarms.h"
 #include "rotary_encoder.h"
+#include "audio.h"
 
 void *discovery(void *nil) {
     start_discovery_server();
@@ -33,6 +34,10 @@ int main(int argc, char *argv[]) {
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);
+
+    pthread_t audio;
+    pthread_create(&audio, NULL, play, NULL);
+
 
 //    int fd = bind_unix_domain_socket("./socket");
     int fd = bind_tcp_socket(6969);
