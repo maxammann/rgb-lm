@@ -18,7 +18,7 @@ void *discovery(void *nil) {
 }
 
 int main(int argc, char *argv[]) {
-
+    play();
     init_controller();
 
 
