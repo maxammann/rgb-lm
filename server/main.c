@@ -18,7 +18,7 @@ void *discovery(void *nil) {
 }
 
 int main(int argc, char *argv[]) {
-    play();
+
     init_controller();
 
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&pthread, NULL, discovery, NULL);
 
     pthread_t audio;
-    pthread_create(&audio, NULL, play, NULL);
+    pthread_create(&audio, NULL, (void *(*)(void *)) play, "test.ogg");
 
 
 //    int fd = bind_unix_domain_socket("./socket");

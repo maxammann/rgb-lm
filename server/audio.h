@@ -1,3 +1,3 @@
 #pragma once
 
-int play();
+int play(char *file_path);
