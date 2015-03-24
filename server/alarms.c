@@ -1,6 +1,11 @@
 #include <glib.h>
 #include <malloc.h>
+#include <unistd.h>
+#include <lm/thread.h>
 #include "alarms.h"
+#include "audio.h"
+#include "controller.h"
+#include "screen/screen.h"
 
 struct Alarm_ {
     int enabled;
@@ -8,7 +13,9 @@ struct Alarm_ {
     char *name;
 };
 
-GSList *alarms;
+static GSList *alarms;
+
+static int running;
 
 Alarm *new_alarm(char *name, uint32_t time, int enabled) {
     Alarm *alarm = malloc(sizeof(Alarm));
@@ -54,4 +61,46 @@ void clear_alarms() {
         g_slist_free_full(alarms, free_nodes);
         alarms = g_slist_alloc();
     }
+}
+
+void check_alarm(gpointer data, gpointer user_data) {
+    if (data == NULL) {
+        return;
+    }
+
+    time_t t = time(NULL);
+    struct tm *gtm = gmtime(&t);
+
+    gtm->tm_hour = (gtm->tm_hour + 1) % 24;
+
+    if (gtm->tm_hour > 10) {
+        return;
+    }
+
+    Alarm *alarm = data;
+
+    int wake = gtm->tm_hour * 60 * 60 + gtm->tm_min * 60 + gtm->tm_sec;
+
+    if (alarm->time < wake) {
+        set_current_screen(get_screen("menu"), NULL);
+        lm_thread_unpause(get_thread());
+        play("heaven.mp3");
+    }
+}
+
+void *watch(void *nil) {
+
+    while (running) {
+        g_slist_foreach(alarms, check_alarm, NULL);
+
+        usleep(1000000);
+    }
+
+    return NULL;
+}
+
+void start_watch() {
+    running = 1;
+    pthread_t pthread;
+    pthread_create(&pthread, NULL, watch, NULL);
 }

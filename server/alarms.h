@@ -18,3 +18,5 @@ char *get_name(Alarm *alarm);
 uint32_t get_time(Alarm *alarm);
 
 int get_enabled(Alarm *alarm);
+
+void start_watch();

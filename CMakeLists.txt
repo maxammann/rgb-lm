@@ -9,8 +9,8 @@ add_definitions(-DREV2)
 
 add_definitions(-DRT)
 
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 
 find_package (Threads)
 find_library(REAL_TIME rt)
