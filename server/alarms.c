@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <unistd.h>
 #include <lm/thread.h>
+#include <m3u.h>
 #include "alarms.h"
 #include "audio.h"
 #include "controller.h"
@@ -85,6 +86,16 @@ void check_alarm(gpointer data, gpointer user_data) {
         set_current_screen(get_screen("menu"), NULL);
         lm_thread_unpause(get_thread());
         play("heaven.mp3");
+
+        int amount;
+        Title *titles = m3u_read("test.m3u", &amount);
+
+        int i;
+        for (i = 0; i < amount; ++i) {
+            play(titles[0].title_dest);
+        }
+
+        m3u_free(titles, amount);
     }
 }
 
