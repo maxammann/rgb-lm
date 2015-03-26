@@ -1,117 +1,96 @@
-#include <glib.h>
 #include <malloc.h>
 #include <unistd.h>
 #include <lm/thread.h>
-#include <m3u.h>
+#include <stdlib.h>
+#include <string.h>
 #include "alarms.h"
-#include "audio.h"
-#include "controller.h"
-#include "screen/screen.h"
 
-struct Alarm_ {
-    int enabled;
-    uint32_t time;
-    char *name;
-};
+static Alarm *alarms;
+static uint32_t alarms_size;
 
-static GSList *alarms;
+void set_alarms(Alarm *alarms_, size_t alarms_size_) {
+    alarms = alarms_;
+    alarms_size = (uint32_t) alarms_size_;
 
-static int running;
-
-Alarm *new_alarm(char *name, uint32_t time, int enabled) {
-    Alarm *alarm = malloc(sizeof(Alarm));
-    alarm->name = name;
-    alarm->time = time;
-    alarm->enabled = enabled;
-    return alarm;
-}
-
-char *get_name(Alarm *alarm) {
-    if (alarm == NULL) {
-        return "None";
-    }
-    return alarm->name;
-}
-
-uint32_t get_time(Alarm *alarm) {
-    return alarm->time;
-}
-
-int get_enabled(Alarm *alarm) {
-    return alarm->enabled;
-}
-
-void add_alarm(Alarm *alarm) {
-    if (alarms == NULL) {
-        alarms = g_slist_alloc();
-    }
-
-    alarms = g_slist_append(alarms, alarm);
-}
-
-void free_nodes(gpointer data) {
-    free(data);
-}
-
-GSList *get_alarms() {
-    return alarms;
+    write_alarms("test.alarms");
 }
 
 void clear_alarms() {
-    if (alarms != NULL) {
-        g_slist_free_full(alarms, free_nodes);
-        alarms = g_slist_alloc();
+    int i;
+
+    for (i = 0; i < alarms_size; ++i) {
+        Alarm alarm = alarms[i];
+
+        free(alarm.name);
     }
+
+    free(alarms);
+    alarms = 0;
 }
 
-void check_alarm(gpointer data, gpointer user_data) {
-    if (data == NULL) {
+void write_alarms(char *path) {
+    FILE *file = fopen(path, "w");
+    if (file == NULL) {
         return;
     }
 
-    time_t t = time(NULL);
-    struct tm *gtm = gmtime(&t);
+    fwrite(&alarms_size, sizeof(uint32_t), 1, file);
 
-    gtm->tm_hour = (gtm->tm_hour + 1) % 24;
+    int i;
 
-    if (gtm->tm_hour > 10) {
+    for (i = 0; i < alarms_size; ++i) {
+        Alarm alarm = alarms[i];
+
+        fwrite(&alarm.enabled, sizeof(int), 1, file);
+        fwrite(&alarm.time, sizeof(uint32_t), 1, file);
+
+        uint32_t name_length = (uint32_t) (strlen(alarm.name) + 1);
+
+        fwrite(&name_length, sizeof(int32_t), 1, file);
+        fwrite(alarm.name, sizeof(char), name_length, file);
+    }
+
+
+    fclose(file);
+}
+
+void read_alarms(char *path) {
+    if (!access(path, F_OK)) {
         return;
     }
 
-    Alarm *alarm = data;
+    clear_alarms();
 
-    int wake = gtm->tm_hour * 60 * 60 + gtm->tm_min * 60 + gtm->tm_sec;
-
-    if (alarm->time < wake) {
-        set_current_screen(get_screen("menu"), NULL);
-        lm_thread_unpause(get_thread());
-        play("heaven.mp3");
-
-        int amount;
-        Title *titles = m3u_read("test.m3u", &amount);
-
+    FILE *file = fopen(path, "r");
+    if (file != NULL) {
+        fread(&alarms_size, sizeof(uint32_t), 1, file);
+        alarms = malloc(sizeof(Alarm) * alarms_size);
         int i;
-        for (i = 0; i < amount; ++i) {
-            play(titles[0].title_dest);
+
+        for (i = 0; i < alarms_size; ++i) {
+            Alarm alarm;
+
+            fread(&alarm.enabled, sizeof(int), 1, file);
+            fread(&alarm.time, sizeof(uint32_t), 1, file);
+
+            uint32_t name_length;
+            fread(&name_length, sizeof(uint32_t), 1, file);
+
+            alarm.name = malloc(sizeof(char) * name_length);
+
+            fread(alarm.name, sizeof(char), name_length, file);
+
+            alarms[i] = alarm;
         }
 
-        m3u_free(titles, amount);
+        fclose(file);
     }
 }
 
-void *watch(void *nil) {
-
-    while (running) {
-        g_slist_foreach(alarms, check_alarm, NULL);
-
-        usleep(1000000);
-    }
-
-    return NULL;
+uint32_t get_alarms_size() {
+    return alarms_size;
 }
 
-void start_watch() {
-    running = 1;
-    pthread_t pthread;
-    pthread_create(&pthread, NULL, watch, NULL);
+Alarm *get_alarms() {
+    return alarms;
 }

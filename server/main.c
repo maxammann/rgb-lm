@@ -1,5 +1,6 @@
 #include <lm/lm.h>
 #include <stdio.h>
+#include <m3u.h>
 
 #include "controller.h"
 #include "server.h"
@@ -12,6 +13,7 @@
 #include "screen/alarms.h"
 #include "rotary_encoder.h"
 #include "alarms.h"
+#include "wakedog.h"
 
 void *discovery(void *nil) {
     start_discovery_server();
@@ -19,36 +21,41 @@ void *discovery(void *nil) {
 }
 
 int main(int argc, char *argv[]) {
-    time_t t = time(NULL);
-    struct tm *gtm = gmtime(&t);
+//    play("test.mp3", 30, NULL);
+//    return 0;
+
+//    size_t amount;
+//    Title *titles = m3u_read("test1.m3u", &amount);
+//
+//    int i;
+//    for (i = 0; i < amount; ++i) {
+//        printf("%s", titles[i].title_dest);
+//    }
+//
+//    m3u_free(titles, amount);
+//    return 0;
+//    time_t t = time(NULL);
+//    struct tm *gtm = gmtime(&t);
 //    time_t gt = mktime(gtm);
 
-    gtm->tm_hour;
+//    gtm->tm_hour;
+//    printf("time: %s\n", gtm->tm_zone);
 
 
-    printf("time: %s\n", gtm->tm_zone);
+    read_alarms("test.alarms");
 
-
-    init_controller();
-
-    start_watch();
-
+    start_dog();
 
     setupencoder(15, 16);
+
+    init_controller();
 
     register_example_screens();
     register_menu_screens();
     register_alarms_screens();
 
-
-//    lm_thread_pause(get_thread());
-//    set_current_screen(get_screen("menu"), NULL);
-
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);
-
-//    pthread_t audio;
-//    pthread_create(&audio, NULL, (void *(*)(void *)) play, "test.ogg");
 
 //    int fd = bind_unix_domain_socket("./socket");
     int fd = bind_tcp_socket(6969);

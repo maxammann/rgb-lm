@@ -4,6 +4,7 @@
 #include "libavformat/avformat.h"
 #include "libavresample/avresample.h"
 #include "libavutil/opt.h"
+#include "../audio.h"
 
 #define CLEAN() clean(device, frame, fmt_ctx, dec_ctx, resample);
 
@@ -36,8 +37,11 @@ static void clean(ao_device *device,
     ao_shutdown();
 }
 
-int play(char *file_path) {
+int play(char *file_path, double max_vol, brake brake_fn) {
     int ret;
+
+    double delta_vol = 1.0 / max_vol;
+    int mod_vol = 1;
 
     signal(SIGINT, on_cancel_playback);
 
@@ -129,6 +133,12 @@ int play(char *file_path) {
         return 1;
     }
 
+    struct timespec start_time;
+
+    if (max_vol != 0.0) {
+        clock_gettime(CLOCK_REALTIME, &start_time);
+    }
+
     while (1) {
         if ((ret = av_read_frame(fmt_ctx, &packet)) < 0) {
             break;
@@ -155,12 +165,24 @@ int play(char *file_path) {
                 avresample_convert(resample, &output, out_linesize, out_samples,
                         frame->data, frame->linesize[0], frame->nb_samples);
 
+                // If we want to slowly increase volume
+                if (max_vol != 0.0 && mod_vol) {
+                    struct timespec current;
+                    clock_gettime(CLOCK_REALTIME, &current);
+                    double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 + current.tv_nsec) / 10E9;
+                    double volume = fmin(1.0, delta_vol * elapsed);
 
-                int16_t *volume = (int16_t *) output;
+                    if (volume != 1.0) {
+                        int16_t *stream = (int16_t *) output;
 
-                for (int i = 0; i < out_linesize / sizeof(uint16_t); ++i) {
-                    volume[i] = (int16_t) (volume[i] * 0.4);
+                        for (int i = 0; i < out_linesize / sizeof(uint16_t); ++i) {
+                            stream[i] = (int16_t) (stream[i] * volume);
+                        }
+                    } else {
+                        mod_vol = 0;
+                    }
                 }
+
 
                 if (ao_play(device, (char *) output, (uint_32) out_linesize) == 0) {
                     printf("ao_play: failed.\n");
@@ -174,7 +196,7 @@ int play(char *file_path) {
 
         av_free_packet(&packet);
 
-        if (cancel_playback) {
+        if (cancel_playback || (brake_fn != NULL && brake_fn())) {
             CLEAN();
             break;
         }

@@ -1,22 +1,23 @@
 #pragma once
 
 #include <stdint.h>
-#include "glib.h"
+
+struct Alarm_ {
+    int enabled;
+    uint32_t time;
+    char *name;
+};
 
 typedef struct Alarm_ Alarm;
 
-Alarm *new_alarm(char* name, uint32_t time, int enabled);
-
-void add_alarm(Alarm *alarm);
+void set_alarms(Alarm *alarms, size_t alarms_size);
 
 void clear_alarms();
 
-GSList *get_alarms();
+void write_alarms(char *path);
 
-char *get_name(Alarm *alarm);
+void read_alarms(char *path);
 
-uint32_t get_time(Alarm *alarm);
+uint32_t get_alarms_size();
 
-int get_enabled(Alarm *alarm);
-
-void start_watch();
+Alarm *get_alarms();

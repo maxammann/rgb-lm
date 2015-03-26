@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
-#include <libzvbi.h>
 #include <string.h>
+#include <unistd.h>
 #include "m3u.h"
 
 Title *m3u_read(char *file_path, size_t *titles_size) {
@@ -36,8 +36,9 @@ Title *m3u_read(char *file_path, size_t *titles_size) {
         Title title;
 
         title.type = UNKNOWN;
-        title.title_dest = malloc((size_t) read - 1);
-        strncpy ( title.title_dest,  line,(size_t) read - 1);
+        title.title_dest = malloc((size_t) read);
+        strncpy ( title.title_dest,  line,(size_t) read);
+        title.title_dest[read - 1] = '\0';
 
         titles[i] = title;
         ++i;
@@ -46,6 +47,8 @@ Title *m3u_read(char *file_path, size_t *titles_size) {
     *titles_size = lines_;
 
     free(line);
+
+    fclose(fp);
 
     return titles;
 }

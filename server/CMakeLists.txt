@@ -49,7 +49,8 @@ add_executable(server ${SOURCE_FILES}
  	screen/menu.c screen/menu.h
   	screen/alarms.c screen/alarms.h
   	screen/example.c screen/example.h
-  	rotary_encoder.c rotary_encoder.h audio.h)
+  	wakedog.c wakedog.h
+  	rotary_encoder.c rotary_encoder.h audio.h wakedog.h)
 
   	message(${AVResample_LIBRARIES})
 

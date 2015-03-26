@@ -136,7 +136,7 @@ static inline void print_string(Lm__PrintString *print_string) {
     free(text);
 }
 
-static inline void set_screen(Lm__SetScreen *set_screen) {
+static inline void proto_set_screen(Lm__SetScreen *set_screen) {
     char *name = set_screen->name;
     if (name[0] == '\0') {
         set_current_screen(NULL, NULL);
@@ -151,8 +151,10 @@ static inline void set_screen(Lm__SetScreen *set_screen) {
     set_current_screen(screen, NULL);
 }
 
-void set_alarms(Lm__Alarms *alarms) {
+void proto_set_alarms(Lm__Alarms *alarms) {
     int i;
+
+    Alarm *out_alarms = malloc(alarms->n_alarms * sizeof(Alarm));
 
     clear_alarms();
 
@@ -161,10 +163,16 @@ void set_alarms(Lm__Alarms *alarms) {
 
         char *name = strdup(proto_alarm->name);
 
-        Alarm *alarm = new_alarm(name, proto_alarm->time, proto_alarm->enabled);
-        add_alarm(alarm);
-        printf("Registered alarm %s", name);
+        Alarm alarm;
+
+        alarm.name = name;
+        alarm.time = proto_alarm->time;
+        alarm.enabled = proto_alarm->enabled;
+        out_alarms[i] = (alarm);
+        printf("Registered alarm %s\n", name);
     }
+
+    set_alarms(out_alarms, alarms->n_alarms);
 }
 
 void process_buffer(uint8_t *buffer, size_t size) {
@@ -205,13 +213,13 @@ void process_buffer(uint8_t *buffer, size_t size) {
             lm_thread_unpause(thread);
             break;
         case LM__REQUEST__TYPE__SETSCREEN:
-            set_screen(request->setscreen);
+            proto_set_screen(request->setscreen);
             break;
         case LM__REQUEST__TYPE__CLEAR:
             lm_matrix_clear(matrix);
             break;
         case LM__REQUEST__TYPE__ALARM_REQUST:
-            set_alarms(request->alarm_request->alarms);
+            proto_set_alarms(request->alarm_request->alarms);
             break;
         case LM__REQUEST__TYPE__MENU_NEXT:
             menu_next();
