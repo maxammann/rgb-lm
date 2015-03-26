@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
 //    printf("time: %s\n", gtm->tm_zone);
 
 
+
     read_alarms("test.alarms");
 
     start_dog();

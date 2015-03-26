@@ -1,11 +1,10 @@
-#include <glib.h>
 #include <stdlib.h>
 #include <string.h>
+#include "uthash.h"
 #include "screen.h"
 #include "math.h"
 
 lmLedMatrix *matrix;
-GHashTable *screens;
 screen_t current_screen;
 void *current_user_data;
 
@@ -14,6 +13,14 @@ pthread_mutex_t screen_mutex;
 pthread_cond_t screen_cond;
 
 int running = 1;
+
+typedef struct screen {
+    screen_t  screen;
+    char name[32];
+    UT_hash_handle hh;
+} screen_st;
+
+screen_st *screens = NULL;
 
 
 static void *start(void *ptr) {
@@ -53,7 +60,6 @@ static void *start(void *ptr) {
 
 
 void init_screens(lmLedMatrix *matrix_) {
-    screens = g_hash_table_new(g_str_hash, g_str_equal);
     pthread_create(&screen_thread, NULL, start, NULL);
     pthread_cond_init(&screen_cond, NULL);
     pthread_mutex_init(&screen_mutex, NULL);
@@ -77,13 +83,22 @@ screen_t set_current_screen(start_screen screen, void *user_data) {
 }
 
 screen_t get_screen(const char *name) {
-    return g_hash_table_lookup(screens, name);
+    screen_st *st;
+
+    HASH_FIND_STR(screens, name, st);
+
+    return st->screen;
 }
 
 int register_screen(const char *name, screen_t screen) {
     char *key = malloc(sizeof(const char) * strlen(name) + 1);
     strcpy(key, name);
-    return g_hash_table_insert(screens, key, screen);
+
+    screen_st *st = malloc(sizeof(screen_st));
+    st->screen = screen;
+    strcpy(st->name, name);
+
+    HASH_ADD_STR(screens, name, st);
 }
 
 void close_screens() {

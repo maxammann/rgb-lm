@@ -2,8 +2,7 @@ package lm;
 
 message Request {
 	enum Type {
-		SETPIXEL = 1; FILL = 2; CREATEFONT = 3; DESTROYFONT = 4; PRINTSTRING = 5;
-		DESTROYSTRING = 6; POPULATESTRING = 7; RENDERSTRING = 8; SETSCREEN = 9; ALARM_REQUST = 10;
+		SETSCREEN = 9; ALARM_REQUST = 10;
 
 		MENU_NEXT = 20; MENU_PREVIOUS = 21;
 
@@ -12,84 +11,9 @@ message Request {
 
 	required Type type = 1;
 
-    optional SetPixel setpixel = 2;
-    optional Fill fill = 3;
-
-    optional CreateFont createfont = 4;
-    optional DestroyFont destroyfont = 5;
-
-    optional PrintString printstring = 6;
-
-    optional DestroyString destroystring = 7;
-    optional PopulateString populatestring = 8;
-    optional RenderString renderstring = 9;
     optional SetScreen setscreen = 10;
     optional AlarmRequest alarm_request = 11;
 }
-
-message Position {
-	required uint32 x = 1;
-	required uint32 y = 2;
-}
-
-message RGB {
-	required uint32 r = 1;
-	required uint32 g = 2;
-	required uint32 b = 3;
-}
-
-message SetPixel {
-	required Position pos = 1;
-
-	required RGB rgb = 2;
-}
-
-message Fill {
-	required RGB rgb = 1;
-}
-
-
-message CreateFont {
-	required uint32 id = 1;
-	required uint32 size = 2;
-	required string font = 3;
-
-}
-
-message DestroyFont {
-	required uint32 id = 1;
-}
-
-
-message PrintString {
-	required Position pos = 1;
-
-	required RGB rgb = 2;
-
-	required uint32 font = 3;
-    required string text = 4;
-}
-
-
-message DestroyString {
-	required uint32 id = 1;
-}
-
-message PopulateString {
-	required uint32 id = 1;
-
-	required uint32 font = 2;
-    required string text = 3;
-}
-
-message RenderString {
-	required uint32 id = 1;
-
-	required Position pos = 2;
-
-	   required RGB rgb = 3;
-}
-
 
 message SetScreen {
     required string name = 1;

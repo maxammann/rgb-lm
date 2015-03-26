@@ -1,7 +1,5 @@
 #include <lm/lm.h>
 #include <math.h>
-#include <glib.h>
-#include <stdio.h>
 #include "screen.h"
 #include "../controller.h"
 
@@ -111,16 +109,16 @@ void digital_clock_screen(lmLedMatrix *matrix, double elapsed) {
     char *time_minute;
 
     // Hex representation
-    time_hour = g_strdup_printf("%X", tm_struct->tm_hour);
-    time_minute = g_strdup_printf("%X", tm_struct->tm_min);
+//    time_hour = g_strdup_printf("%X", tm_struct->tm_hour);
+//    time_minute = g_strdup_printf("%X", tm_struct->tm_min);
 //    time_hour = g_strdup_printf("%i", tm_struct->tm_hour);
 //    time_minute = g_strdup_printf("%i", tm_struct->tm_min);
 
     lmString *hour = lm_fonts_string_new();
     lmString *minute = lm_fonts_string_new();
 
-    lm_fonts_populate_string(get_font_library(), hour, time_hour, get_default_font());
-    lm_fonts_populate_string(get_font_library(), minute, time_minute, get_default_font());
+//    lm_fonts_populate_string(get_font_library(), hour, time_hour, get_default_font());
+//    lm_fonts_populate_string(get_font_library(), minute, time_minute, get_default_font());
 
     int hour_width = lm_fonts_string_width(hour);
     int minute_width = lm_fonts_string_width(minute);
