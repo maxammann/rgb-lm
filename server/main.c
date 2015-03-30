@@ -14,16 +14,15 @@
 #include "rotary_encoder.h"
 #include "alarms.h"
 #include "wakedog.h"
+#include "audio.h"
 
 void *discovery(void *nil) {
     start_discovery_server();
     return NULL;
 }
 
-int main(int argc, char *argv[]) {
 
-//    play("test.mp3", 30, NULL);
-//    return 0;
+int main(int argc, char *argv[]) {
 
 //    size_t amount;
 //    Title *titles = m3u_read("test1.m3u", &amount);
@@ -47,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     read_alarms("test.alarms");
 
-    setupencoder(15, 16);
+    setupencoder(15, 16, 14, skip_current_playback);
 
     init_controller();
 
@@ -58,6 +57,9 @@ int main(int argc, char *argv[]) {
 
     start_dog();
 
+
+//    lm_thread_unpause(get_thread());
+//    set_current_screen(get_screen("menu"), NULL);
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);

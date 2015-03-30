@@ -13,19 +13,20 @@ static void clean(ao_device *device,
                   AVCodecContext *dec_ctx,
                   AVAudioResampleContext *resample) {
 
-    avcodec_free_frame(&frame);
+    if (frame != 0) avcodec_free_frame(&frame);
 
-    avcodec_close(dec_ctx);
-    avformat_close_input(&fmt_ctx);
 
-    avresample_close(resample);
-    avresample_free(&resample);
+    if (dec_ctx != 0) avcodec_close(dec_ctx);
+    if (fmt_ctx != 0) avformat_close_input(&fmt_ctx);
 
-    ao_close(device);
+    if (resample != 0) avresample_close(resample);
+    if (resample != 0) avresample_free(&resample);
+
+    if (device != 0) ao_close(device);
     ao_shutdown();
 }
 
-static inline void modify_volume(int16_t *stream, int bytes, double volume) {
+static inline void modify_volume(int16_t *stream, int bytes, long double volume) {
     size_t length = bytes / sizeof(uint16_t);
 
     for (int i = 0; i < length; ++i) {
@@ -33,10 +34,25 @@ static inline void modify_volume(int16_t *stream, int bytes, double volume) {
     }
 }
 
-int play(char *file_path, double max_vol, brake brake_fn) {
+int play_default(char *file_path, double seconds, brake brake_fn) {
+    return play(file_path, seconds, 1.0, brake_fn);
+}
+
+int play(char *file_path, double seconds, double max_vol, brake brake_fn) {
     int ret;
 
-    double delta_vol = (max_vol == 0) ? NAN : 1.0 / max_vol;
+    double delta_vol = max_vol / seconds;
+
+//    delta_vol = NAN        -> do not modify volume any more
+//    delta_vol = INFINITY   -> just set volume and don't modify
+
+    if (delta_vol == INFINITY && max_vol == 1.0) {
+        delta_vol = NAN;
+    }
+
+    ao_device *device = 0;
+    ao_sample_format format;
+    int default_driver;
 
     // Packet
     AVPacket packet;
@@ -48,7 +64,7 @@ int play(char *file_path, double max_vol, brake brake_fn) {
 
 
     // Contexts
-    AVAudioResampleContext *resample;
+    AVAudioResampleContext *resample = 0;
     AVFormatContext *fmt_ctx = 0;
     AVCodecContext *dec_ctx = 0;
 
@@ -60,16 +76,19 @@ int play(char *file_path, double max_vol, brake brake_fn) {
     AVCodec *dec;
     if ((ret = avformat_open_input(&fmt_ctx, file_path, NULL, NULL)) < 0) {
         av_log(NULL, AV_LOG_ERROR, "Cannot open input file\n");
+        CLEAN();
         return ret;
     }
 
     if ((ret = avformat_find_stream_info(fmt_ctx, NULL)) < 0) {
         av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
+        CLEAN();
         return ret;
     }
 
     if ((av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &dec, 0)) < 0) {
         av_log(NULL, AV_LOG_ERROR, "Cannot find a audio stream in the input file\n");
+        CLEAN();
         return ret;
     }
 
@@ -79,6 +98,7 @@ int play(char *file_path, double max_vol, brake brake_fn) {
     // Open codec
     if ((ret = avcodec_open2(dec_ctx, dec, NULL)) < 0) {
         av_log(NULL, AV_LOG_ERROR, "Cannot open audio decoder\n");
+        CLEAN();
         return ret;
     }
 
@@ -101,10 +121,6 @@ int play(char *file_path, double max_vol, brake brake_fn) {
 
 
     // Setup driver
-    ao_device *device;
-    ao_sample_format format;
-    int default_driver;
-
     ao_initialize();
     default_driver = ao_default_driver_id();
 
@@ -118,17 +134,18 @@ int play(char *file_path, double max_vol, brake brake_fn) {
 
     if (device == NULL) {
         fprintf(stderr, "Error opening device.\n");
+        CLEAN();
         return 1;
     }
 
     struct timespec start_time;
 
-    if (max_vol != 0.0) {
-        clock_gettime(CLOCK_REALTIME, &start_time);
+    if (seconds != 0.0) {
+        clock_gettime(CLOCK_MONOTONIC, &start_time);
     }
 
     while (1) {
-        if ((ret = av_read_frame(fmt_ctx, &packet)) < 0) {
+        if ((av_read_frame(fmt_ctx, &packet)) < 0) {
             break;
         }
 
@@ -153,28 +170,26 @@ int play(char *file_path, double max_vol, brake brake_fn) {
                 avresample_convert(resample, &output, out_linesize, out_samples,
                                    frame->data, frame->linesize[0], frame->nb_samples);
 
-                // If we want to slowly increase volume
-                if (delta_vol != NAN) {
+                if (delta_vol == INFINITY) {
+                    modify_volume((int16_t *) output, out_linesize, max_vol);
+                } else if (delta_vol == delta_vol) {
                     struct timespec current;
-                    clock_gettime(CLOCK_REALTIME, &current);
-                    double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 +
-                                          current.tv_nsec) / 10E9;
+                    clock_gettime(CLOCK_MONOTONIC, &current);
+                    long double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 +
+                                               current.tv_nsec) / 10E9;
 
-                    double volume = fmin(VOLUME_FINISHED, delta_vol * elapsed);
+                    long double volume = fminl(max_vol, delta_vol * elapsed);
 
-                    if (volume == VOLUME_FINISHED) {
+                    if (volume == 1.0) {
                         delta_vol = NAN;
                     } else {
-                        int16_t *stream = (int16_t *) output;
-
-                        modify_volume(stream, out_linesize, volume);
+                        modify_volume((int16_t *) output, out_linesize, volume);
                     }
                 }
 
 
                 if (ao_play(device, (char *) output, (uint_32) out_linesize) == 0) {
                     printf("ao_play: failed.\n");
-                    CLEAN();
                     break;
                 }
 
@@ -185,7 +200,6 @@ int play(char *file_path, double max_vol, brake brake_fn) {
         av_free_packet(&packet);
 
         if (brake_fn != NULL && brake_fn()) {
-            CLEAN();
             break;
         }
     }

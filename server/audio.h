@@ -2,6 +2,6 @@
 
 typedef int (*brake)();
 
-static const double VOLUME_FINISHED = 1.0;
+int play_default(char *file_path, double seconds, brake brake_fn);
 
-int play(char *file_path, double max_vol, brake brake_fn);
+int play(char *file_path, double seconds, double max_vol, brake brake_fn);

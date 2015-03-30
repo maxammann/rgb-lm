@@ -36,7 +36,7 @@ void updateEncoder() {
     encoder.delta = delta;
 }
 
-void setupencoder(int pin_a, int pin_b) {
+void setupencoder(int pin_a, int pin_b, int switch_pin, void (*switch_down)) {
     wiringPiSetup();
 
     encoder.pin_a = pin_a;
@@ -50,6 +50,11 @@ void setupencoder(int pin_a, int pin_b) {
     pullUpDnControl(pin_a, PUD_UP);
     pullUpDnControl(pin_b, PUD_UP);
 
+    pullUpDnControl(switch_pin, PUD_UP);
+
     wiringPiISR(pin_a, INT_EDGE_BOTH, updateEncoder);
     wiringPiISR(pin_b, INT_EDGE_BOTH, updateEncoder);
+
+
+    wiringPiISR(switch_pin, INT_EDGE_BOTH, switch_down);
 }

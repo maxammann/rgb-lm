@@ -7,32 +7,46 @@
 #include "screen/screen.h"
 #include "audio.h"
 #include "wakedog.h"
+#include "controller.h"
 
 static int running;
 
-
 //stop playback
-static int is_playback_stopped_ = 0;
+static int current_playback = 0;
+
+static int skip = 0;
+
 
 int is_playback_stopped() {
-    return is_playback_stopped_;
+    return skip == current_playback;
+}
+
+void skip_playback(int playback) {
+    skip = playback;
+}
+
+void skip_current_playback() {
+    skip_playback(current_playback);
 }
 
 static void *wakeup(void *pVoid) {
     size_t amount;
     Title *titles;
 
+    lm_thread_unpause(get_thread());
+    set_current_screen(get_screen("mesmerizing"), NULL);
+
     char *wakeup_playlist = getenv("WAKEUP_PLAYLIST");
 
     if (wakeup_playlist != NULL) {
         titles = m3u_read(wakeup_playlist, &amount);
 
-        play(titles[rand() % amount].title_dest, 0, is_playback_stopped);
+        current_playback++;
+        play_default(titles[rand() % amount].title_dest, 0, is_playback_stopped);
 
         m3u_free(titles, amount);
     } else {
         printf("No audio found!\n");
-        return 0;
     }
 
     char *news_playlist = getenv("NEWS_PLAYLIST");
@@ -42,19 +56,22 @@ static void *wakeup(void *pVoid) {
 
         int i;
         for (i = 0; i < amount; ++i) {
-            play(titles[i].title_dest, 0, is_playback_stopped);
+            current_playback++;
+            play_default(titles[i].title_dest, 0, is_playback_stopped);
         }
 
         m3u_free(titles, amount);
     } else {
         printf("No news found!\n");
-        return 0;
     }
+
+    lm_thread_pause(get_thread());
+    set_current_screen(NULL, NULL);
 
     return 0;
 }
 
-int should_be_woke_(Alarm *alarm, struct tm *now) {
+static int should_be_woke_(Alarm *alarm, struct tm *now) {
     return now->tm_hour * 60 * 60 + now->tm_min * 60 + now->tm_sec > alarm->time;
 }
 
