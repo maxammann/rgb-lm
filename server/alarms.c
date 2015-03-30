@@ -4,11 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include "alarms.h"
+#include "wakedog.h"
 
-static Alarm *alarms;
-static uint32_t alarms_size;
+Alarm *alarms;
+uint32_t alarms_size;
 
 void set_alarms(Alarm *alarms_, size_t alarms_size_) {
+    int i;
+
+    for (i = 0; i < alarms_size_; ++i) {
+        alarms_[i].already_woke = should_be_woke(&alarms_[i]);
+    }
+
     alarms = alarms_;
     alarms_size = (uint32_t) alarms_size_;
 
@@ -55,19 +62,16 @@ void write_alarms(char *path) {
 }
 
 void read_alarms(char *path) {
-    if (!access(path, F_OK)) {
-        return;
-    }
-
     clear_alarms();
 
     FILE *file = fopen(path, "r");
     if (file != NULL) {
-        fread(&alarms_size, sizeof(uint32_t), 1, file);
-        alarms = malloc(sizeof(Alarm) * alarms_size);
+        size_t read_size;
+        fread(&read_size, sizeof(uint32_t), 1, file);
+        Alarm *read = malloc(sizeof(Alarm) * read_size);
         int i;
 
-        for (i = 0; i < alarms_size; ++i) {
+        for (i = 0; i < read_size; ++i) {
             Alarm alarm;
 
             fread(&alarm.enabled, sizeof(int), 1, file);
@@ -80,10 +84,12 @@ void read_alarms(char *path) {
 
             fread(alarm.name, sizeof(char), name_length, file);
 
-            alarms[i] = alarm;
+            read[i] = alarm;
         }
 
         fclose(file);
+
+        set_alarms(read, read_size);
     }
 }
 

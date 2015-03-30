@@ -1,5 +1,4 @@
 #include <ao/ao.h>
-#include <signal.h>
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavresample/avresample.h"
@@ -8,22 +7,11 @@
 
 #define CLEAN() clean(device, frame, fmt_ctx, dec_ctx, resample);
 
-int cancel_playback;
-
-void on_cancel_playback(int sig) {
-    if (sig != SIGINT) {
-        return;
-    }
-
-    cancel_playback = 1;
-    exit(0);
-}
-
 static void clean(ao_device *device,
-        AVFrame *frame,
-        AVFormatContext *fmt_ctx,
-        AVCodecContext *dec_ctx,
-        AVAudioResampleContext *resample) {
+                  AVFrame *frame,
+                  AVFormatContext *fmt_ctx,
+                  AVCodecContext *dec_ctx,
+                  AVAudioResampleContext *resample) {
 
     avcodec_free_frame(&frame);
 
@@ -37,14 +25,18 @@ static void clean(ao_device *device,
     ao_shutdown();
 }
 
+static inline void modify_volume(int16_t *stream, int bytes, double volume) {
+    size_t length = bytes / sizeof(uint16_t);
+
+    for (int i = 0; i < length; ++i) {
+        stream[i] = (int16_t) (stream[i] * volume);
+    }
+}
+
 int play(char *file_path, double max_vol, brake brake_fn) {
     int ret;
 
-    double delta_vol = 1.0 / max_vol;
-    int mod_vol = 1;
-
-    signal(SIGINT, on_cancel_playback);
-
+    double delta_vol = (max_vol == 0) ? NAN : 1.0 / max_vol;
 
     // Packet
     AVPacket packet;
@@ -122,10 +114,6 @@ int play(char *file_path, double max_vol, brake brake_fn) {
     format.byte_format = AO_FMT_NATIVE;
     format.matrix = 0;
 
-//    printf("Sample rate: %d\n", dec_ctx->sample_rate);
-//    printf("Channels: %d\n", dec_ctx->channels);
-//    printf("bits per sample: %d\n", format.bits);
-
     device = ao_open_live(default_driver, &format, NULL);
 
     if (device == NULL) {
@@ -163,23 +151,23 @@ int play(char *file_path, double max_vol, brake brake_fn) {
                 av_samples_alloc(&output, &out_linesize, 2, out_samples, output_fmt, 0);
 
                 avresample_convert(resample, &output, out_linesize, out_samples,
-                        frame->data, frame->linesize[0], frame->nb_samples);
+                                   frame->data, frame->linesize[0], frame->nb_samples);
 
                 // If we want to slowly increase volume
-                if (max_vol != 0.0 && mod_vol) {
+                if (delta_vol != NAN) {
                     struct timespec current;
                     clock_gettime(CLOCK_REALTIME, &current);
-                    double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 + current.tv_nsec) / 10E9;
-                    double volume = fmin(1.0, delta_vol * elapsed);
+                    double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 +
+                                          current.tv_nsec) / 10E9;
 
-                    if (volume != 1.0) {
+                    double volume = fmin(VOLUME_FINISHED, delta_vol * elapsed);
+
+                    if (volume == VOLUME_FINISHED) {
+                        delta_vol = NAN;
+                    } else {
                         int16_t *stream = (int16_t *) output;
 
-                        for (int i = 0; i < out_linesize / sizeof(uint16_t); ++i) {
-                            stream[i] = (int16_t) (stream[i] * volume);
-                        }
-                    } else {
-                        mod_vol = 0;
+                        modify_volume(stream, out_linesize, volume);
                     }
                 }
 
@@ -196,7 +184,7 @@ int play(char *file_path, double max_vol, brake brake_fn) {
 
         av_free_packet(&packet);
 
-        if (cancel_playback || (brake_fn != NULL && brake_fn())) {
+        if (brake_fn != NULL && brake_fn()) {
             CLEAN();
             break;
         }

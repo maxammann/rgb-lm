@@ -68,7 +68,7 @@ void proto_set_alarms(Lm__Alarms *alarms) {
         alarm.name = name;
         alarm.time = proto_alarm->time;
         alarm.enabled = proto_alarm->enabled;
-        out_alarms[i] = (alarm);
+        out_alarms[i] = alarm;
         printf("Registered alarm %s\n", name);
     }
 

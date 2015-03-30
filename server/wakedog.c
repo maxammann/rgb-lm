@@ -2,14 +2,14 @@
 #include <m3u.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <uthash.h>
 #include "alarms.h"
 #include "screen/screen.h"
-#include "controller.h"
 #include "audio.h"
 #include "wakedog.h"
 
 static int running;
-static Alarm *currently_running;
+
 
 //stop playback
 static int is_playback_stopped_ = 0;
@@ -18,65 +18,96 @@ int is_playback_stopped() {
     return is_playback_stopped_;
 }
 
-void *wakeup(void *pVoid) {
-    char *wakup_audio = getenv("WAKEUP_AUDIO");
-    char *news_playlist = getenv("NEWS_PLAYLIST");
-
-    set_current_screen(get_screen("menu"), NULL);
-    lm_thread_unpause(get_thread());
-    play(wakup_audio, 30, is_playback_stopped);
-
+static void *wakeup(void *pVoid) {
     size_t amount;
-    Title *titles = m3u_read(news_playlist, &amount);
+    Title *titles;
 
-    int i;
-    for (i = 0; i < amount; ++i) {
-        play(titles[i].title_dest, 0, is_playback_stopped);
+    char *wakeup_playlist = getenv("WAKEUP_PLAYLIST");
+
+    if (wakeup_playlist != NULL) {
+        titles = m3u_read(wakeup_playlist, &amount);
+
+        play(titles[rand() % amount].title_dest, 0, is_playback_stopped);
+
+        m3u_free(titles, amount);
+    } else {
+        printf("No audio found!\n");
+        return 0;
     }
 
-    m3u_free(titles, amount);
+    char *news_playlist = getenv("NEWS_PLAYLIST");
 
-    currently_running = 0;
+    if (news_playlist != NULL) {
+        titles = m3u_read(news_playlist, &amount);
+
+        int i;
+        for (i = 0; i < amount; ++i) {
+            play(titles[i].title_dest, 0, is_playback_stopped);
+        }
+
+        m3u_free(titles, amount);
+    } else {
+        printf("No news found!\n");
+        return 0;
+    }
 
     return 0;
 }
 
-void check_alarm(Alarm *alarm) {
+int should_be_woke_(Alarm *alarm, struct tm *now) {
+    return now->tm_hour * 60 * 60 + now->tm_min * 60 + now->tm_sec > alarm->time;
+}
+
+int should_be_woke(Alarm *alarm) {
+    time_t t = time(NULL);
+    struct tm *now = localtime(&t);
+    return should_be_woke_(alarm, now);
+}
+
+static void check_alarm(Alarm *alarm, struct tm *now) {
     if (alarm == NULL) {
         return;
     }
 
-    if (currently_running != NULL) {
+    if (alarm->already_woke == 1) {
         return;
     }
 
-    time_t t = time(NULL);
-    struct tm *gtm = gmtime(&t);
 
-    gtm->tm_hour = (gtm->tm_hour + 1) % 24;
+    if (should_be_woke_(alarm, now)) {
+        alarm->already_woke = 1;
 
-    int time = gtm->tm_hour * 60 * 60 + gtm->tm_min * 60 + gtm->tm_sec;
-
-    int32_t delta = time - alarm->time;
-
-    if (delta > 0 && delta < 2) {
-        currently_running = alarm;
         pthread_t audio;
         pthread_create(&audio, NULL, wakeup, NULL);
-        printf("Waking you up! Motherfucker, it's %d:%d!\n", gtm->tm_hour, gtm->tm_min);
+        printf("Waking you up! Motherfucker, it's %d:%d!\n", now->tm_hour, now->tm_min);
     }
 }
 
-void *watch(void *nil) {
+static void *watch(void *nil) {
     int i;
-    uint32_t size = get_alarms_size();
-    Alarm *alarms = get_alarms();
+    int last_hour = 0;
+
 
     while (running) {
+        time_t t = time(NULL);
+        struct tm *now = localtime(&t);
+
+        int reset = (last_hour == 23 && now->tm_hour == 0);
+
+        uint32_t size = get_alarms_size();
+        Alarm *alarms = get_alarms();
 
         for (i = 0; i < size; ++i) {
-            check_alarm(&alarms[i]);
+            Alarm *alarm = alarms + i;
+
+            if (reset) {
+                alarm->already_woke = 0;
+            }
+
+            check_alarm(alarm, now);
         }
+
+        last_hour = now->tm_hour;
 
         usleep(SLEEP);
     }

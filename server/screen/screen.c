@@ -87,6 +87,10 @@ screen_t get_screen(const char *name) {
 
     HASH_FIND_STR(screens, name, st);
 
+    if (st == NULL) {
+        return NULL;
+    }
+
     return st->screen;
 }
 

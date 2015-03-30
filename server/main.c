@@ -21,6 +21,7 @@ void *discovery(void *nil) {
 }
 
 int main(int argc, char *argv[]) {
+
 //    play("test.mp3", 30, NULL);
 //    return 0;
 
@@ -35,17 +36,16 @@ int main(int argc, char *argv[]) {
 //    m3u_free(titles, amount);
 //    return 0;
 //    time_t t = time(NULL);
-//    struct tm *gtm = gmtime(&t);
+//    struct tm *gtm = localtime(&t);
 //    time_t gt = mktime(gtm);
-
+//
 //    gtm->tm_hour;
 //    printf("time: %s\n", gtm->tm_zone);
+//    return 0;
 
 
 
     read_alarms("test.alarms");
-
-    start_dog();
 
     setupencoder(15, 16);
 
@@ -54,6 +54,10 @@ int main(int argc, char *argv[]) {
     register_example_screens();
     register_menu_screens();
     register_alarms_screens();
+
+
+    start_dog();
+
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);

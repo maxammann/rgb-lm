@@ -6,6 +6,8 @@ struct Alarm_ {
     int enabled;
     uint32_t time;
     char *name;
+
+    int already_woke;
 };
 
 typedef struct Alarm_ Alarm;
