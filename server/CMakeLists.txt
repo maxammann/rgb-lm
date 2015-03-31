@@ -35,12 +35,12 @@ set(SOURCE_FILES ${SOURCE_HEADERS} ${PROTO_SRCS} ${PROTO_HDRS})
 option(FFMPEG_COMPAT "FFMPEG_COMPAT" ON)
 
 if (${FFMPEG_COMPAT})
-	set(SOURCE_FILES ${SOURCE_FILES} ffmpeg/ffmpeg_compat.c)
+	set(SOURCE_FILES ${SOURCE_FILES} audio/ffmpeg_compat.c)
 endif (${FFMPEG_COMPAT})
 
 add_executable(server ${SOURCE_FILES}
 	main.c
-	ffmpeg/audio_ffmpeg.c
+	audio/audio_ffmpeg.c
  	controller.c
 	server.c
  	alarms.c
@@ -50,7 +50,7 @@ add_executable(server ${SOURCE_FILES}
   	screen/alarms.c screen/alarms.h
   	screen/example.c screen/example.h
   	wakedog.c wakedog.h
-  	rotary_encoder.c rotary_encoder.h audio.h wakedog.h)
+  	rotary_encoder.c rotary_encoder.h audio/audio.h wakedog.h)
 
   	message(${AVResample_LIBRARIES})
 

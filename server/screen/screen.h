@@ -7,7 +7,9 @@ typedef void (*start_screen)(lmLedMatrix *matrix, double, void* user_data);
 typedef start_screen screen_t;
 
 
-void init_screens(lmLedMatrix* matrix);
+void screens_start(lmLedMatrix *matrix);
+
+void screens_stop();
 
 screen_t get_current_screen();
 

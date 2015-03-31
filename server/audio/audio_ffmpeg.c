@@ -3,9 +3,11 @@
 #include "libavformat/avformat.h"
 #include "libavresample/avresample.h"
 #include "libavutil/opt.h"
-#include "../audio.h"
+#include "audio.h"
 
 #define CLEAN() clean(device, frame, fmt_ctx, dec_ctx, resample);
+
+#define IS_NAN(val) val == val
 
 static void clean(ao_device *device,
                   AVFrame *frame,
@@ -34,11 +36,48 @@ static inline void modify_volume(int16_t *stream, int bytes, long double volume)
     }
 }
 
-int play_default(char *file_path, double seconds, brake brake_fn) {
-    return play(file_path, seconds, 1.0, brake_fn);
+int audio_play_default(char *file_path, double seconds, brake brake_fn) {
+    return audio_play(file_path, seconds, 1.0, brake_fn);
 }
 
-int play(char *file_path, double seconds, double max_vol, brake brake_fn) {
+void audio_init() {
+    ao_initialize();
+    av_register_all();
+}
+
+int open_file(char *file_path, AVFormatContext **fmt_ctx, AVCodecContext **dec_ctx, int *audio_stream_index) {
+    int ret = 0;
+
+    // Find codec and stream
+    AVCodec *dec;
+    if ((ret = avformat_open_input(fmt_ctx, file_path, NULL, NULL)) < 0) {
+        av_log(NULL, AV_LOG_ERROR, "Cannot open input file\n");
+        return ret;
+    }
+
+    if ((ret = avformat_find_stream_info(*fmt_ctx, NULL)) < 0) {
+        av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
+        return ret;
+    }
+
+    if ((av_find_best_stream(*fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &dec, 0)) < 0) {
+        av_log(NULL, AV_LOG_ERROR, "Cannot find a audio stream in the input file\n");
+        return ret;
+    }
+
+    *audio_stream_index = ret;
+    dec_ctx = &(*fmt_ctx)->streams[*audio_stream_index]->codec;
+
+    // Open codec
+    if ((ret = avcodec_open2(*dec_ctx, dec, NULL)) < 0) {
+        av_log(NULL, AV_LOG_ERROR, "Cannot open audio decoder\n");
+        return ret;
+    }
+
+    return ret;
+}
+
+int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) {
     int ret;
 
     double delta_vol = max_vol / seconds;
@@ -62,7 +101,6 @@ int play(char *file_path, double seconds, double max_vol, brake brake_fn) {
     // Frame
     AVFrame *frame = avcodec_alloc_frame();
 
-
     // Contexts
     AVAudioResampleContext *resample = 0;
     AVFormatContext *fmt_ctx = 0;
@@ -70,41 +108,15 @@ int play(char *file_path, double seconds, double max_vol, brake brake_fn) {
 
     int audio_stream_index;
 
-    av_register_all();
+    ret = open_file(file_path, &fmt_ctx, &dec_ctx, &audio_stream_index);
 
-    // Find codec and stream
-    AVCodec *dec;
-    if ((ret = avformat_open_input(&fmt_ctx, file_path, NULL, NULL)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot open input file\n");
-        CLEAN();
-        return ret;
-    }
-
-    if ((ret = avformat_find_stream_info(fmt_ctx, NULL)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot find stream information\n");
-        CLEAN();
-        return ret;
-    }
-
-    if ((av_find_best_stream(fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &dec, 0)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot find a audio stream in the input file\n");
-        CLEAN();
-        return ret;
-    }
-
-    audio_stream_index = ret;
-    dec_ctx = fmt_ctx->streams[audio_stream_index]->codec;
-
-    // Open codec
-    if ((ret = avcodec_open2(dec_ctx, dec, NULL)) < 0) {
-        av_log(NULL, AV_LOG_ERROR, "Cannot open audio decoder\n");
-        CLEAN();
+    if (ret < 0) {
+        av_log(NULL, AV_LOG_ERROR, "Error opening file\n");
         return ret;
     }
 
     // Setup resampling
     resample = avresample_alloc_context();
-
 
     int64_t layout = av_get_default_channel_layout(dec_ctx->channels);
     int sample_rate = dec_ctx->sample_rate;
@@ -119,9 +131,7 @@ int play(char *file_path, double seconds, double max_vol, brake brake_fn) {
 
     avresample_open(resample);
 
-
     // Setup driver
-    ao_initialize();
     default_driver = ao_default_driver_id();
 
     format.bits = av_get_bytes_per_sample(output_fmt) * 8;
@@ -172,7 +182,7 @@ int play(char *file_path, double seconds, double max_vol, brake brake_fn) {
 
                 if (delta_vol == INFINITY) {
                     modify_volume((int16_t *) output, out_linesize, max_vol);
-                } else if (delta_vol == delta_vol) {
+                } else if (IS_NAN(delta_vol)) {
                     struct timespec current;
                     clock_gettime(CLOCK_MONOTONIC, &current);
                     long double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 +

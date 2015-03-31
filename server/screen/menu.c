@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <wiringPi.h>
 #include "screen.h"
 #include "lm/ppm.h"
 #include "math.h"

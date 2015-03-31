@@ -59,11 +59,15 @@ static void *start(void *ptr) {
 }
 
 
-void init_screens(lmLedMatrix *matrix_) {
+void screens_start(lmLedMatrix *matrix_) {
     pthread_create(&screen_thread, NULL, start, NULL);
     pthread_cond_init(&screen_cond, NULL);
     pthread_mutex_init(&screen_mutex, NULL);
     matrix = matrix_;
+}
+
+void screens_stop() {
+    running = 0;
 }
 
 inline screen_t get_current_screen() {

@@ -5,9 +5,9 @@
 #include <uthash.h>
 #include "alarms.h"
 #include "screen/screen.h"
-#include "audio.h"
 #include "wakedog.h"
 #include "controller.h"
+#include "audio/audio.h"
 
 static int running;
 
@@ -42,7 +42,7 @@ static void *wakeup(void *pVoid) {
         titles = m3u_read(wakeup_playlist, &amount);
 
         current_playback++;
-        play_default(titles[rand() % amount].title_dest, 0, is_playback_stopped);
+        audio_play_default(titles[rand() % amount].title_dest, 0, is_playback_stopped);
 
         m3u_free(titles, amount);
     } else {
@@ -57,7 +57,7 @@ static void *wakeup(void *pVoid) {
         int i;
         for (i = 0; i < amount; ++i) {
             current_playback++;
-            play_default(titles[i].title_dest, 0, is_playback_stopped);
+            audio_play_default(titles[i].title_dest, 0, is_playback_stopped);
         }
 
         m3u_free(titles, amount);
@@ -126,7 +126,7 @@ static void *watch(void *nil) {
 
         last_hour = now->tm_hour;
 
-        usleep(SLEEP);
+        sleep(2);
     }
 
     return NULL;

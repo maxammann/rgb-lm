@@ -7,12 +7,16 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 typedef uint32_t request_size_t;
 
 #define SIZE sizeof(request_size_t)
 
-int bind_tcp_socket(uint16_t port) {
+static int running;
+pthread_mutex_t running_mutex;
+
+int bind_tcp_socket(uint16_t port, int *out_fd) {
     struct sockaddr_in addr;
     int fd;
 
@@ -20,7 +24,7 @@ int bind_tcp_socket(uint16_t port) {
 
     if (fd == -1) {
         perror("socket error");
-        exit(-1);
+        return -1;
     }
 
     bzero(&addr, sizeof(addr));
@@ -33,13 +37,15 @@ int bind_tcp_socket(uint16_t port) {
 
     if (error == -1) {
         perror("bind error");
-        exit(-1);
+        return -1;
     }
 
-    return fd;
+    *out_fd = fd;
+
+    return 0;
 }
 
-int bind_unix_domain_socket(const char *socket_path) {
+int bind_unix_domain_socket(const char *socket_path, int *out_fd) {
     struct sockaddr_un addr;
     int fd;
 
@@ -47,7 +53,7 @@ int bind_unix_domain_socket(const char *socket_path) {
 
     if (fd == -1) {
         perror("socket error");
-        exit(-1);
+        return -1;
     }
 
     memset(&addr, 0, sizeof(addr));
@@ -59,14 +65,23 @@ int bind_unix_domain_socket(const char *socket_path) {
     int error = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
 
     if (error == -1) {
-        perror("bind error");
-        exit(-1);
+       return -1;
     }
 
-    return fd;
+    *out_fd = fd;
+
+    return 0;
+}
+
+void stop_server(int fd) {
+    running = 0;
+    close(fd);
 }
 
 void start_server(int fd, void (*process)(uint8_t *, size_t)) {
+    running = 1;
+    pthread_mutex_init(&running_mutex, NULL);
+
     uint8_t buf[256]; // sizeof(buf) > sizeof(uint32_t)
     int cl;
     ssize_t rc = 0;
@@ -77,13 +92,19 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
 
     if (listen(fd, 5) == -1) {
         perror("listen error");
-        exit(-1);
+        close(fd);
+        return;
     }
 
     while (1) {
+
+        if (!running) {
+            break;
+        }
+
         if ((cl = accept(fd, NULL, NULL)) == -1) {
-            perror("accept error");
-            continue;
+            perror("accept errored or finished");
+            break;
         }
 
         while ((rc = read(cl, buf, sizeof(buf))) > 0) {
@@ -128,7 +149,6 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
 
         if (rc == -1) {
             perror("Read Error!\n");
-            exit(-1);
         } else if (rc == 0) {
             printf("Connection to client closed!\n");
             close(cl);

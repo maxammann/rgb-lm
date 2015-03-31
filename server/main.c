@@ -1,6 +1,7 @@
 #include <lm/lm.h>
 #include <stdio.h>
-#include <m3u.h>
+#include <signal.h>
+#include <stdlib.h>
 
 #include "controller.h"
 #include "server.h"
@@ -14,13 +15,27 @@
 #include "rotary_encoder.h"
 #include "alarms.h"
 #include "wakedog.h"
-#include "audio.h"
+#include "audio/audio.h"
+
+static int fd;
 
 void *discovery(void *nil) {
     start_discovery_server();
     return NULL;
 }
 
+void shutdown(int sig) {
+    //probably won't help much, todo more cleanups
+    printf("Stopping!\n");
+
+    stop_discovery_server();
+    stop_server(fd);
+    screens_stop();
+
+    lm_thread_stop(get_thread());
+    printf("Stopped!\n");
+    exit(0);
+}
 
 int main(int argc, char *argv[]) {
 
@@ -42,7 +57,9 @@ int main(int argc, char *argv[]) {
 //    printf("time: %s\n", gtm->tm_zone);
 //    return 0;
 
+    signal(SIGINT, shutdown);
 
+    audio_init();
 
     read_alarms("test.alarms");
 
@@ -65,7 +82,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&pthread, NULL, discovery, NULL);
 
 //    int fd = bind_unix_domain_socket("./socket");
-    int fd = bind_tcp_socket(6969);
+    bind_tcp_socket(6969, &fd);
     start_server(fd, process_buffer);
 
     free_controller();

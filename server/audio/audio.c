@@ -4,17 +4,6 @@
 
 #define BUFFER_SIZE 8192
 
-int cancel_playback;
-
-void on_cancel_playback(int sig) {
-    if (sig != SIGINT) {
-        return;
-    }
-
-    cancel_playback = 1;
-    exit(0);
-}
-
 static void clean(ao_device *device, SNDFILE *file) {
     ao_close(device);
     sf_close(file);
@@ -29,8 +18,6 @@ int play(char *file_path, brake brake_fn) {
     int default_driver;
 
     short *buffer;
-
-    signal(SIGINT, on_cancel_playback);
 
 
     SNDFILE *file = sf_open(file_path, SFM_READ, &sfinfo);
@@ -87,10 +74,10 @@ int play(char *file_path, brake brake_fn) {
             break;
         }
 
-        if (cancel_playback) {
-            clean(device, file);
-            break;
-        }
+//        if (cancel_playback) {
+//            clean(device, file);
+//            break;
+//        }
     }
 
     clean(device, file);

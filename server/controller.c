@@ -33,7 +33,7 @@ void init_controller() {
     lm_thread_start(thread);
     lm_thread_pause(thread);
 
-    init_screens(matrix);
+    screens_start(matrix);
 }
 
 static inline void proto_set_screen(Lm__SetScreen *set_screen) {
