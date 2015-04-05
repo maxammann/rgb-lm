@@ -66,7 +66,7 @@ int open_file(char *file_path, AVFormatContext **fmt_ctx, AVCodecContext **dec_c
     }
 
     *audio_stream_index = ret;
-    dec_ctx = &(*fmt_ctx)->streams[*audio_stream_index]->codec;
+    *dec_ctx = (*fmt_ctx)->streams[*audio_stream_index]->codec;
 
     // Open codec
     if ((ret = avcodec_open2(*dec_ctx, dec, NULL)) < 0) {

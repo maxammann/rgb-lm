@@ -8,6 +8,7 @@ find_package (AVFormat REQUIRED)
 find_package (AVUtil REQUIRED)
 find_package (AVResample REQUIRED)
 find_package (UThash REQUIRED)
+find_package (ALSA REQUIRED)
 
 
 include_directories(${PROTOBUFC_INCLUDE_DIRS})
@@ -22,6 +23,7 @@ include_directories(${AVFormat_INCLUDE_DIRS})
 include_directories(${AVCodec_INCLUDE_DIRS})
 include_directories(${AVResample_INCLUDE_DIRS})
 include_directories(${UTHASH_INCLUDE_DIRS})
+include_directories(${ALSA_INCLUDE_DIRS})
 
 
 set(SOURCE_HEADERS)
@@ -62,6 +64,7 @@ ${WIRINGPI_LIBRARIES}
 ${LIBAO_LIBRARIES} ${LIBSNDFILE_LIBRARY}
 ${AVCodec_LIBRARIES}
 ${AVFormat_LIBRARIES} ${AVUtil_LIBRARIES} ${AVResample_LIBRARIES}
+${ALSA_LIBRARIES}
 )
 
 

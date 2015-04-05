@@ -57,6 +57,8 @@ int main(int argc, char *argv[]) {
 //    printf("time: %s\n", gtm->tm_zone);
 //    return 0;
 
+    mute(0);
+
     signal(SIGINT, shutdown);
 
     audio_init();

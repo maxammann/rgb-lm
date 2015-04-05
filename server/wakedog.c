@@ -30,11 +30,13 @@ void skip_current_playback() {
 }
 
 static void *wakeup(void *pVoid) {
+    mute(1);
+
     size_t amount;
     Title *titles;
 
     lm_thread_unpause(get_thread());
-    set_current_screen(get_screen("mesmerizing"), NULL);
+    set_current_screen(get_screen("menu"), NULL);
 
     char *wakeup_playlist = getenv("WAKEUP_PLAYLIST");
 
@@ -67,6 +69,8 @@ static void *wakeup(void *pVoid) {
 
     lm_thread_pause(get_thread());
     set_current_screen(NULL, NULL);
+
+    mute(0);
 
     return 0;
 }
@@ -136,4 +140,31 @@ void start_dog() {
     running = 1;
     pthread_t pthread;
     pthread_create(&pthread, NULL, watch, NULL);
+}
+
+
+#include <alsa/asoundlib.h>
+
+void mute(int mute)
+{
+    snd_mixer_t *handle;
+    snd_mixer_selem_id_t *sid;
+    const char *card = "default";
+    const char *selem_name = "PCM";
+
+    snd_mixer_open(&handle, 0);
+    snd_mixer_attach(handle, card);
+    snd_mixer_selem_register(handle, NULL, NULL);
+    snd_mixer_load(handle);
+
+    snd_mixer_selem_id_alloca(&sid);
+    snd_mixer_selem_id_set_index(sid, 0);
+    snd_mixer_selem_id_set_name(sid, selem_name);
+    snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+
+    if (snd_mixer_selem_has_playback_switch(elem)) {
+        snd_mixer_selem_set_playback_switch_all(elem, mute);
+    }
+
+    snd_mixer_close(handle);
 }
