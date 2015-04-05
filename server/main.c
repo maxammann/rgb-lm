@@ -38,6 +38,9 @@ void shutdown(int sig) {
 }
 
 int main(int argc, char *argv[]) {
+    audio_init();
+    audio_play("test.mp3", 60, 1.0, NULL);
+    return 0;
 
 //    size_t amount;
 //    Title *titles = m3u_read("test1.m3u", &amount);
