@@ -1,8 +1,7 @@
 find_package (ProtobufC REQUIRED)
 find_package (WiringPi REQUIRED)
 find_package (PkgConfig REQUIRED)
-find_package (AO REQUIRED)
-find_package (libsndfile REQUIRED)
+
 find_package (AVCodec REQUIRED)
 find_package (AVFormat REQUIRED)
 find_package (AVUtil REQUIRED)
@@ -10,15 +9,10 @@ find_package (AVResample REQUIRED)
 find_package (UThash REQUIRED)
 find_package (ALSA REQUIRED)
 
-
 include_directories(${PROTOBUFC_INCLUDE_DIRS})
 include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/m3u")
 include_directories(${WIRINGPI_INCLUDE_DIRS})
-
-include_directories(${LIBAO_INCLUDE_DIR})
-include_directories(${LIBSNDFILE_INCLUDE_DIR})
-
 include_directories(${AVFormat_INCLUDE_DIRS})
 include_directories(${AVCodec_INCLUDE_DIRS})
 include_directories(${AVResample_INCLUDE_DIRS})
@@ -51,8 +45,9 @@ add_executable(server ${SOURCE_FILES}
  	screen/menu.c screen/menu.h
   	screen/alarms.c screen/alarms.h
   	screen/example.c screen/example.h
+  	screen/visualize.c screen/visualize.h
   	wakedog.c wakedog.h
-  	rotary_encoder.c rotary_encoder.h audio/audio.h wakedog.h)
+  	rotary_encoder.c rotary_encoder.h audio/audio.h wakedog.h screen/visualize.h screen/visualize.c)
 
   	message(${AVResample_LIBRARIES})
 
@@ -61,7 +56,6 @@ target_link_libraries (server rgb_led_matrix
 ${PROTOBUFC_LIBRARY}
 ${THREADING}
 ${WIRINGPI_LIBRARIES}
-${LIBAO_LIBRARIES} ${LIBSNDFILE_LIBRARY}
 ${AVCodec_LIBRARIES}
 ${AVFormat_LIBRARIES} ${AVUtil_LIBRARIES} ${AVResample_LIBRARIES}
 ${ALSA_LIBRARIES}

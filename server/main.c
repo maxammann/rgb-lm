@@ -12,6 +12,7 @@
 #include "screen/example.h"
 #include "screen/menu.h"
 #include "screen/alarms.h"
+#include "screen/visualize.h"
 #include "rotary_encoder.h"
 #include "alarms.h"
 #include "wakedog.h"
@@ -38,10 +39,9 @@ void shutdown(int sig) {
 }
 
 int main(int argc, char *argv[]) {
-    audio_init();
-    audio_play("test.mp3", 60, 1.0, NULL);
-    return 0;
-
+//    audio_init();
+//    audio_play_default("test.mp3", 0, NULL);
+//    return 0;
 //    size_t amount;
 //    Title *titles = m3u_read("test1.m3u", &amount);
 //
@@ -75,9 +75,13 @@ int main(int argc, char *argv[]) {
     register_example_screens();
     register_menu_screens();
     register_alarms_screens();
-
+    register_visualize_screen();
 
     start_dog();
+
+    lm_thread_unpause(get_thread());
+    set_current_screen(get_screen("visualize"), NULL);
+    audio_play_default("../clint.mp3", 0, NULL);
 
 
 //    lm_thread_unpause(get_thread());

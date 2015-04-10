@@ -1,13 +1,14 @@
-#include <ao/ao.h>
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavresample/avresample.h"
 #include "libavutil/opt.h"
 #include "audio.h"
+#include "../screen/visualize.h"
+#include <alsa/asoundlib.h>
 
-#define CLEAN() clean(device, frame, fmt_ctx, dec_ctx, resample);
+#define CLEAN() clean(pcm_handle, frame, fmt_ctx, dec_ctx, resample);
 
-static void clean(ao_device *device,
+static void clean(snd_pcm_t *pcm_handle,
                   AVFrame *frame,
                   AVFormatContext *fmt_ctx,
                   AVCodecContext *dec_ctx,
@@ -22,8 +23,10 @@ static void clean(ao_device *device,
     if (resample != 0) avresample_close(resample);
     if (resample != 0) avresample_free(&resample);
 
-    if (device != 0) ao_close(device);
-    ao_shutdown();
+    if (resample != 0) {
+        snd_pcm_drain(pcm_handle);
+        snd_pcm_close(pcm_handle);
+    }
 }
 
 static inline void modify_volume(int16_t *stream, int bytes, double volume) {
@@ -39,7 +42,6 @@ int audio_play_default(char *file_path, double seconds, brake brake_fn) {
 }
 
 void audio_init() {
-    ao_initialize();
     av_register_all();
 }
 
@@ -95,6 +97,7 @@ enum AVSampleFormat init_resampling(AVAudioResampleContext **out_resample, AVCod
     return output_fmt;
 }
 
+#define PCM_DEVICE "default"
 
 int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) {
     int ret;
@@ -118,10 +121,6 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
         vol = max_vol / seconds;
     }
 
-    ao_device *device = 0;
-    ao_sample_format format;
-    int default_driver;
-
     // Packet
     AVPacket packet;
     av_init_packet(&packet);
@@ -144,24 +143,41 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
 
     // Setup resampling
     enum AVSampleFormat output_fmt = init_resampling(&resample, dec_ctx);
-    int sample_rate = dec_ctx->sample_rate;
 
     // Setup driver
-    default_driver = ao_default_driver_id();
+    snd_pcm_t *pcm_handle;
+    snd_pcm_hw_params_t *params;
+    int pcm;
+    unsigned int rate, channels;
 
-    format.bits = av_get_bytes_per_sample(output_fmt) * 8;
-    format.channels = dec_ctx->channels;
-    format.rate = sample_rate;
-    format.byte_format = AO_FMT_NATIVE;
-    format.matrix = 0;
+    rate = dec_ctx->sample_rate;
+    channels = (unsigned int) dec_ctx->channels;
 
-    device = ao_open_live(default_driver, &format, NULL);
-
-    if (device == NULL) {
-        fprintf(stderr, "Error opening device.\n");
-        CLEAN();
-        return 1;
+    if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
+                            SND_PCM_STREAM_PLAYBACK, 0) < 0)) {
+        printf("ERROR: Can't open \"%s\" PCM device. %s\n", PCM_DEVICE, snd_strerror(pcm));
     }
+
+    snd_pcm_hw_params_alloca(&params);
+
+    snd_pcm_hw_params_any(pcm_handle, params);
+
+    /* Set parameters */
+    if ((pcm = snd_pcm_hw_params_set_access(pcm_handle, params, SND_PCM_ACCESS_RW_INTERLEAVED) < 0))
+        printf("ERROR: Can't set interleaved mode. %s\n", snd_strerror(pcm));
+
+    if ((pcm = snd_pcm_hw_params_set_format(pcm_handle, params, SND_PCM_FORMAT_S16) < 0))
+        printf("ERROR: Can't set format. %s\n", snd_strerror(pcm));
+
+    if ((pcm = snd_pcm_hw_params_set_channels(pcm_handle, params, channels) < 0))
+        printf("ERROR: Can't set channels number. %s\n", snd_strerror(pcm));
+
+    if ((pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, &rate, 0) < 0))
+        printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
+
+    /* Write parameters */
+    if ((pcm = snd_pcm_hw_params(pcm_handle, params) < 0))
+        printf("ERROR: Can't set harware parameters. %s\n", snd_strerror(pcm));
 
     struct timespec start_time;
 
@@ -206,16 +222,20 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
                     double volume = fmin(max_vol, vol * elapsed);
 
                     if (volume == 1.0) {
-                        vol = SKIP;
+                        vol_state = SKIP;
                     } else {
                         modify_volume((int16_t *) output, out_linesize, volume);
                     }
                 }
 
+                buffer_visualize((uint16_t *) frame->data[0], frame->linesize[0] / sizeof(uint16_t));
 
-                if (ao_play(device, (char *) output, (uint_32) out_linesize) == 0) {
-                    printf("ao_play: failed.\n");
-                    break;
+
+                if ((pcm = snd_pcm_writei(pcm_handle, output, (snd_pcm_uframes_t) out_linesize / (channels * av_get_bytes_per_sample(output_fmt))) == -EPIPE)) {
+                    printf("XRUN.\n");
+                    snd_pcm_prepare(pcm_handle);
+                } else if (pcm < 0) {
+                    printf("ERROR. Can't write to PCM device. %s\n", snd_strerror(pcm));
                 }
 
                 av_freep(&output);
@@ -232,6 +252,30 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
     CLEAN();
 
     return 0;
+}
+
+void mute(int mute)
+{
+    snd_mixer_t *handle;
+    snd_mixer_selem_id_t *sid;
+    const char *card = "default";
+    const char *selem_name = "PCM";
+
+    snd_mixer_open(&handle, 0);
+    snd_mixer_attach(handle, card);
+    snd_mixer_selem_register(handle, NULL, NULL);
+    snd_mixer_load(handle);
+
+    snd_mixer_selem_id_alloca(&sid);
+    snd_mixer_selem_id_set_index(sid, 0);
+    snd_mixer_selem_id_set_name(sid, selem_name);
+    snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+
+    if (snd_mixer_selem_has_playback_switch(elem)) {
+        snd_mixer_selem_set_playback_switch_all(elem, mute);
+    }
+
+    snd_mixer_close(handle);
 }
 
 

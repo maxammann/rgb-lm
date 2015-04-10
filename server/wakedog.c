@@ -44,7 +44,7 @@ static void *wakeup(void *pVoid) {
         titles = m3u_read(wakeup_playlist, &amount);
 
         current_playback++;
-        audio_play_default(titles[rand() % amount].title_dest, 0, is_playback_stopped);
+        audio_play_default(titles[rand() % amount].title_dest, 30, is_playback_stopped);
 
         m3u_free(titles, amount);
     } else {
@@ -140,31 +140,4 @@ void start_dog() {
     running = 1;
     pthread_t pthread;
     pthread_create(&pthread, NULL, watch, NULL);
-}
-
-
-#include <alsa/asoundlib.h>
-
-void mute(int mute)
-{
-    snd_mixer_t *handle;
-    snd_mixer_selem_id_t *sid;
-    const char *card = "default";
-    const char *selem_name = "PCM";
-
-    snd_mixer_open(&handle, 0);
-    snd_mixer_attach(handle, card);
-    snd_mixer_selem_register(handle, NULL, NULL);
-    snd_mixer_load(handle);
-
-    snd_mixer_selem_id_alloca(&sid);
-    snd_mixer_selem_id_set_index(sid, 0);
-    snd_mixer_selem_id_set_name(sid, selem_name);
-    snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
-
-    if (snd_mixer_selem_has_playback_switch(elem)) {
-        snd_mixer_selem_set_playback_switch_all(elem, mute);
-    }
-
-    snd_mixer_close(handle);
 }
