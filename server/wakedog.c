@@ -36,7 +36,7 @@ static void *wakeup(void *pVoid) {
     Title *titles;
 
     lm_thread_unpause(get_thread());
-    set_current_screen(get_screen("menu"), NULL);
+    set_current_screen(get_screen("visualize"), NULL);
 
     char *wakeup_playlist = getenv("WAKEUP_PLAYLIST");
 

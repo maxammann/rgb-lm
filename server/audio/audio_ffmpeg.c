@@ -5,10 +5,11 @@
 #include "audio.h"
 #include "../screen/visualize.h"
 #include <alsa/asoundlib.h>
+#include <ao/ao.h>
 
-#define CLEAN() clean(pcm_handle, frame, fmt_ctx, dec_ctx, resample);
+#define CLEAN() clean(device, frame, fmt_ctx, dec_ctx, resample);
 
-static void clean(snd_pcm_t *pcm_handle,
+static void clean(ao_device *device,
                   AVFrame *frame,
                   AVFormatContext *fmt_ctx,
                   AVCodecContext *dec_ctx,
@@ -23,14 +24,13 @@ static void clean(snd_pcm_t *pcm_handle,
     if (resample != 0) avresample_close(resample);
     if (resample != 0) avresample_free(&resample);
 
-    if (resample != 0) {
-        snd_pcm_drain(pcm_handle);
-        snd_pcm_close(pcm_handle);
+    if (device != 0) {
+         ao_close(device);
     }
 }
 
 static inline void modify_volume(int16_t *stream, int bytes, double volume) {
-    size_t length = bytes / sizeof(uint16_t);
+    size_t length = bytes / sizeof(int16_t);
 
     for (int i = 0; i < length; ++i) {
         stream[i] = (int16_t) (stream[i] * volume);
@@ -42,6 +42,7 @@ int audio_play_default(char *file_path, double seconds, brake brake_fn) {
 }
 
 void audio_init() {
+    ao_initialize();
     av_register_all();
 }
 
@@ -145,45 +146,33 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
     enum AVSampleFormat output_fmt = init_resampling(&resample, dec_ctx);
 
     // Setup driver
-    snd_pcm_t *pcm_handle;
-    snd_pcm_hw_params_t *params;
-    int pcm;
-    unsigned int rate, channels;
+    ao_device *device = 0;
+    ao_sample_format format;
+    int default_driver;
 
-    rate = dec_ctx->sample_rate;
-    channels = (unsigned int) dec_ctx->channels;
+    int sample_rate = dec_ctx->sample_rate;
+    default_driver = ao_driver_id("alsa");
 
-    if ((pcm = snd_pcm_open(&pcm_handle, PCM_DEVICE,
-                            SND_PCM_STREAM_PLAYBACK, 0) < 0)) {
-        printf("ERROR: Can't open \"%s\" PCM device. %s\n", PCM_DEVICE, snd_strerror(pcm));
+    format.bits = av_get_bytes_per_sample(output_fmt) * 8;
+    format.channels = dec_ctx->channels;
+    format.rate = sample_rate;
+    format.byte_format = AO_FMT_NATIVE;
+    format.matrix = 0;
+
+    device = ao_open_live(default_driver, &format, NULL);
+
+    if (device == NULL) {
+        fprintf(stderr, "Error opening device.\n");
+        return 1;
     }
-
-    snd_pcm_hw_params_alloca(&params);
-
-    snd_pcm_hw_params_any(pcm_handle, params);
-
-    /* Set parameters */
-    if ((pcm = snd_pcm_hw_params_set_access(pcm_handle, params, SND_PCM_ACCESS_RW_INTERLEAVED) < 0))
-        printf("ERROR: Can't set interleaved mode. %s\n", snd_strerror(pcm));
-
-    if ((pcm = snd_pcm_hw_params_set_format(pcm_handle, params, SND_PCM_FORMAT_S16) < 0))
-        printf("ERROR: Can't set format. %s\n", snd_strerror(pcm));
-
-    if ((pcm = snd_pcm_hw_params_set_channels(pcm_handle, params, channels) < 0))
-        printf("ERROR: Can't set channels number. %s\n", snd_strerror(pcm));
-
-    if ((pcm = snd_pcm_hw_params_set_rate_near(pcm_handle, params, &rate, 0) < 0))
-        printf("ERROR: Can't set rate. %s\n", snd_strerror(pcm));
-
-    /* Write parameters */
-    if ((pcm = snd_pcm_hw_params(pcm_handle, params) < 0))
-        printf("ERROR: Can't set harware parameters. %s\n", snd_strerror(pcm));
 
     struct timespec start_time;
 
     if (vol_state == DYNAMIC) {
         clock_gettime(CLOCK_MONOTONIC, &start_time);
     }
+
+    visualize_init(4096 / sizeof(int16_t));
 
     while (1) {
         if ((av_read_frame(fmt_ctx, &packet)) < 0) {
@@ -228,15 +217,14 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
                     }
                 }
 
-                buffer_visualize((uint16_t *) frame->data[0], frame->linesize[0] / sizeof(uint16_t));
 
 
-                if ((pcm = snd_pcm_writei(pcm_handle, output, (snd_pcm_uframes_t) out_linesize / (channels * av_get_bytes_per_sample(output_fmt))) == -EPIPE)) {
-                    printf("XRUN.\n");
-                    snd_pcm_prepare(pcm_handle);
-                } else if (pcm < 0) {
-                    printf("ERROR. Can't write to PCM device. %s\n", snd_strerror(pcm));
+                if (ao_play(device, (char *) output, (uint_32) out_linesize) == 0) {
+                    printf("ao_play: failed.\n");
+                    break;
                 }
+
+                buffer_visualize((int16_t *) output);
 
                 av_freep(&output);
             }
