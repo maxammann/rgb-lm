@@ -80,9 +80,9 @@ int avresample_get_out_samples(AVAudioResampleContext *avr, int in_nb_samples) {
     av_opt_get_int(avr, "in_sample_rate", 0, &sample_rate);
 
     samples = rescale_rnd(samples,
-            sample_rate,
-            sample_rate,
-            AV_ROUND_UP);
+                          sample_rate,
+                          sample_rate,
+                          AV_ROUND_UP);
 
     samples += avresample_available(avr);
 

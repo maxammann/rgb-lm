@@ -59,9 +59,9 @@ static void *main(void *ch) {
     uint16_t columns = lm_matrix_columns(matrix);
 
 
-    io_bits color_clock_mask = { 0 };   // Mask of bits we need to set while clocking in.
-    io_bits clock = { 0 }, output_enable = { 0 }, strobe = { 0 }, row_address = { 0 };
-    io_bits row_mask = { 0 };
+    io_bits color_clock_mask = {0};   // Mask of bits we need to set while clocking in.
+    io_bits clock = {0}, output_enable = {0}, strobe = {0}, row_address = {0};
+    io_bits row_mask = {0};
 
     // Color & clock
     color_clock_mask.bits.r1 = color_clock_mask.bits.g1 = color_clock_mask.bits.b1 = 1;

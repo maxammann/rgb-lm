@@ -25,7 +25,7 @@ static void clean(ao_device *device,
     if (resample != 0) avresample_free(&resample);
 
     if (device != 0) {
-         ao_close(device);
+        ao_close(device);
     }
 }
 
@@ -218,7 +218,6 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
                 }
 
 
-
                 if (ao_play(device, (char *) output, (uint_32) out_linesize) == 0) {
                     printf("ao_play: failed.\n");
                     break;
@@ -242,8 +241,7 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
     return 0;
 }
 
-void mute(int mute)
-{
+void mute(int mute) {
     snd_mixer_t *handle;
     snd_mixer_selem_id_t *sid;
     const char *card = "default";
@@ -257,7 +255,7 @@ void mute(int mute)
     snd_mixer_selem_id_alloca(&sid);
     snd_mixer_selem_id_set_index(sid, 0);
     snd_mixer_selem_id_set_name(sid, selem_name);
-    snd_mixer_elem_t* elem = snd_mixer_find_selem(handle, sid);
+    snd_mixer_elem_t *elem = snd_mixer_find_selem(handle, sid);
 
     if (snd_mixer_selem_has_playback_switch(elem)) {
         snd_mixer_selem_set_playback_switch_all(elem, mute);

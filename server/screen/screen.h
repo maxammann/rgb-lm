@@ -2,7 +2,7 @@
 
 #include <lm/lm.h>
 
-typedef void (*start_screen)(lmLedMatrix *matrix, double, void* user_data);
+typedef void (*start_screen)(lmLedMatrix *matrix, double, void *user_data);
 
 typedef start_screen screen_t;
 

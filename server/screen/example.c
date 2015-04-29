@@ -70,7 +70,8 @@ void draw_hand(lmLedMatrix *matrix, float t, double length, rgb *color) {
     double target_x = result[0];
     double target_y = result[1];
 
-    lm_matrix_line(matrix, (uint16_t) delta_x, (uint16_t) delta_y, (uint16_t) (delta_x + target_x), (uint16_t) (delta_y + target_y), color);
+    lm_matrix_line(matrix, (uint16_t) delta_x, (uint16_t) delta_y, (uint16_t) (delta_x + target_x),
+                   (uint16_t) (delta_y + target_y), color);
 }
 
 void clock_screen(lmLedMatrix *matrix, double elapsed) {
@@ -125,7 +126,8 @@ void digital_clock_screen(lmLedMatrix *matrix, double elapsed) {
     int hour_height = lm_fonts_string_height(hour);
 
     lm_fonts_render_string(matrix, hour, (uint16_t) (delta_x - hour_width / 2), delta_y, &color);
-    lm_fonts_render_string(matrix, minute, (uint16_t) (delta_x - minute_width / 2), (uint16_t) (delta_y + hour_height + spacing_y), &color);
+    lm_fonts_render_string(matrix, minute, (uint16_t) (delta_x - minute_width / 2),
+                           (uint16_t) (delta_y + hour_height + spacing_y), &color);
 
     lm_matrix_swap_buffers(matrix);
 

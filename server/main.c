@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 
     read_alarms("test.alarms");
 
-    setupencoder(15, 16, 14, skip_current_playback);
+    setupencoder(15, 16, 8, skip_current_playback);
 
     init_controller();
 
@@ -79,13 +79,20 @@ int main(int argc, char *argv[]) {
 
     start_dog();
 
-    lm_thread_unpause(get_thread());
-    set_current_screen(get_screen("visualize"), NULL);
-    audio_play_default("../sin_2.wav", 0, NULL);
-
-
 //    lm_thread_unpause(get_thread());
-//    set_current_screen(get_screen("menu"), NULL);
+//    set_current_screen(get_screen("visualize"), NULL);
+//    audio_play_default("../sin2.wav", 0, NULL);
+
+
+    lm_thread_unpause(get_thread());
+    set_current_screen(get_screen("menu"), NULL);
+//    rgb rgb;
+//    rgb.r = 255;
+//    rgb.b = 0;
+//    rgb.g = 0;
+//    lm_matrix_fill(get_matrix(), &rgb);
+//    lm_matrix_swap_buffers(get_matrix());
+
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);

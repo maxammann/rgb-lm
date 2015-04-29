@@ -15,7 +15,7 @@ pthread_cond_t screen_cond;
 int running = 1;
 
 typedef struct screen {
-    screen_t  screen;
+    screen_t screen;
     char name[32];
     UT_hash_handle hh;
 } screen_st;

@@ -65,7 +65,7 @@ int bind_unix_domain_socket(const char *socket_path, int *out_fd) {
     int error = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
 
     if (error == -1) {
-       return -1;
+        return -1;
     }
 
     *out_fd = fd;
@@ -118,7 +118,8 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
                     break;
                 }
 
-                request_size_t size = ntohl(msg_buff[0] + (msg_buff[1] << 8) + (msg_buff[2] << 16) + (msg_buff[3] << 24));
+                request_size_t size = ntohl(
+                        msg_buff[0] + (msg_buff[1] << 8) + (msg_buff[2] << 16) + (msg_buff[3] << 24));
 
                 if (size > 256 || size < 1) {
                     close(cl);

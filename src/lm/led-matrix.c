@@ -126,7 +126,7 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
         int b = (blue & mask) == mask;
         int g = (green & mask) == mask;
 
-        io_bits plane_bits = { 0 };
+        io_bits plane_bits = {0};
         plane_bits.bits.r1 = plane_bits.bits.r2 = (bits_t) r;
         plane_bits.bits.g1 = plane_bits.bits.g2 = (bits_t) g;
         plane_bits.bits.b1 = plane_bits.bits.b2 = (bits_t) b;
@@ -140,10 +140,10 @@ void lm_matrix_fill(lmLedMatrix *matrix, rgb *rgb) {
 }
 
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
-        int16_t x, int16_t y,
-        rgb *rgb) {
+                         int16_t x, int16_t y,
+                         rgb *rgb) {
     if (x < 0 || y < 0
-            || x >= matrix->columns || y >= matrix->rows) {
+        || x >= matrix->columns || y >= matrix->rows) {
         return;
     }
 
@@ -160,7 +160,8 @@ void lm_matrix_set_pixel(lmLedMatrix *matrix,
     const int min_bit_plane = COLOR_SHIFT + MAX_BITPLANES - pwm;
 
 
-    io_bits *bits = lm_io_bits_value_at(matrix->hot_bitplane_buffer, matrix->columns, y & matrix->row_mask, x, min_bit_plane);
+    io_bits *bits = lm_io_bits_value_at(matrix->hot_bitplane_buffer, matrix->columns, y & matrix->row_mask, x,
+                                        min_bit_plane);
     if (y < double_rows) {   // Upper sub-panel.
         for (i = min_bit_plane; i < MAX_BITPLANES; ++i) {
             int mask = 1 << i;
@@ -186,9 +187,9 @@ int sgn(int x) {
 }
 
 void lm_matrix_line(lmLedMatrix *matrix,
-        int16_t xstart, int16_t ystart,
-        int16_t xend, int16_t yend,
-        rgb *rgb) {
+                    int16_t xstart, int16_t ystart,
+                    int16_t xend, int16_t yend,
+                    rgb *rgb) {
     int x, y, t, dx, dy, incx, incy, pdx, pdy, ddx, ddy, es, el, err;
 
 /* Entfernung in beiden Dimensionen berechnen */

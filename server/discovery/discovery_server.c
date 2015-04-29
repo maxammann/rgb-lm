@@ -37,7 +37,7 @@ void start_discovery_server() {
     server_addr.sin_port = htons(8888);           // Port number to use
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  // Listen on any IP address
     ret = bind(server_s, (struct sockaddr *) &server_addr,
-                   sizeof(server_addr));
+               sizeof(server_addr));
     if (ret < 0) {
         printf("*** ERROR - bind() failed \n");
         exit(-1);
@@ -48,7 +48,7 @@ void start_discovery_server() {
     while (running) {
         addr_len = sizeof(client_addr);
         ret = recvfrom(server_s, in_buf, sizeof(in_buf), 0,
-                           (struct sockaddr *) &client_addr, &addr_len);
+                       (struct sockaddr *) &client_addr, &addr_len);
         if (ret < 0) {
             printf("*** ERROR - recvfrom() failed \n");
             exit(-1);
@@ -65,7 +65,7 @@ void start_discovery_server() {
         // Send to the client using the server socket
         strcpy(out_buf, "DISCOVERY_RESPONSE");
         ret = sendto(server_s, out_buf, (strlen(out_buf) + 1), 0,
-                         (struct sockaddr *) &client_addr, sizeof(client_addr));
+                     (struct sockaddr *) &client_addr, sizeof(client_addr));
         if (ret < 0) {
             printf("*** ERROR - sendto() failed \n");
             exit(-1);

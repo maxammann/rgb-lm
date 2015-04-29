@@ -84,7 +84,7 @@ void menu_screen(lmLedMatrix *matrix, double elapsed) {
         menu_next();
         encoder.value = 0;
 //        printf("next\n");
-    }   else if (encoder.value / ENCODER_EDGE < -1) {
+    } else if (encoder.value / ENCODER_EDGE < -1) {
         menu_previous();
         encoder.value = 0;
 //        printf("previous\n");

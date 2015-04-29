@@ -1,6 +1,4 @@
-
-struct encoder_dev_
-{
+struct encoder_dev_ {
     int pin_a;
     int pin_b;
     int value;

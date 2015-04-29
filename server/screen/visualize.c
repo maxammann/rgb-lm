@@ -5,7 +5,8 @@
 #include <string.h>
 #include "stdlib.h"
 
-static int16_t power[32];
+static int16_t left_bands[32];
+static int16_t right_bands[32];
 
 static RDFTContext *ctx;
 
@@ -42,13 +43,13 @@ void buffer_visualize(int16_t *data) {
 
 
     float left_data[sizeof(float) * N * 3];
+    float right_data[sizeof(float) * N * 3];
 
     for (i = 0, tight_index = 0; i < samples; i += 2) {
         int16_t left = data[i];
         int16_t right = data[i + 1];
 
         double window_modifier = (0.5 * (1 - cos(2 * M_PI * tight_index / N)));
-//        double window_modifier = 1;
         float value = (float) (window_modifier * ((left) / 32768.0f));
 
         if (value > 1.0) {
@@ -58,73 +59,24 @@ void buffer_visualize(int16_t *data) {
         }
 
         left_data[tight_index] = value;
+        value = (float) (window_modifier * ((right) / 32768.0f));
+
+        if (value > 1.0) {
+            value = 1;
+        } else if (value < -1.0) {
+            value = -1;
+        }
+
+        right_data[tight_index] = value;
+
         tight_index++;
     }
 
 
     av_rdft_calc(ctx, left_data);
-    detrend(left_data, N);
+    av_rdft_calc(ctx, right_data);
 
     int size = N / 2 * 2; // half is usable, but we have re and im
-
-
-
-
-//    for (i = 0, tight_index = 0; i < size; i += size / 32) {
-//        double sum = 0;
-//        int i2;
-//        for (i2 = (i == 0 ? 1 : 0); i2 < 32; i2 += 2) {
-//            float im = left_data[i + i2];
-//            float re = left_data[i + i2 + 1];
-//            sum += sqrt(im * im + re * re);
-//        }
-//
-//        power[tight_index] = (int16_t) (sum / 32.0);
-//        tight_index++;
-//    }
-
-    int bands = 32;
-    int band_index = 0;
-
-    double avg = 0;
-    int avg_count = N / 2 / bands;
-
-//    double max_mag = -INFINITY;
-//    int max_index = 0;
-
-    for (i = 0; i < size; i += 2) {
-//        if (i == 0) {
-//            continue;
-//        }
-
-        float im = left_data[i];
-        float re = left_data[i + 1];
-        double mag = sqrt(im * im + re * re);
-
-        avg += mag;
-
-        if (avg_count == 0) {
-            avg_count = N / 2 / bands;
-
-            avg /= bands;
-
-            power[band_index] = (int16_t) round(avg * 16.0f);
-
-            band_index++;
-        }
-
-        --avg_count;
-
-
-//        if (max_mag < mag) {
-//            max_mag = mag;
-//            max_index = i / 2;
-//        }
-    }
-
-//    memset(power, 0, 32 * sizeof(int16_t));
-//
-//    power[max_index / 16] = 32;
 
 
     for (i = 0, tight_index = 0; i < size; i += size / 32) {
@@ -133,7 +85,18 @@ void buffer_visualize(int16_t *data) {
         float re = left_data[i + 1];
         double mag = sqrt(im * im + re * re);
 
-        power[tight_index] = (int16_t) (mag * 16.0f);
+        left_bands[tight_index] = (int16_t) (mag * 16.0f);
+
+        tight_index++;
+    }
+
+    for (i = 0, tight_index = 0; i < size; i += size / 32) {
+
+        float im = right_data[i];
+        float re = right_data[i + 1];
+        double mag = sqrt(im * im + re * re);
+
+        right_bands[tight_index] = (int16_t) (mag * 16.0f);
 
         tight_index++;
     }
@@ -147,8 +110,12 @@ void screen_draw(lmLedMatrix *matrix, double elapsed) {
     rgb c = {200, 160, 20};
 
     for (x = 0; x < 32; ++x) {
-        for (y = 0; y < power[x]; ++y) {
+        for (y = 0; y < left_bands[x]; ++y) {
             lm_matrix_set_pixel(matrix, x, 32 - y, &c);
+        }
+
+        for (y = 0; y < right_bands[x]; ++y) {
+            lm_matrix_set_pixel(matrix, x, 32 - (y + 16), &c);
         }
     }
     lm_matrix_swap_buffers(matrix);

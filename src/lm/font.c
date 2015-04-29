@@ -41,9 +41,9 @@ struct lmString_ {
 };
 
 static FT_Error face_requester(FTC_FaceID face_id,
-        FT_Library library,
-        FT_Pointer req_data,
-        FT_Face *aface) {
+                               FT_Library library,
+                               FT_Pointer req_data,
+                               FT_Face *aface) {
     PCacheFace face = (PCacheFace) face_id;
 
     FT_Error error = FT_New_Face(library, face->file_path, face->face_index, aface);
@@ -101,8 +101,8 @@ FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec *scaler) {
 }
 
 static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
-        FT_Int x, FT_Int y,
-        rgb *rgb) {
+                          FT_Int x, FT_Int y,
+                          rgb *rgb) {
 
     FT_Int i, j;
 
@@ -144,7 +144,7 @@ static void compute_string_bbox(int num_glyphs, FT_Glyph *glyphs, FT_Vector *pos
     /* translate it, and grow the string bbox          */
     for (n = 0; n < num_glyphs; n++) {
         FT_Glyph_Get_CBox(glyphs[n], FT_GLYPH_BBOX_PIXELS,
-                &glyph_bbox);
+                          &glyph_bbox);
 
         glyph_bbox.xMin += pos[n].x;
         glyph_bbox.xMax += pos[n].x;
@@ -238,7 +238,7 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
 
 
             FT_Get_Kerning(face, previous, glyph_index,
-                    FT_KERNING_DEFAULT, &delta);
+                           FT_KERNING_DEFAULT, &delta);
 
             pen_x += delta.x >> 6;
         }
@@ -268,8 +268,8 @@ static inline void create_string(lmFontLibrary *library, lmString *string, FT_UL
 }
 
 void render_string(lmLedMatrix *matrix, lmString *string,
-        int16_t x, int16_t y,
-        rgb *rgb) {
+                   int16_t x, int16_t y,
+                   rgb *rgb) {
     if (string->num_glyphs == 0) {
         return;
     }
@@ -320,9 +320,9 @@ void render_string(lmLedMatrix *matrix, lmString *string,
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
 
             render_bitmap(matrix, bit->bitmap,
-                    x + bit->left,
-                    y + shiftY - bit->top,
-                    rgb);
+                          x + bit->left,
+                          y + shiftY - bit->top,
+                          rgb);
 
             /* increment pen position --                       */
             /* we don't have access to a slot structure,       */
@@ -360,8 +360,8 @@ void lm_fonts_string_free(lmString *string) {
 }
 
 void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const char *text, lmFont *font,
-        int16_t x, int16_t y,
-        rgb *rgb) {
+                           int16_t x, int16_t y,
+                           rgb *rgb) {
 
 //    printf("Matrix: %p\n", (void *)matrix);
 //    printf("text: %s\n", text);
@@ -379,8 +379,8 @@ void lm_fonts_print_string(lmFontLibrary *library, lmLedMatrix *matrix, const ch
 }
 
 void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const wchar_t *text, lmFont *font,
-        int16_t x, int16_t y,
-        rgb *rgb) {
+                            int16_t x, int16_t y,
+                            rgb *rgb) {
     lmString string;
     init_string(&string);
     lm_fonts_populate_wstring(library, &string, text, font);
@@ -389,8 +389,8 @@ void lm_fonts_print_wstring(lmFontLibrary *library, lmLedMatrix *matrix, const w
 }
 
 void lm_fonts_print_lstring(lmFontLibrary *library, lmLedMatrix *matrix, unsigned long *text, int len, lmFont *font,
-        int16_t x, int16_t y,
-        rgb *rgb) {
+                            int16_t x, int16_t y,
+                            rgb *rgb) {
     lmString string;
     init_string(&string);
     lm_fonts_populate_lstring(library, &string, text, len, font);
@@ -431,8 +431,8 @@ void lm_fonts_populate_lstring(lmFontLibrary *library, lmString *string, unsigne
 }
 
 void lm_fonts_render_string(lmLedMatrix *matrix, lmString *string,
-        int16_t x, int16_t y,
-        rgb *rgb) {
+                            int16_t x, int16_t y,
+                            rgb *rgb) {
     render_string(matrix, string, x, y, rgb);
 }
 
@@ -445,7 +445,7 @@ int lm_fonts_string_height(lmString *string) {
 }
 
 void lm_fonts_string_apply_transformation(lmString *string,
-        lmMatrix matrix) {
+                                          lmMatrix matrix) {
     string->use_matrix = 1;
     string->matrix = matrix;
 }

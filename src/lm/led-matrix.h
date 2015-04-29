@@ -40,17 +40,17 @@ uint8_t lm_matrix_double_rows(lmLedMatrix *matrix);
 io_bits *lm_matrix_bit_plane(lmLedMatrix *matrix);
 
 void lm_matrix_fill(lmLedMatrix *matrix,
-        rgb *rgb);
+                    rgb *rgb);
 
 void lm_matrix_set_pixel(lmLedMatrix *matrix,
-        int16_t x, int16_t y,
-        rgb *rgb);
+                         int16_t x, int16_t y,
+                         rgb *rgb);
 
 
 void lm_matrix_line(lmLedMatrix *matrix,
-        int16_t xstart, int16_t ystart,
-        int16_t xend, int16_t yend,
-        rgb *rgb);
+                    int16_t xstart, int16_t ystart,
+                    int16_t xend, int16_t yend,
+                    rgb *rgb);
 
 void lm_matrix_clear(lmLedMatrix *matrix);
 
