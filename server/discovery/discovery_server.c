@@ -32,10 +32,9 @@ void start_discovery_server() {
         exit(-1);
     }
 
-
-    server_addr.sin_family = AF_INET;                 // Address family to use
-    server_addr.sin_port = htons(8888);           // Port number to use
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);  // Listen on any IP address
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(8888);
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     ret = bind(server_s, (struct sockaddr *) &server_addr,
                sizeof(server_addr));
     if (ret < 0) {
@@ -54,15 +53,12 @@ void start_discovery_server() {
             exit(-1);
         }
 
-        // Copy the four-byte client IP address into an IP address structure
         memcpy(&client_ip_addr, &client_addr.sin_addr.s_addr, 4);
 
-        // Print an informational message of IP address and port of the client
         printf("IP address of client = %s  port = %d) \n", inet_ntoa(client_ip_addr),
                ntohs(client_addr.sin_port));
 
-        // >>> Step #4 <<<
-        // Send to the client using the server socket
+
         strcpy(out_buf, "DISCOVERY_RESPONSE");
         ret = sendto(server_s, out_buf, (strlen(out_buf) + 1), 0,
                      (struct sockaddr *) &client_addr, sizeof(client_addr));
@@ -72,8 +68,6 @@ void start_discovery_server() {
         }
     }
 
-    // >>> Step #5 <<<
-    // Close all open sockets
 
     ret = close(server_s);
     if (ret < 0) {

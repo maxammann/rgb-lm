@@ -98,8 +98,6 @@ enum AVSampleFormat init_resampling(AVAudioResampleContext **out_resample, AVCod
     return output_fmt;
 }
 
-#define PCM_DEVICE "default"
-
 int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) {
     int ret;
     enum {
