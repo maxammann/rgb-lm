@@ -22,12 +22,6 @@ void init_controller() {
 
     library = lm_fonts_init();
 
-//    default_font = lm_fonts_font_new(library, "/usr/share/fonts/truetype/msttcorefonts/arial.ttf", 16);
-//    default_font = lm_fonts_font_new(library, "/root/projects/InputMono/InputMono-Medium.ttf", 16);
-//    default_font = lm_fonts_font_new(library, "/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf", 16);
-//    default_font = lm_fonts_font_new(library, "/root/projects/fonts/arial_uni.ttf", 16);
-//    default_font = lm_fonts_font_new(library, "/root/projects/fonts/NotoSansSymbols-unhinted/NotoSansSymbols-Regular.ttf", 16);
-//    default_font = lm_fonts_font_new(library, "/root/projects/fonts/UNC6-Fonts/u1.ttf", 16);
     default_font = lm_fonts_font_new(library, "/root/projects/fonts/Symbola/Symbola.ttf", 22);
 
     lm_thread_start(thread);

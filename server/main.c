@@ -39,28 +39,6 @@ void shutdown(int sig) {
 }
 
 int main(int argc, char *argv[]) {
-//    audio_init();
-//    audio_play_default("test.mp3", 0, NULL);
-//    return 0;
-//    size_t amount;
-//    Title *titles = m3u_read("test1.m3u", &amount);
-//
-//    int i;
-//    for (i = 0; i < amount; ++i) {
-//        printf("%s", titles[i].title_dest);
-//    }
-//
-//    m3u_free(titles, amount);
-//    return 0;
-//    time_t t = time(NULL);
-//    struct tm *gtm = localtime(&t);
-//    time_t gt = mktime(gtm);
-//
-//    gtm->tm_hour;
-//    printf("time: %s\n", gtm->tm_zone);
-//    return 0;
-
-//    mute(0);
 
     signal(SIGINT, shutdown);
 
@@ -68,7 +46,8 @@ int main(int argc, char *argv[]) {
 
     read_alarms("test.alarms");
 
-    setupencoder(15, 16, 8, skip_current_playback);
+    setupencoder(9, 16, 15, skip_current_playback);
+
 
     init_controller();
 
@@ -86,18 +65,10 @@ int main(int argc, char *argv[]) {
 
     lm_thread_unpause(get_thread());
     set_current_screen(get_screen("menu"), NULL);
-//    rgb rgb;
-//    rgb.r = 255;
-//    rgb.b = 0;
-//    rgb.g = 0;
-//    lm_matrix_fill(get_matrix(), &rgb);
-//    lm_matrix_swap_buffers(get_matrix());
-
 
     pthread_t pthread;
     pthread_create(&pthread, NULL, discovery, NULL);
 
-//    int fd = bind_unix_domain_socket("./socket");
     bind_tcp_socket(6969, &fd);
     start_server(fd, process_buffer);
 
