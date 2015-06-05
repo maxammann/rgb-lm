@@ -22,7 +22,7 @@ static unsigned long current_time() {
 
 static void button() {
     int down;
-    
+
     down = !digitalRead(15);
 
     unsigned long now = current_time();

@@ -97,7 +97,6 @@ static void *main(void *ch) {
 
             for (b = COLOR_SHIFT + MAX_BITPLANES - pwm_bits; b < MAX_BITPLANES; ++b) {
 
-//                lm_matrix_lock(matrix);
                 io_bits *row_data = lm_io_bits_value_at(bitplane, columns, d_row, 0, b);
 
                 for (col = 0; col < columns; ++col) {
@@ -105,7 +104,6 @@ static void *main(void *ch) {
                     lm_gpio_set_masked_bits(out.raw, color_clock_mask.raw);
                     lm_gpio_set_bits(clock.raw);
                 }
-//                lm_matrix_unlock(matrix);
 
                 lm_gpio_clear_bits(color_clock_mask.raw);
 
@@ -154,6 +152,7 @@ lmThread *lm_thread_new(lmLedMatrix *matrix, long base_time_nanos) {
     for (i = 0; i < MAX_BITPLANES; ++i) {
         thread->row_sleep_timings[i] = (1 << i) * base_time_nanos;
     }
+
     return thread;
 }
 

@@ -1,5 +1,4 @@
 #include <malloc.h>
-#include <unistd.h>
 #include <lm/thread.h>
 #include <stdlib.h>
 #include <string.h>

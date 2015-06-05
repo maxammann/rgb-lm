@@ -1,15 +1,12 @@
 #include <stdlib.h>
 #include <m3u.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <uthash.h>
 #include "alarms.h"
 #include "screen/screen.h"
 #include "wakedog.h"
 #include "controller.h"
 #include "audio/audio.h"
-
-static int running;
 
 //stop playback
 static int current_playback = 0;

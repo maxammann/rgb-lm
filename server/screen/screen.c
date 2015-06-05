@@ -53,7 +53,7 @@ static void *start(void *ptr) {
 
         struct timespec sleep, remaining;
         sleep.tv_sec = 0;
-        sleep.tv_nsec = 33333333;
+        sleep.tv_nsec = 41666700;
 
         nanosleep(&sleep, &remaining);
     }

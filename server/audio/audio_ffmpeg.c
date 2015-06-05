@@ -203,6 +203,7 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
                 } else if (vol_state == DYNAMIC) {
                     struct timespec current;
                     clock_gettime(CLOCK_MONOTONIC, &current);
+
                     double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 +
                                           current.tv_nsec) / 10E9;
 

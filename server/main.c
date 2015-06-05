@@ -10,9 +10,7 @@
 #include "discovery/discovery_server.h"
 
 #include "screen/screen.h"
-#include "screen/example.h"
 #include "screen/menu.h"
-#include "screen/alarms.h"
 #include "screen/visualize.h"
 
 #include "alarms.h"
@@ -54,9 +52,7 @@ void shutdown(int sig) {
 
 int main(int argc, char *argv[]) {
     printf("Initialising controller\n");
-    register_example_screens();
     register_menu_screens();
-    register_alarms_screens();
     register_visualize_screen();
     init_controller();
 
@@ -80,9 +76,14 @@ int main(int argc, char *argv[]) {
     input_setup();
 
     pthread_t pthread;
+    // Set minimum priority
+    struct sched_param p;
+    p.sched_priority = sched_get_priority_min(SCHED_FIFO);
 
     pthread_create(&pthread, NULL, start_discovery, NULL);
+    pthread_setschedparam(pthread, SCHED_FIFO, &p);
     pthread_create(&pthread, NULL, start_main_server, NULL);
+    pthread_setschedparam(pthread, SCHED_FIFO, &p);
 
     // END INIT
     set_current_screen(NULL, NULL);

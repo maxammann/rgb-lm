@@ -3,11 +3,11 @@
 #include <stdio.h>
 
 void digital_clock_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double elapsed, void *user_data) {
-    rgb color = {68, 73, 219};
+    rgb color = {255, 0, 0};
 
     int16_t delta_x = 16;
-    int16_t delta_y = 2;
-    int16_t spacing_y = 3;
+    int16_t delta_y = 1;
+    int16_t spacing_y = 2;
 
     time_t rawtime;
     time(&rawtime);

@@ -45,14 +45,13 @@ add_executable(server ${SOURCE_FILES}
  	discovery/discovery_server.c
  	screen/screen.c
  	screen/menu.c screen/menu.h
-  	screen/alarms.c screen/alarms.h
-  	screen/example.c screen/example.h
   	screen/visualize.c screen/visualize.h
   	wakedog.c wakedog.h
   	rotary_encoder.c rotary_encoder.h audio/audio.h wakedog.h screen/visualize.h screen/visualize.c
-  	input.c screen/menu/clock.h screen/menu/clock.c screen/menu/clock.h)
+  	input.c input.h
+  	screen/menu/clock.c screen/menu/clock.h)
 
-  	message(${AVResample_LIBRARIES})
+message(${AVResample_LIBRARIES})
 
 target_link_libraries (server m3u)
 target_link_libraries (server rgb_led_matrix

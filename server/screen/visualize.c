@@ -2,8 +2,6 @@
 #include <math.h>
 #include "screen.h"
 #include <libavcodec/avfft.h>
-#include <string.h>
-#include "stdlib.h"
 
 static int16_t left_bands[32];
 static int16_t right_bands[32];
