@@ -3,22 +3,25 @@
 
 #define PPMREADBUFLEN 256
 
-image *ppm_new() {
-    return malloc(sizeof(image));
+image_t *ppm_new() {
+    return malloc(sizeof(image_t));
 }
 
-void ppm_free(image *img) {
+void ppm_free(image_t *img) {
     free(img);
 }
 
-void ppm_load(char *file, image *img) {
+void ppm_load(char *file, image_t *img) {
     char buf[PPMREADBUFLEN], *t;
 
     unsigned int w, h, d;
     int r;
     FILE *pf = fopen(file, "r");
 
-    if (pf == NULL) return;
+    if (pf == NULL) {
+        perror("PPM does not exist!");
+        return;
+    }
 
     t = fgets(buf, PPMREADBUFLEN, pf);
 
@@ -45,8 +48,8 @@ void ppm_load(char *file, image *img) {
     }
 }
 
-void ppm_render(lmLedMatrix *matrix, int16_t x_start, int16_t y_start, image *img) {
-    uint16_t x, y;
+void ppm_render(lmLedMatrix *matrix, int16_t x_start, int16_t y_start, image_t *img) {
+    int16_t x, y;
 
     for (x = 0; x < img->width; ++x) {
         for (y = 0; y < img->height; ++y) {

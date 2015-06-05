@@ -96,14 +96,9 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
         return;
     }
 
-    while (1) {
-
-        if (!running) {
-            break;
-        }
+    while (running) {
 
         if ((cl = accept(fd, NULL, NULL)) == -1) {
-            perror("accept errored or finished");
             break;
         }
 

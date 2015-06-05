@@ -122,10 +122,10 @@ static void render_bitmap(lmLedMatrix *matrix, FT_Bitmap bitmap,
                 continue;
             }
 
-            uint16_t x_pixel = (uint16_t) (i + x);
-            uint16_t y_pixel = (uint16_t) (j + y);
+            FT_Int x_pixel = i + x;
+            FT_Int y_pixel = j + y;
 
-            lm_matrix_set_pixel(matrix, x_pixel, y_pixel, rgb);
+            lm_matrix_set_pixel(matrix, (int16_t) x_pixel, (int16_t) y_pixel, rgb);
         }
     }
 }
@@ -140,7 +140,7 @@ static void compute_string_bbox(int num_glyphs, FT_Glyph *glyphs, FT_Vector *pos
     bbox.xMin = bbox.yMin = 32000;
     bbox.xMax = bbox.yMax = -32000;
 
-    /* for each glyph image, compute its bounding box, */
+    /* for each glyph image_t, compute its bounding box, */
     /* translate it, and grow the string bbox          */
     for (n = 0; n < num_glyphs; n++) {
         FT_Glyph_Get_CBox(glyphs[n], FT_GLYPH_BBOX_PIXELS,

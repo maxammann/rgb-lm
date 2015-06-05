@@ -12,7 +12,7 @@ pthread_t screen_thread;
 pthread_mutex_t screen_mutex;
 pthread_cond_t screen_cond;
 
-int running = 1;
+static int running = 1;
 
 typedef struct screen {
     screen_t screen;
@@ -20,8 +20,11 @@ typedef struct screen {
     UT_hash_handle hh;
 } screen_st;
 
-screen_st *screens = NULL;
+static screen_st *screens = NULL;
 
+static inline double diff_seconds(struct timespec a, struct timespec b) {
+    return fabs(a.tv_sec * 10E9 + a.tv_nsec - b.tv_sec * 10E9 + b.tv_nsec);
+}
 
 static void *start(void *ptr) {
 
@@ -33,7 +36,7 @@ static void *start(void *ptr) {
         struct timespec current;
         clock_gettime(CLOCK_REALTIME, &current);
 
-        double elapsed = fabs(last_time.tv_sec * 10E9 + last_time.tv_nsec - current.tv_sec * 10E9 + current.tv_nsec);
+        double elapsed = diff_seconds(last_time, current);
 
         last_time.tv_nsec = current.tv_nsec;
         last_time.tv_sec = current.tv_sec;
@@ -98,7 +101,7 @@ screen_t get_screen(const char *name) {
     return st->screen;
 }
 
-int register_screen(const char *name, screen_t screen) {
+void register_screen(const char *name, screen_t screen) {
     char *key = malloc(sizeof(const char) * strlen(name) + 1);
     strcpy(key, name);
 

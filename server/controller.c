@@ -17,12 +17,14 @@ void init_controller() {
     lm_gpio_init();
     lm_gpio_init_output(lm_io_bits_new());
 
-    matrix = lm_matrix_new(32, 32, 11);
+    matrix = lm_matrix_new(32, 32, 6);
     thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
 
     library = lm_fonts_init();
 
-    default_font = lm_fonts_font_new(library, "/root/projects/fonts/Symbola/Symbola.ttf", 22);
+//    default_font = lm_fonts_font_new(library, "alarm-clock/fonts/Symbola.ttf", 22);
+//    default_font = lm_fonts_font_new(library, "alarm-clock/fonts/NotoSans-Regular.ttf", 20);
+    default_font = lm_fonts_font_new(library, "alarm-clock/fonts/alterebro-pixel-font.ttf", 32);
 
     lm_thread_start(thread);
     lm_thread_pause(thread);

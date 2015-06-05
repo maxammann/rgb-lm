@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "controller.h"
 #include "server.h"
@@ -13,64 +14,106 @@
 #include "screen/menu.h"
 #include "screen/alarms.h"
 #include "screen/visualize.h"
-#include "rotary_encoder.h"
+
 #include "alarms.h"
 #include "wakedog.h"
 #include "audio/audio.h"
 
-static int fd;
+#include "lm/ppm.h"
+#include "input.h"
 
-void *discovery(void *nil) {
+static int main_fd;
+static int running;
+
+void *start_discovery(void *nil) {
+    printf("Starting discovery server\n");
     start_discovery_server();
     return NULL;
 }
 
+void *start_main_server(void *nil) {
+    printf("Starting server\n");
+    bind_tcp_socket(6969, &main_fd);
+    start_server(main_fd, process_buffer);
+    return NULL;
+}
+
 void shutdown(int sig) {
-    //probably won't help much, todo more cleanups
     printf("Stopping!\n");
 
     stop_discovery_server();
-    stop_server(fd);
-    screens_stop();
+    stop_server(main_fd);
 
+    screens_stop();
     lm_thread_stop(get_thread());
+
+    running = 0;
+
     printf("Stopped!\n");
-    exit(0);
 }
 
 int main(int argc, char *argv[]) {
-
-    signal(SIGINT, shutdown);
-
-    audio_init();
-
-    read_alarms("test.alarms");
-
-    setupencoder(9, 16, 15, skip_current_playback);
-
-
-    init_controller();
-
+    printf("Initialising controller\n");
     register_example_screens();
     register_menu_screens();
     register_alarms_screens();
     register_visualize_screen();
-
-    start_dog();
-
-//    lm_thread_unpause(get_thread());
-//    set_current_screen(get_screen("visualize"), NULL);
-//    audio_play_default("../sin2.wav", 0, NULL);
+    init_controller();
 
 
+    image_t boot;
+    ppm_load("alarm-clock/graphics/boot.ppm", &boot);
+    ppm_render(get_matrix(), 0, 0, &boot);
+    lm_matrix_swap_buffers(get_matrix());
     lm_thread_unpause(get_thread());
-    set_current_screen(get_screen("menu"), NULL);
+
+    // START INIT
+    signal(SIGINT, shutdown);
+    signal(SIGTERM, shutdown);
+
+    printf("Initialising audio\n");
+    audio_init();
+
+    printf("Reading alams\n");
+    read_alarms("test.alarms");
+
+    input_setup();
 
     pthread_t pthread;
-    pthread_create(&pthread, NULL, discovery, NULL);
 
-    bind_tcp_socket(6969, &fd);
-    start_server(fd, process_buffer);
+    pthread_create(&pthread, NULL, start_discovery, NULL);
+    pthread_create(&pthread, NULL, start_main_server, NULL);
+
+    // END INIT
+    set_current_screen(NULL, NULL);
+    lm_thread_pause(get_thread());
+
+    printf("Wakeup playlist: %s\n", getenv("WAKEUP_PLAYLIST"));
+    printf("News playlist: %s\n", getenv("NEWS_PLAYLIST"));
+
+    running = 1;
+
+    while (running) {
+        watch();
+
+
+        if (last_down_longer_than(2000)) {
+            printf("Button long pressed\n");
+            set_current_screen(NULL, NULL);
+            lm_thread_pause(get_thread());
+
+            reset_last_down();
+        }
+
+        if (last_up_longer_than(10000)) {
+            set_current_screen(NULL, NULL);
+            lm_thread_pause(get_thread());
+
+            reset_last_up();
+        }
+
+        sleep(1);
+    }
 
     free_controller();
     close_screens();

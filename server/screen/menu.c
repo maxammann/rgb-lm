@@ -6,46 +6,73 @@
 #include "menu.h"
 #include "../rotary_encoder.h"
 
-#define MENUES 3
+#include "menu/clock.h"
 
-#define ENCODER_EDGE 5
+#define MENUES 2
+
+#define ENCODER_EDGE 15
 #define SPEED 25.0
 
-#define NEW_MENU(i, path) ppm_load(path, menus[i]);
+#define WIDTH 32
 
-static image **menus;
-
-static int next_menu = 0;
 static enum Direction {
     NOTHING = 0, LEFT = -1, RIGHT = 1,
 } next_direction = NOTHING;
 
-static double next_x = 0;
 
+typedef void (*menu_screen_)(lmLedMatrix *matrix, int16_t x, int16_t y, double elapsed, void *user_data);
+
+typedef menu_screen_ menu_screen_t;
+
+typedef struct menu_ menu_t;
+
+struct menu_ {
+    menu_screen_t screen;
+    char *name;
+    void *user_data;
+};
+
+void ppm_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double elapsed, void *user_data) {
+    ppm_render(matrix, x, y, user_data);
+}
+
+
+static menu_t menus[MENUES];
 static int current_menu = 0;
+static int next_menu = 0;
 
-static double current_x;
 
 void menu_screen_init() {
-    int i;
+    menu_t menu;
 
-    menus = malloc(MENUES * sizeof(lmString *));
 
-    for (i = 0; i < MENUES; ++i) {
-        menus[i] = ppm_new(); //todo possibly free?
-    }
+    menu.name = "clock";
+//    menu.user_data = ppm_new();
+//    ppm_load("alarm-clock/graphics/1.ppm", menu.user_data);
+    menu.screen = digital_clock_menu_screen;
+    menus[0] = menu;
 
-    NEW_MENU(0, "/root/projects/rgb-led-matrix/graphics/1.ppm");
-    NEW_MENU(1, "/root/projects/rgb-led-matrix/graphics/2.ppm");
-    NEW_MENU(2, "/root/projects/rgb-led-matrix/graphics/3.ppm");
+//    menu.name = "next_alarm";
+//    menu.user_data = ppm_new();
+//    ppm_load("alarm-clock/graphics/2.ppm", menu.user_data);
+//    menu.screen = ppm_menu_screen;
+//    menus[0] = menu;
+
+    menu.name = "alarms";
+    menu.user_data = ppm_new();
+    ppm_load("alarm-clock/graphics/3.ppm", menu.user_data);
+    menu.screen = ppm_menu_screen;
+    menus[1] = menu;
 }
 
 void menu_next() {
     if (next_menu != current_menu) {
         return;
     }
+
     next_menu = (current_menu + 1) % MENUES;
     next_direction = LEFT;
+    printf("Left\n");
 }
 
 void menu_previous() {
@@ -58,13 +85,16 @@ void menu_previous() {
     } else {
         next_menu = (current_menu - 1) % MENUES;
     }
-
     next_direction = RIGHT;
+    printf("Right\n");
 }
 
-static inline void move_menu(image *current, double elapsed, int sign, double start) {
+static double next_x = 0;
+static double current_x = 0;
+
+static inline void move_menu(double elapsed, int sign) {
     if (next_x == 0) {
-        next_x = start;
+        next_x = -sign * WIDTH; //set next outside of screen
     }
 
     double delta = SPEED * elapsed;
@@ -72,45 +102,45 @@ static inline void move_menu(image *current, double elapsed, int sign, double st
     next_x += sign * delta;
     current_x += sign * delta;
 
-    if (current_x > current->width || current_x < -current->width) {
+    if (current_x > WIDTH || current_x < -WIDTH) {
         next_x = 0;
         current_menu = next_menu;
-        next_direction = NOTHING;
+        next_direction = NOTHING; // finished for this menu
+        printf("Finished transition\n");
     }
 }
 
 void menu_screen(lmLedMatrix *matrix, double elapsed) {
     if (encoder.value / ENCODER_EDGE > 1) {
         menu_next();
+        printf("next ->\n");
         encoder.value = 0;
-//        printf("next\n");
     } else if (encoder.value / ENCODER_EDGE < -1) {
         menu_previous();
+        printf("previous ->\n");
         encoder.value = 0;
-//        printf("previous\n");
-
     }
 
     lm_matrix_clear(matrix);
 
-    image *current = menus[current_menu];
+    menu_t current = menus[current_menu];
 
     if (next_direction == NOTHING) {
-        current_x = 0;
+        current_x = 0; // Nothing to do
     } else {
-        image *next = menus[next_menu];
-        int next_width = next->width;
-        move_menu(current, elapsed, next_direction, -next_direction * next_width);
-        ppm_render(matrix, (int16_t) round(next_x), 0, next);
+        menu_t next = menus[next_menu];
+
+        move_menu(elapsed, next_direction);
+        next.screen(matrix, (int16_t) round(next_x), 0, elapsed, next.user_data);
     }
 
-//    printf("%d | %f | %f | %f\n", next_direction, current_x, next_x, elapsed);
+    current.screen(matrix, (int16_t) round(current_x), 0, elapsed, current.user_data);
 
-    ppm_render(matrix, (int16_t) round(current_x), 0, current);
     lm_matrix_swap_buffers(matrix);
-};
+}
+
 
 void register_menu_screens() {
     menu_screen_init();
-    register_screen("menu", (screen_t) &menu_screen);
+    register_screen("menu_t", (screen_t) &menu_screen);
 }

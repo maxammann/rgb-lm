@@ -15,13 +15,13 @@ struct image_ {
     int width, height;
 };
 
-typedef struct image_ image;
+typedef struct image_ image_t;
 
-image *ppm_new();
+image_t *ppm_new();
 
-void ppm_free(image *img);
+void ppm_free(image_t *img);
 
-void ppm_load(char *file, image *img);
+void ppm_load(char *file, image_t *img);
 
-void ppm_render(lmLedMatrix *matrix, int16_t x, int16_t y, image *img);
+void ppm_render(lmLedMatrix *matrix, int16_t x, int16_t y, image_t *img);
 

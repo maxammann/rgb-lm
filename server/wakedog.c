@@ -104,40 +104,28 @@ static void check_alarm(Alarm *alarm, struct tm *now) {
     }
 }
 
-static void *watch(void *nil) {
+static int last_hour = 0;
+
+void watch() {
     int i;
-    int last_hour = 0;
 
+    time_t t = time(NULL);
+    struct tm *now = localtime(&t);
 
-    while (running) {
-        time_t t = time(NULL);
-        struct tm *now = localtime(&t);
+    int reset = (last_hour == 23 && now->tm_hour == 0);
 
-        int reset = (last_hour == 23 && now->tm_hour == 0);
+    uint32_t size = get_alarms_size();
+    Alarm *alarms = get_alarms();
 
-        uint32_t size = get_alarms_size();
-        Alarm *alarms = get_alarms();
+    for (i = 0; i < size; ++i) {
+        Alarm *alarm = alarms + i;
 
-        for (i = 0; i < size; ++i) {
-            Alarm *alarm = alarms + i;
-
-            if (reset) {
-                alarm->already_woke = 0;
-            }
-
-            check_alarm(alarm, now);
+        if (reset) {
+            alarm->already_woke = 0;
         }
 
-        last_hour = now->tm_hour;
-
-        sleep(2);
+        check_alarm(alarm, now);
     }
 
-    return NULL;
-}
-
-void start_dog() {
-    running = 1;
-    pthread_t pthread;
-    pthread_create(&pthread, NULL, watch, NULL);
+    last_hour = now->tm_hour;
 }
