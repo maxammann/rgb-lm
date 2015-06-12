@@ -48,8 +48,9 @@ add_executable(server ${SOURCE_FILES}
   	screen/visualize.c screen/visualize.h
   	wakedog.c wakedog.h
   	rotary_encoder.c rotary_encoder.h audio/audio.h wakedog.h screen/visualize.h screen/visualize.c
-  	input.c input.h
-  	screen/menu/clock.c screen/menu/clock.h)
+  	screen/menu/clock.c screen/menu/clock.h
+  	screen/menu/mesmerizing.h screen/menu/mesmerizing.c
+  	time_util.h time_util.c)
 
 message(${AVResample_LIBRARIES})
 

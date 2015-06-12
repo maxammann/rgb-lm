@@ -7,6 +7,7 @@
 #include "../rotary_encoder.h"
 
 #include "menu/clock.h"
+#include "menu/mesmerizing.h"
 
 #define MENUES 2
 
@@ -47,22 +48,23 @@ void menu_screen_init() {
 
 
     menu.name = "clock";
-//    menu.user_data = ppm_new();
-//    ppm_load("alarm-clock/graphics/1.ppm", menu.user_data);
     menu.screen = digital_clock_menu_screen;
     menus[0] = menu;
 
+    menu.name = "mesmerizing";
+    menu.screen = mesmerizing_menu_screen;
+    menus[1] = menu;
+
 //    menu.name = "next_alarm";
-//    menu.user_data = ppm_new();
-//    ppm_load("alarm-clock/graphics/2.ppm", menu.user_data);
-//    menu.screen = ppm_menu_screen;
+//    menu.screen =;
 //    menus[0] = menu;
 
-    menu.name = "alarms";
-    menu.user_data = ppm_new();
-    ppm_load("alarm-clock/graphics/3.ppm", menu.user_data);
-    menu.screen = ppm_menu_screen;
-    menus[1] = menu;
+
+//    menu.name = "alarms";
+//    menu.screen = ;
+//    menus[1] = menu;
+
+
 }
 
 void menu_next() {
@@ -142,5 +144,5 @@ void menu_screen(lmLedMatrix *matrix, double elapsed) {
 
 void register_menu_screens() {
     menu_screen_init();
-    register_screen("menu_t", (screen_t) &menu_screen);
+    register_screen("menu", (screen_t) &menu_screen);
 }

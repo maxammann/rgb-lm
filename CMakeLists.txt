@@ -11,9 +11,12 @@ add_definitions(-DRT)
 
 if (RELEASE)
     set(CMAKE_BUILD_TYPE Release)
+    message("Build type: Release")
 else (RELEASE)
     set(CMAKE_BUILD_TYPE Debug)
+     message("Build type: Debug")
 endif(RELEASE)
+
 
 find_package (Threads)
 find_library(REAL_TIME rt)

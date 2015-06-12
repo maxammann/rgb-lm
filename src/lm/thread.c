@@ -6,9 +6,9 @@
 
 #ifdef RT
 
-#define CITICAL_NANOS 21300     //The amount of nanos when we're using "busy wait"
-#define BUSY_OPERATION / 3
-#define NANO_SLEEP_OFFSET 21300
+#define CITICAL_NANOS 28000
+#define BUSY_OPERATION >> 2
+#define NANO_SLEEP_OFFSET 20000
 
 #else
 
@@ -32,7 +32,7 @@ struct lmThread_ {
 };
 
 
-static void sleep_nanos(long nanos) {
+void sleep_nanos(long nanos) {
     if (nanos > CITICAL_NANOS) {
         struct timespec sleep_time = {0, nanos - NANO_SLEEP_OFFSET};
         nanosleep(&sleep_time, NULL);
@@ -40,7 +40,7 @@ static void sleep_nanos(long nanos) {
         long i;
 
         for (i = nanos BUSY_OPERATION; i != 0; --i) {
-            asm("");   // skip gcc
+            asm("");   // do not optimize
         }
     }
 }

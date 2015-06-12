@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "uthash.h"
 #include "screen.h"
-#include "math.h"
+#include "../time_util.h"
 
 lmLedMatrix *matrix;
 screen_t current_screen;
@@ -22,40 +23,32 @@ typedef struct screen {
 
 static screen_st *screens = NULL;
 
-static inline double diff_seconds(struct timespec a, struct timespec b) {
-    return fabs(a.tv_sec * 10E9 + a.tv_nsec - b.tv_sec * 10E9 + b.tv_nsec);
-}
 
 static void *start(void *ptr) {
-
+    struct timespec current;
     struct timespec last_time;
-    clock_gettime(CLOCK_REALTIME, &last_time);
+    double elapsed = 20833300;
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &last_time);
 
     while (running) {
+        clock_gettime(CLOCK_MONOTONIC_RAW, &current);
+        last_time = current;
 
-        struct timespec current;
-        clock_gettime(CLOCK_REALTIME, &current);
+//        elapsed = diff_nseconds(last_time, current);
 
-        double elapsed = diff_seconds(last_time, current);
-
-        last_time.tv_nsec = current.tv_nsec;
-        last_time.tv_sec = current.tv_sec;
 
         pthread_mutex_lock(&screen_mutex);
         while (current_screen == NULL) {
             pthread_cond_wait(&screen_cond, &screen_mutex);
         }
-
         pthread_mutex_unlock(&screen_mutex);
 
 
-        current_screen(matrix, elapsed / 10E9, current_user_data);
+        current_screen(matrix, 0.12, current_user_data);
+//        printf("%lf\n", elapsed);
 
-        struct timespec sleep, remaining;
-        sleep.tv_sec = 0;
-        sleep.tv_nsec = 41666700;
-
-        nanosleep(&sleep, &remaining);
+        sleep_nanos(20833300);
     }
 
     return NULL;

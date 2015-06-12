@@ -18,7 +18,7 @@
 #include "audio/audio.h"
 
 #include "lm/ppm.h"
-#include "input.h"
+#include "rotary_encoder.h"
 
 static int main_fd;
 static int running;
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
     printf("Reading alams\n");
     read_alarms("test.alarms");
 
-    input_setup();
+    setupencoder(9, 16, 15);
 
     pthread_t pthread;
     // Set minimum priority
@@ -94,11 +94,15 @@ int main(int argc, char *argv[]) {
 
     running = 1;
 
+//    set_current_screen(get_screen("menu"), NULL);
+//    lm_thread_unpause(get_thread());
+//    menu_next();
+
     while (running) {
         watch();
 
 
-        if (last_down_longer_than(2000)) {
+        if (last_down_longer_than(1000)) {
             printf("Button long pressed\n");
             set_current_screen(NULL, NULL);
             lm_thread_pause(get_thread());
@@ -106,7 +110,7 @@ int main(int argc, char *argv[]) {
             reset_last_down();
         }
 
-        if (last_up_longer_than(10000)) {
+        if (last_up_longer_than(10000) && last_rotated_longer_than(10000)) {
             set_current_screen(NULL, NULL);
             lm_thread_pause(get_thread());
 

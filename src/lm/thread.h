@@ -23,3 +23,5 @@ void lm_thread_unpause(lmThread *thread);
 void lm_thread_stop(lmThread *thread);
 
 int lm_thread_is_stopped(lmThread *thread);
+
+void sleep_nanos(long nanos);

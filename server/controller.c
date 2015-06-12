@@ -17,7 +17,7 @@ void init_controller() {
     lm_gpio_init();
     lm_gpio_init_output(lm_io_bits_new());
 
-    matrix = lm_matrix_new(32, 32, 6);
+    matrix = lm_matrix_new(32, 32, 11);
     thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
 
     library = lm_fonts_init();

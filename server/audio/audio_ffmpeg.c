@@ -167,7 +167,7 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
     struct timespec start_time;
 
     if (vol_state == DYNAMIC) {
-        clock_gettime(CLOCK_MONOTONIC, &start_time);
+        clock_gettime(CLOCK_MONOTONIC_RAW, &start_time);
     }
 
     visualize_init(4096 / sizeof(int16_t));
@@ -202,7 +202,7 @@ int audio_play(char *file_path, double seconds, double max_vol, brake brake_fn) 
                     modify_volume((int16_t *) output, out_linesize, vol);
                 } else if (vol_state == DYNAMIC) {
                     struct timespec current;
-                    clock_gettime(CLOCK_MONOTONIC, &current);
+                    clock_gettime(CLOCK_MONOTONIC_RAW, &current);
 
                     double elapsed = fabs(start_time.tv_sec * 10E9 + start_time.tv_nsec - current.tv_sec * 10E9 +
                                           current.tv_nsec) / 10E9;

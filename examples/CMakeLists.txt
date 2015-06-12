@@ -22,6 +22,14 @@ set_target_properties(pulsing
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
+add_executable(mesmerizing  mesmerizing.c)
+target_link_libraries (mesmerizing rgb_led_matrix)
+set_target_properties(mesmerizing
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+
 
 add_executable(simple_font simple_font.c)
 target_link_libraries (simple_font rgb_led_matrix)
