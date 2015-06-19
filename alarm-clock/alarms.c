@@ -9,7 +9,7 @@ Alarm *alarms;
 uint32_t alarms_size;
 
 void set_alarms(Alarm *alarms_, size_t alarms_size_) {
-    int i;
+    size_t i;
 
     for (i = 0; i < alarms_size_; ++i) {
         alarms_[i].already_woke = should_be_woke(&alarms_[i]);
@@ -22,7 +22,7 @@ void set_alarms(Alarm *alarms_, size_t alarms_size_) {
 }
 
 void clear_alarms() {
-    int i;
+    size_t i;
 
     for (i = 0; i < alarms_size; ++i) {
         Alarm alarm = alarms[i];

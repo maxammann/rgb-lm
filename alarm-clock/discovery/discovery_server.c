@@ -43,7 +43,7 @@ void start_discovery_server() {
     }
 
 
-    printf("Discovery server started\n");
+    printf("Discovery alarm-clock started\n");
     while (running) {
         addr_len = sizeof(client_addr);
         ret = recvfrom(server_s, in_buf, sizeof(in_buf), 0,

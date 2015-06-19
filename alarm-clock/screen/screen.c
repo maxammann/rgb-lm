@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include "uthash.h"
 #include "screen.h"
-#include "../time_util.h"
 
 lmLedMatrix *matrix;
 screen_t current_screen;
@@ -27,16 +25,12 @@ static screen_st *screens = NULL;
 static void *start(void *ptr) {
     struct timespec current;
     struct timespec last_time;
-    double elapsed = 20833300;
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &last_time);
 
     while (running) {
         clock_gettime(CLOCK_MONOTONIC_RAW, &current);
         last_time = current;
-
-//        elapsed = diff_nseconds(last_time, current);
-
 
         pthread_mutex_lock(&screen_mutex);
         while (current_screen == NULL) {
@@ -46,7 +40,6 @@ static void *start(void *ptr) {
 
 
         current_screen(matrix, 0.12, current_user_data);
-//        printf("%lf\n", elapsed);
 
         sleep_nanos(20833300);
     }

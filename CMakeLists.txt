@@ -25,7 +25,7 @@ set(THREADING ${REAL_TIME} ${CMAKE_THREAD_LIBS_INIT})
 
 add_subdirectory(src/lm)
 add_subdirectory(examples)
-add_subdirectory(server)
+add_subdirectory(alarm-clock)
 add_subdirectory(m3u)
 
 

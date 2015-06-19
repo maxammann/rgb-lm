@@ -93,8 +93,7 @@ FT_Face get_font_face(lmFontLibrary *library, FTC_ScalerRec *scaler) {
     FT_Error error = FTC_Manager_LookupSize(library->manager, scaler, &size);
 
     if (error) {
-//        char const *string = ((CacheFace*)(scaler->face_id))->file_path;
-        printf("FTC_Manager_LookupSize: %d\n", error);
+        printf("Failed at loading font: %s (%d)\n", ((CacheFace *) scaler->face_id)->file_path, error);
         return 0;
     }
     return size->face;

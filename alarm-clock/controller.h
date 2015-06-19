@@ -4,7 +4,7 @@
 #include "lm.pb-c.h"
 
 
-void init_controller();
+int init_controller();
 
 
 lmFontLibrary *get_font_library();

@@ -69,8 +69,6 @@ static void *wakeup(void *pVoid) {
     lm_thread_pause(get_thread());
     set_current_screen(NULL, NULL);
 
-//    mute(0);
-
     return 0;
 }
 

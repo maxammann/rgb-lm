@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "controller.h"
 #include "server.h"
@@ -24,13 +25,13 @@ static int main_fd;
 static int running;
 
 void *start_discovery(void *nil) {
-    printf("Starting discovery server\n");
+    printf("Starting discovery alarm-clock\n");
     start_discovery_server();
     return NULL;
 }
 
 void *start_main_server(void *nil) {
-    printf("Starting server\n");
+    printf("Starting alarm-clock\n");
     bind_tcp_socket(6969, &main_fd);
     start_server(main_fd, process_buffer);
     return NULL;
@@ -51,14 +52,33 @@ void shutdown(int sig) {
 }
 
 int main(int argc, char *argv[]) {
+    printf("Wakeup playlist: %s\n", getenv("WAKEUP_PLAYLIST"));
+    printf("News playlist: %s\n", getenv("NEWS_PLAYLIST"));
+    char *graphics = getenv("GRAPHICS");
+    graphics = graphics == NULL ? "graphics" : graphics;
+    setenv("GRAPHICS", graphics, 1);
+    printf("Graphics directory: %s\n", graphics);
+
+    char *fonts = getenv("FONTS");
+    fonts = fonts == NULL ? "fonts" : fonts;
+    setenv("FONTS", fonts, 1);
+    printf("Fonts directory: %s\n", fonts);
+
     printf("Initialising controller\n");
     register_menu_screens();
     register_visualize_screen();
-    init_controller();
+    if (init_controller() < 0) {
+        printf("Failed initialising controller!\n");
+        return -1;
+    }
 
 
     image_t boot;
-    ppm_load("alarm-clock/graphics/boot.ppm", &boot);
+    char boot_img[80];
+    strcpy(boot_img, graphics);
+    strcat(boot_img, "/boot.ppm");
+
+    ppm_load(boot_img, &boot);
     ppm_render(get_matrix(), 0, 0, &boot);
     lm_matrix_swap_buffers(get_matrix());
     lm_thread_unpause(get_thread());
@@ -86,11 +106,9 @@ int main(int argc, char *argv[]) {
     pthread_setschedparam(pthread, SCHED_FIFO, &p);
 
     // END INIT
+    lm_matrix_clear(get_matrix());
     set_current_screen(NULL, NULL);
     lm_thread_pause(get_thread());
-
-    printf("Wakeup playlist: %s\n", getenv("WAKEUP_PLAYLIST"));
-    printf("News playlist: %s\n", getenv("NEWS_PLAYLIST"));
 
     running = 1;
 

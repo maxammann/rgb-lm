@@ -36,6 +36,7 @@ int lm_gpio_init() {
     int mem_fd;
 
     if ((mem_fd = open("/dev/mem", O_RDWR | O_SYNC)) < 0) {
+        printf("Failed to open /dev/mem. Do you have the proper permissions?\n");
         return -1;
     }
 

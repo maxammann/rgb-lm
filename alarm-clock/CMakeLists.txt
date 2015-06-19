@@ -7,7 +7,6 @@ find_package (AVFormat REQUIRED)
 find_package (AVUtil REQUIRED)
 find_package (AVResample REQUIRED)
 find_package (UThash REQUIRED)
-find_package (ALSA REQUIRED)
 find_package (AO REQUIRED)
 
 include_directories(${PROTOBUFC_INCLUDE_DIRS})
@@ -18,8 +17,8 @@ include_directories(${AVFormat_INCLUDE_DIRS})
 include_directories(${AVCodec_INCLUDE_DIRS})
 include_directories(${AVResample_INCLUDE_DIRS})
 include_directories(${UTHASH_INCLUDE_DIRS})
-include_directories(${ALSA_INCLUDE_DIRS})
 include_directories(${LIBAO_INCLUDE_DIR})
+include_directories(".")
 
 
 set(SOURCE_HEADERS)
@@ -36,7 +35,7 @@ if (${FFMPEG_COMPAT})
 	set(SOURCE_FILES ${SOURCE_FILES} audio/ffmpeg_compat.c)
 endif (${FFMPEG_COMPAT})
 
-add_executable(server ${SOURCE_FILES}
+add_executable(alarm-clock ${SOURCE_FILES}
 	main.c
 	audio/audio_ffmpeg.c
  	controller.c
@@ -54,14 +53,14 @@ add_executable(server ${SOURCE_FILES}
 
 message(${AVResample_LIBRARIES})
 
-target_link_libraries (server m3u)
-target_link_libraries (server rgb_led_matrix
+target_link_libraries (alarm-clock m3u)
+target_link_libraries (alarm-clock rgb_led_matrix
 ${PROTOBUFC_LIBRARY}
 ${THREADING}
 ${WIRINGPI_LIBRARIES}
 ${AVCodec_LIBRARIES}
 ${AVFormat_LIBRARIES} ${AVUtil_LIBRARIES} ${AVResample_LIBRARIES}
-${ALSA_LIBRARIES} ${LIBAO_LIBRARIES} 
+${LIBAO_LIBRARIES}
 )
 
 

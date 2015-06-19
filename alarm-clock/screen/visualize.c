@@ -70,7 +70,7 @@ void buffer_visualize(int16_t *data) {
         float im = left_data[i];
         float re = left_data[i + 1];
         double mag = sqrt(im * im +
-                                re * re); // The magnitude in logarithmic scale, linear would be sqrt(im * im + re * re)
+                          re * re); // The magnitude in logarithmic scale, linear would be sqrt(im * im + re * re)
 
         // Visualize magnitude of i-th band
         left_bands[tight_index] = (int16_t) (mag * HEIGHT);

@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "screen.h"
-#include "lm/ppm.h"
 #include "math.h"
 
 #include "menu.h"
@@ -29,11 +28,6 @@ struct menu_ {
     char *name;
     void *user_data;
 };
-
-//void ppm_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double elapsed, void *user_data) {
-//    ppm_render(matrix, x, y, user_data);
-//}
-
 
 static menu_t menus[MENUES];
 static int current_menu = 0;
