@@ -1,11 +1,12 @@
 #include <wiringPi.h>
-#include <stdio.h>
 
 #include "rotary_encoder.h"
 #include "time_util.h"
 #include "screen/screen.h"
 #include "controller.h"
 #include "wakedog.h"
+#include "screen/menu/alarms.h"
+#include "screen/menu.h"
 
 static unsigned long last_down = 0;
 static unsigned long last_up = 0;
@@ -27,11 +28,20 @@ static void button() {
         }
 
         skip_current_playback();
+#ifdef DEBUG
         printf("Button down\n");
+#endif
     } else {
         last_down = 0;
         last_up = now;
+
+        if (get_current_menu() == 2) {
+            next_alarm();
+        }
+
+#ifdef DEBUG
         printf("Button up\n");
+#endif
     }
 }
 
@@ -47,7 +57,7 @@ int last_up_longer_than(unsigned long time) {
 
 int last_rotated_longer_than(unsigned long time) {
     unsigned long now = current_time();
-    return encoder.last_rotatated != 0 && encoder.last_rotatated  < now - time;
+    return encoder.last_rotatated != 0 && encoder.last_rotatated < now - time;
 }
 
 void reset_last_down() {

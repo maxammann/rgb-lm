@@ -3,12 +3,18 @@
 #include "screen.h"
 #include <libavcodec/avfft.h>
 
-static int16_t left_bands[32];
-static int16_t right_bands[32];
+
+#define HEIGHT 32
+#define WIDTH 32
+
+static rgb color = {0, 204, 204};
+
+static int16_t left_bands[WIDTH]; // Left channel frequency bands
+static int16_t right_bands[WIDTH]; // Right channel frequency bands
 
 static RDFTContext *ctx;
 
-static int N, samples;
+static int N, samples; // N and number of samples to process each step
 
 void visualize_init(int samples_) {
     samples = samples_;
@@ -16,40 +22,21 @@ void visualize_init(int samples_) {
     ctx = av_rdft_init((int) log2(N), DFT_R2C);
 }
 
-void detrend(float array[], int n) {
-    double x, y, a, b;
-    double sy = 0.0,
-            sxy = 0.0,
-            sxx = 0.0;
-    int i;
-
-    for (i = 0, x = (-n / 2.0 + 0.5); i < n; i++, x += 1.0) {
-        y = array[i];
-        sy += y;
-        sxy += x * y;
-        sxx += x * x;
-    }
-    b = sxy / sxx;
-    a = sy / n;
-
-    for (i = 0, x = (-n / 2.0 + 0.5); i < n; i++, x += 1.0)
-        array[i] -= (a + b * x);
-}
-
 void buffer_visualize(int16_t *data) {
-    int i, tight_index;
+    int i, tight_index; // just some iterator indices
 
 
-    float left_data[sizeof(float) * N * 3];
-    float right_data[sizeof(float) * N * 3];
+    float left_data[N * 2];
+    float right_data[N * 2];
 
     for (i = 0, tight_index = 0; i < samples; i += 2) {
         int16_t left = data[i];
         int16_t right = data[i + 1];
 
-        double window_modifier = (0.5 * (1 - cos(2 * M_PI * tight_index / N)));
-        float value = (float) (window_modifier * ((left) / 32768.0f));
+        double window_modifier = (0.5 * (1 - cos(2 * M_PI * tight_index / (N - 1)))); // Hann (Hanning) window function
+        float value = (float) (window_modifier * ((left) / 32768.0f)); // Convert to float and apply
 
+        // cap values above 1 and below -1
         if (value > 1.0) {
             value = 1;
         } else if (value < -1.0) {
@@ -57,6 +44,7 @@ void buffer_visualize(int16_t *data) {
         }
 
         left_data[tight_index] = value;
+
         value = (float) (window_modifier * ((right) / 32768.0f));
 
         if (value > 1.0) {
@@ -77,24 +65,27 @@ void buffer_visualize(int16_t *data) {
     int size = N / 2 * 2; // half is usable, but we have re and im
 
 
-    for (i = 0, tight_index = 0; i < size; i += size / 32) {
+    for (i = 0, tight_index = 0; i < size; i += size / WIDTH) {
 
         float im = left_data[i];
         float re = left_data[i + 1];
-        double mag = sqrt(im * im + re * re);
+        double mag = sqrt(im * im +
+                                re * re); // The magnitude in logarithmic scale, linear would be sqrt(im * im + re * re)
 
-        left_bands[tight_index] = (int16_t) (mag * 16.0f);
+        // Visualize magnitude of i-th band
+        left_bands[tight_index] = (int16_t) (mag * HEIGHT);
+
 
         tight_index++;
     }
 
-    for (i = 0, tight_index = 0; i < size; i += size / 32) {
+    for (i = 0, tight_index = 0; i < size; i += size / WIDTH) {
 
         float im = right_data[i];
         float re = right_data[i + 1];
         double mag = sqrt(im * im + re * re);
 
-        right_bands[tight_index] = (int16_t) (mag * 16.0f);
+        right_bands[tight_index] = (int16_t) (mag * HEIGHT);
 
         tight_index++;
     }
@@ -105,16 +96,14 @@ void screen_draw(lmLedMatrix *matrix, double elapsed) {
 
     int16_t x, y;
 
-    rgb c = {200, 160, 20};
-
-    for (x = 0; x < 32; ++x) {
+    for (x = 0; x < WIDTH; ++x) {
         for (y = 0; y < left_bands[x]; ++y) {
-            lm_matrix_set_pixel(matrix, x, 32 - y, &c);
+            lm_matrix_set_pixel(matrix, x, HEIGHT - y, &color);
         }
 
-        for (y = 0; y < right_bands[x]; ++y) {
-            lm_matrix_set_pixel(matrix, x, 32 - (y + 16), &c);
-        }
+//        for (y = 0; y < right_bands[x]; ++y) {
+//            lm_matrix_set_pixel(matrix, x, 32 - (y + 16), &color);
+//        }
     }
     lm_matrix_swap_buffers(matrix);
 }

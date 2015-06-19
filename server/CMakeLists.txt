@@ -50,7 +50,7 @@ add_executable(server ${SOURCE_FILES}
   	rotary_encoder.c rotary_encoder.h audio/audio.h wakedog.h screen/visualize.h screen/visualize.c
   	screen/menu/clock.c screen/menu/clock.h
   	screen/menu/mesmerizing.h screen/menu/mesmerizing.c
-  	time_util.h time_util.c)
+  	time_util.h time_util.c screen/menu/alarms.h screen/menu/alarms.c)
 
 message(${AVResample_LIBRARIES})
 

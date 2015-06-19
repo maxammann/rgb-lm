@@ -94,23 +94,22 @@ int main(int argc, char *argv[]) {
 
     running = 1;
 
-//    set_current_screen(get_screen("menu"), NULL);
-//    lm_thread_unpause(get_thread());
-//    menu_next();
-
     while (running) {
         watch();
 
 
-        if (last_down_longer_than(1000)) {
+        if (last_down_longer_than(800)) {
+
+#ifdef DEBUG
             printf("Button long pressed\n");
+#endif
             set_current_screen(NULL, NULL);
             lm_thread_pause(get_thread());
 
             reset_last_down();
         }
 
-        if (last_up_longer_than(10000) && last_rotated_longer_than(10000)) {
+        if (last_up_longer_than(4000) && last_rotated_longer_than(4000)) {
             set_current_screen(NULL, NULL);
             lm_thread_pause(get_thread());
 

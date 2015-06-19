@@ -2,9 +2,9 @@
 #include "../../controller.h"
 #include <stdio.h>
 
-void digital_clock_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double elapsed, void *user_data) {
-    rgb color = {150, 150, 150};
+static rgb color = {0, 204, 204};
 
+void digital_clock_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double elapsed, void *user_data) {
     int16_t delta_x = 16;
     int16_t delta_y = 1;
     int16_t spacing_y = 2;
@@ -16,8 +16,8 @@ void digital_clock_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double
     char time_hour[10];
     char time_minute[10];
 
-    sprintf(time_hour, "%i", tm_struct->tm_hour);
-    sprintf(time_minute, "%i", tm_struct->tm_min);
+    sprintf(time_hour, "%02d", tm_struct->tm_hour);
+    sprintf(time_minute, "%02d", tm_struct->tm_min);
 
     lmString *hour = lm_fonts_string_new();
     lmString *minute = lm_fonts_string_new();
@@ -32,7 +32,7 @@ void digital_clock_menu_screen(lmLedMatrix *matrix, int16_t x, int16_t y, double
 //    rgb bg = {255, 255, 255};
 //    int16_t x1, y1;
 //
-//    for (x1 = 0; x1 < 32; ++x1) {
+//    for (x1 = 0; x1 < 32; ++x1) {p
 //        for (y1 = 0; y1 < 32; ++y1) {
 //
 //            lm_matrix_set_pixel(matrix, x + x1, y + y1, &bg);

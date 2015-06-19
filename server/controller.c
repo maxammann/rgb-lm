@@ -11,13 +11,13 @@
 static lmLedMatrix *matrix;
 static lmThread *thread;
 static lmFontLibrary *library;
-static lmFont *default_font;
+static lmFont *default_font, *small_font;
 
 void init_controller() {
     lm_gpio_init();
     lm_gpio_init_output(lm_io_bits_new());
 
-    matrix = lm_matrix_new(32, 32, 11);
+    matrix = lm_matrix_new(32, 32, 8);
     thread = lm_thread_new(matrix, DEFAULT_BASE_TIME_NANOS);
 
     library = lm_fonts_init();
@@ -25,6 +25,7 @@ void init_controller() {
 //    default_font = lm_fonts_font_new(library, "alarm-clock/fonts/Symbola.ttf", 22);
 //    default_font = lm_fonts_font_new(library, "alarm-clock/fonts/NotoSans-Regular.ttf", 20);
     default_font = lm_fonts_font_new(library, "alarm-clock/fonts/alterebro-pixel-font.ttf", 32);
+    small_font = lm_fonts_font_new(library, "alarm-clock/fonts/alterebro-pixel-font.ttf", 16);
 
     lm_thread_start(thread);
     lm_thread_pause(thread);
@@ -104,7 +105,9 @@ void process_buffer(uint8_t *buffer, size_t size) {
 
     }
 
+#ifdef DEBUG
     printf("Received response type: %d\n", request->type);
+#endif
     lm__request__free_unpacked(request, NULL);
 }
 
@@ -123,6 +126,10 @@ lmFontLibrary *get_font_library() {
 
 lmFont *get_default_font() {
     return default_font;
+}
+
+lmFont *get_small_font() {
+    return small_font;
 }
 
 void free_controller() {

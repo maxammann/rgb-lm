@@ -17,16 +17,15 @@
 
 static volatile unsigned *gpio;
 
-static const uint32_t gpios = (
-#ifdef REV1
-        (1 << 0) | (1 << 1) |
-#endif
-#ifdef REV2
-        (1 << 2) | (1 << 3) |
-        #endif
-        (1 << 4) | (1 << 7) | (1 << 8) | (1 << 9) |
-        (1 << 10) | (1 << 11) | (1 << 14) | (1 << 15) | (1 << 17) | (1 << 18) |
-        (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25) | (1 << 27));
+static const uint32_t gpios = ((1 <<  0) | (1 <<  1) | // RPi 1 - Revision 1 accessible
+                               (1 <<  2) | (1 <<  3) | // RPi 1 - Revision 2 accessible
+                               (1 <<  4) | (1 <<  7) | (1 << 8) | (1 <<  9) |
+                               (1 << 10) | (1 << 11) | (1 << 14) | (1 << 15)| (1 <<17) | (1 << 18) |
+                               (1 << 22) | (1 << 23) | (1 << 24) | (1 << 25)| (1 << 27) |
+                               // support for A+/B+ and RPi2 with additional GPIO pins.
+                               (1 <<  5) | (1 <<  6) | (1 << 12) | (1 << 13) | (1 << 16) |
+                               (1 << 19) | (1 << 20) | (1 << 21) | (1 << 26)
+);
 
 
 int lm_gpio_init() {
@@ -77,7 +76,7 @@ uint32_t lm_gpio_init_output(uint32_t outputs) {
     outputs &= gpios;   // Sanitize input.
     uint32_t output_bits_ = outputs;
 
-    for (b = 0; b < 27; ++b) {
+    for (b = 0; b <= 27; ++b) {
         if (outputs & (1 << b)) {
             INP_GPIO(b);   // for writing, we first need to set as input.
             OUT_GPIO(b);

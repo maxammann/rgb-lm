@@ -146,7 +146,9 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
         if (rc == -1) {
             perror("Read Error!\n");
         } else if (rc == 0) {
+#ifdef DEBUG
             printf("Connection to client closed!\n");
+#endif
             close(cl);
         }
     }

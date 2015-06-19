@@ -27,7 +27,7 @@ void skip_current_playback() {
 }
 
 static void *wakeup(void *pVoid) {
-    mute(1);
+//    mute(1);
 
     size_t amount;
     Title *titles;
@@ -45,7 +45,7 @@ static void *wakeup(void *pVoid) {
 
         m3u_free(titles, amount);
     } else {
-        printf("No audio found!\n");
+        printf("No audio set!\n");
     }
 
     char *news_playlist = getenv("NEWS_PLAYLIST");
@@ -53,21 +53,23 @@ static void *wakeup(void *pVoid) {
     if (news_playlist != NULL) {
         titles = m3u_read(news_playlist, &amount);
 
-        int i;
-        for (i = 0; i < amount; ++i) {
-            current_playback++;
-            audio_play_default(titles[i].title_dest, 0, is_playback_stopped);
-        }
+        if (titles != NULL) {
+            int i;
+            for (i = 0; i < amount; ++i) {
+                current_playback++;
+                audio_play_default(titles[i].title_dest, 0, is_playback_stopped);
+            }
 
-        m3u_free(titles, amount);
+            m3u_free(titles, amount);
+        }
     } else {
-        printf("No news found!\n");
+        printf("No news set!\n");
     }
 
     lm_thread_pause(get_thread());
     set_current_screen(NULL, NULL);
 
-    mute(0);
+//    mute(0);
 
     return 0;
 }

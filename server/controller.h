@@ -11,6 +11,8 @@ lmFontLibrary *get_font_library();
 
 lmFont *get_default_font();
 
+lmFont *get_small_font();
+
 lmLedMatrix *get_matrix();
 
 lmThread *get_thread();
