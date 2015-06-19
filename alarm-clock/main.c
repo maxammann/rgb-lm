@@ -59,10 +59,8 @@ int main(int argc, char *argv[]) {
     setenv("GRAPHICS", graphics, 1);
     printf("Graphics directory: %s\n", graphics);
 
-    char *fonts = getenv("FONTS");
-    fonts = fonts == NULL ? "fonts" : fonts;
-    setenv("FONTS", fonts, 1);
-    printf("Fonts directory: %s\n", fonts);
+    char *font = getenv("FONT");
+    printf("Font: %s\n", font);
 
     printf("Initialising controller\n");
     register_menu_screens();

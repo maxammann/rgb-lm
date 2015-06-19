@@ -24,9 +24,7 @@ int init_controller() {
 
     library = lm_fonts_init();
 
-    char *font = malloc(sizeof(char) * 80);
-    strcpy(font, getenv("FONTS"));
-    strcat(font, "/alterebro-pixel-font.ttf");
+    char *font = getenv("FONT");
 
     default_font = lm_fonts_font_new(library, font, 32);
     small_font = lm_fonts_font_new(library, font, 16);

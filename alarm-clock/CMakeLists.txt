@@ -25,7 +25,7 @@ set(SOURCE_HEADERS)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-PROTOBUFC_GENERATE_C(PROTO_SRCS PROTO_HDRS ../lm.proto)
+PROTOBUFC_GENERATE_C(PROTO_SRCS PROTO_HDRS lm.proto)
 
 set(SOURCE_FILES ${SOURCE_HEADERS} ${PROTO_SRCS} ${PROTO_HDRS})
 
@@ -50,8 +50,6 @@ add_executable(alarm-clock ${SOURCE_FILES}
   	screen/menu/clock.c screen/menu/clock.h
   	screen/menu/mesmerizing.h screen/menu/mesmerizing.c
   	time_util.h time_util.c screen/menu/alarms.h screen/menu/alarms.c)
-
-message(${AVResample_LIBRARIES})
 
 target_link_libraries (alarm-clock m3u)
 target_link_libraries (alarm-clock rgb_led_matrix
