@@ -98,7 +98,10 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
 
     while (running) {
 
+        printf("Waiting for new connection...\n");
+
         if ((cl = accept(fd, NULL, NULL)) == -1) {
+            printf("Socket closed!\n");
             break;
         }
 
@@ -140,7 +143,7 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
         }
 
         if (msg_buff_size > 0) {
-            printf("data still in buffer!\n");
+            printf("data still in buffer! clearing\n");
         }
 
         if (rc == -1) {
@@ -151,6 +154,8 @@ void start_server(int fd, void (*process)(uint8_t *, size_t)) {
 #endif
             close(cl);
         }
+
+        msg_buff_size = 0;
     }
 
 }
